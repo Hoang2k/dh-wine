@@ -1,0 +1,237 @@
+.unreset {
+  *,
+  ::before,
+  ::after {
+    // border-width: 0;
+    // border-style: solid;
+    // border-color: theme('borderColor.DEFAULT', currentColor);
+  }
+  a {
+    @apply text-blue-700 underline;
+  }
+  p {
+    @apply my-2;
+  }
+
+  blockquote,
+  figure {
+    @apply m-0;
+  }
+
+  hr {
+    @apply border;
+  }
+
+  h1 {
+    @apply text-4xl font-bold my-2;
+  }
+
+  h2 {
+    @apply text-2xl font-bold my-3;
+  }
+
+  h3 {
+    @apply text-lg font-bold my-4;
+  }
+
+  h4 {
+    @apply text-base font-bold my-5;
+  }
+
+  h5 {
+    @apply text-sm font-bold my-6;
+  }
+
+  h6 {
+    @apply text-xs font-bold my-10;
+  }
+
+  article,
+  aside,
+  nav,
+  section {
+    h1 {
+      @apply text-2xl font-bold my-3;
+    }
+
+    article,
+    aside,
+    nav,
+    section {
+      h1 {
+        @apply text-lg font-bold my-4;
+      }
+
+      article,
+      aside,
+      nav,
+      section {
+        h1 {
+          @apply text-base font-bold my-5;
+        }
+
+        article,
+        aside,
+        nav,
+        section {
+          h1 {
+            @apply text-sm font-bold my-6;
+          }
+
+          article,
+          aside,
+          nav,
+          section {
+            h1 {
+              @apply text-xs font-bold my-10;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  ul,
+  menu {
+    // should be my-4 for proper reset, but thats ugly af
+    // @apply list-disc my-1 pl-10;
+  }
+
+  ol {
+    @apply list-decimal my-4 ml-8;
+  }
+
+  ul,
+  ol {
+    ul {
+      list-style-type: circle;
+    }
+
+    ul,
+    ol {
+      ul {
+        list-style-type: square;
+      }
+    }
+  }
+
+  ul {
+    list-style-type: disc;
+    margin-left: 2rem;
+    li {
+      margin-top: revert;
+      margin-right: revert;
+      margin-bottom: revert;
+      color: revert;
+      font-family: revert;
+      margin-bottom: 5px;
+      position: relative;
+      input {
+        margin-right: 10px;
+        width: 15px;
+        height: 15px;
+      }
+      span {
+        display: inline-block;
+        width: calc(100% - 25px) !important;
+      }
+    }
+  }
+
+  ul.todo-list {
+    list-style: none;
+    margin-top: revert;
+    margin-right: revert;
+    margin-bottom: revert;
+    color: revert;
+    font-family: revert;
+    margin-left: 0.4rem;
+  }
+
+  dd {
+    @apply pl-10;
+  }
+
+  dl {
+    @apply my-4;
+  }
+
+  ul,
+  ol,
+  menu,
+  dl {
+    ul,
+    ol,
+    menu,
+    dl {
+      margin: 0;
+    }
+  }
+
+  legend {
+    @apply py-0 px-1;
+  }
+
+  fieldset {
+    @apply my-0 mx-1 pt-0 px-1 pb-2;
+  }
+
+  b,
+  strong {
+    font-weight: bold;
+  }
+
+  pre {
+    @apply my-4;
+  }
+
+  pre {
+    background: hsla(0, 0%, 78%, .3);
+    border: 1px solid #c4c4c4;
+    border-radius: 2px;
+    color: #353535;
+    direction: ltr;
+    font-style: normal;
+    min-width: 200px;
+    padding: 5px;
+    tab-size: 4;
+    text-align: left;
+    white-space: pre-wrap;
+    code {
+      background: unset;
+      border-radius: 0;
+      padding: 0;
+      background-color: hsla(0, 0%, 78%, .3);
+      border-radius: 2px;
+      padding: .15em;
+    }
+  }
+
+  code {
+      background-color: hsla(0, 0%, 78%, .3);
+      border-radius: 2px;
+      padding: .15em;
+  }
+
+  table {
+    border: 1px double #b3b3b3;
+    border-collapse: collapse;
+    border-spacing: 0;
+    td,
+    th {
+      border: 1px solid #bfbfbf;
+      min-width: 2em;
+      padding: 0.4em;
+    }
+  }
+
+  blockquote {
+    border-left: 5px solid #ccc;
+    font-style: italic;
+    margin-left: 0;
+    margin-right: 0;
+    overflow: hidden;
+    padding-left: 1.5em;
+    padding-right: 1.5em;
+  }
+}

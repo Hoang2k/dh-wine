@@ -1,0 +1,50 @@
+stages:
+    - build
+    - deploy
+    - checklog
+
+build:
+    stage: build
+    variables:
+        GIT_STRATEGY: clone
+    script:
+        - yarn
+        - yarn build
+    tags:
+        - neri-runner 
+    only:
+        - tags
+
+deploy:
+    stage: deploy
+    variables:
+        GIT_STRATEGY: none
+    when: manual
+    script:
+        - >
+            if [ "$GITLAB_USER_ID" == "28262541" ]; then
+                sudo rsync -av --delete --exclude node_modules --exclude .git ./ /datas/neri/
+                sudo chown -R neri. /datas/neri
+                sudo su neri -c "cd /datas/neri/; yarn; pm2 restart neri-client"
+            else
+                echo "Permission denied"
+                exit 1
+            fi
+    tags:
+        - neri-runner
+    only:
+        - tags
+
+
+checklog:
+    stage: checklog
+    variables:
+        GIT_STRATEGY: none
+    when: manual
+    script:
+        - sudo su neri -c "cd /datas/neri/; tail -n 10000 nohup.out"
+    tags:
+        - neri-runner
+    only:
+        - tags
+

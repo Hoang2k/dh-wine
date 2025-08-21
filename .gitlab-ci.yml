@@ -7,12 +7,6 @@ build:
     stage: build
     variables:
         GIT_STRATEGY: clone
-    before_script:
-        - echo "PATH = $PATH"
-        - command -v node || true
-        - node -v
-        - command -v yarn || true
-        - yarn -v
     script:
         - yarn install --frozen-lockfile
         - yarn build
@@ -43,7 +37,7 @@ checklog:
     variables:
         GIT_STRATEGY: none
     script:
-        - sudo -u ntls bash -c "cd /var/www/ntls/ntlsvx-frontend/ && tail -n 200 nohup.out"
+        - sudo -u ntls pm2 logs ntlsvx-frontend --lines 200
     tags:
         - ntls-runner
     only:

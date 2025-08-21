@@ -8,9 +8,10 @@ build:
     variables:
         GIT_STRATEGY: clone
     before_script:
-        - which node
-        - which yarn
+        - echo "PATH = $PATH"
+        - command -v node || true
         - node -v
+        - command -v yarn || true
         - yarn -v
     script:
         - yarn install --frozen-lockfile

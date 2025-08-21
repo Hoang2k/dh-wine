@@ -1,3 +1,9 @@
+before_script:
+  - echo "NODE: $(which node)"
+  - echo "YARN: $(which yarn)"
+  - node -v
+  - yarn -v
+
 stages:
     - build
     - deploy

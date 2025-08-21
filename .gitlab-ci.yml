@@ -8,8 +8,8 @@ build:
     variables:
         GIT_STRATEGY: clone
     before_script:
-        - echo which node
-        - echo which yarn
+        - which node
+        - which yarn
         - node -v
         - yarn -v
     script:

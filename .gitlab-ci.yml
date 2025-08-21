@@ -8,10 +8,13 @@ build:
     variables:
         GIT_STRATEGY: clone
     script:
-        - yarn
+        - yarn install --frozen-lockfile
         - yarn build
+    cache:
+        paths:
+         - node_modules/
     tags:
-        - neri-runner 
+        - ntls-runner 
     only:
         - tags
 
@@ -19,19 +22,18 @@ deploy:
     stage: deploy
     variables:
         GIT_STRATEGY: none
-    when: manual
     script:
         - >
             if [ "$GITLAB_USER_ID" == "28262541" ]; then
-                sudo rsync -av --delete --exclude node_modules --exclude .git ./ /datas/neri/
-                sudo chown -R neri. /datas/neri
-                sudo su neri -c "cd /datas/neri/; yarn; pm2 restart neri-client"
+                sudo rsync -av --delete --exclude node_modules --exclude .git --exclude .env ./ /var/www/ntls/ntlsvx-frontend/
+                sudo chown -R ntls:ntls /var/www/ntls/ntlsvx-frontend
+                sudo -u ntls bash -c "cd /var/www/ntls/ntlsvx-frontend && yarn install --frozen-lockfile && pm2 restart ntlsvx-frontend || pm2 start npm --name ntlsvx-frontend" -- start
             else
                 echo "Permission denied"
                 exit 1
             fi
     tags:
-        - neri-runner
+        - ntls-runner
     only:
         - tags
 
@@ -40,11 +42,10 @@ checklog:
     stage: checklog
     variables:
         GIT_STRATEGY: none
-    when: manual
     script:
-        - sudo su neri -c "cd /datas/neri/; tail -n 10000 nohup.out"
+        - sudo -u ntls bash -c "cd /var/www/ntls/ntlsvx-frontend/ && tail -n 200 nohup.out"
     tags:
-        - neri-runner
+        - ntls-runner
     only:
         - tags
 

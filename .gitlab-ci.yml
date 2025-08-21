@@ -29,10 +29,9 @@ deploy:
     variables:
         GIT_STRATEGY: none
     script:
-        - >
-                sudo rsync -av --delete --exclude node_modules --exclude .git --exclude .env ./ /var/www/ntls/ntlsvx-frontend/
-                sudo chown -R ntls:ntls /var/www/ntls/ntlsvx-frontend
-                sudo -u ntls bash -c "cd /var/www/ntls/ntlsvx-frontend && yarn install --frozen-lockfile && pm2 restart ntlsvx-frontend || pm2 start npm --name ntlsvx-frontend" -- start
+        - sudo rsync -av --delete --exclude node_modules --exclude .git --exclude .env ./ /var/www/ntls/ntlsvx-frontend/
+        - sudo chown -R ntls:ntls /var/www/ntls/ntlsvx-frontend
+        - sudo -u ntls bash -c "cd /var/www/ntls/ntlsvx-frontend && yarn install --frozen-lockfile && pm2 restart ntlsvx-frontend || pm2 start npm --name ntlsvx-frontend" -- start
     tags:
         - ntls-runner
     only:

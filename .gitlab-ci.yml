@@ -37,7 +37,7 @@ checklog:
     variables:
         GIT_STRATEGY: none
     script:
-        - sudo -u ntls pm2 logs ntlsvx-frontend --lines 200
+        - sudo -u ntls pm2 logs ntlsvx-frontend --lines 200 --nostream
     tags:
         - ntls-runner
     only:

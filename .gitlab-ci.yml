@@ -16,7 +16,7 @@ build:
     tags:
         - ntls-runner 
     only:
-        - tags
+        - /^v[0-9]+\.[0-9]+\.[0-9]+$/
 
 deploy:
     stage: deploy
@@ -30,7 +30,7 @@ deploy:
     tags:
         - ntls-runner
     only:
-        - tags
+        - /^v[0-9]+\.[0-9]+\.[0-9]+$/
 
 
 checklog:
@@ -42,5 +42,5 @@ checklog:
     tags:
         - ntls-runner
     only:
-        - tags
+        - /^v[0-9]+\.[0-9]+\.[0-9]+$/
 

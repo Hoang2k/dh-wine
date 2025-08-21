@@ -15,13 +15,12 @@ export default async function HomePage() {
       {/* Header Section */}
       <div className="text-center space-y-4">
         <div className="flex items-center justify-center gap-2 mb-4">
-          <Zap className="h-8 w-8 text-[#8539D9]" />
           <h1 className="text-4xl font-bold bg-gradient-to-r from-[#8539D9] to-[#7028C8] bg-clip-text text-transparent">
-            TanStack Query Demo
+            NTLSVX
           </h1>
         </div>
         <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-          Khám phá sức mạnh của TanStack Query với các API public miễn phí
+          Test hiển thị NTLSVX
         </p>
         <div className="flex items-center justify-center gap-2">
           <Badge variant="secondary" className="flex items-center gap-1">

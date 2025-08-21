@@ -7,6 +7,9 @@ build:
     stage: build
     variables:
         GIT_STRATEGY: clone
+    before_script:
+        - echo "NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL" >> .env
+        - echo "NEXTAUTH_SECRET=$NEXTAUTH_SECRET" >> .env
     script:
         - yarn install --frozen-lockfile
         - yarn build

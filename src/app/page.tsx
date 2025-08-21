@@ -17,6 +17,7 @@ export default async function HomePage() {
         <div className="flex items-center justify-center gap-2 mb-4">
           <h1 className="text-4xl font-bold bg-gradient-to-r from-[#8539D9] to-[#7028C8] bg-clip-text text-transparent">
             NTLSVX
+            TEST Gitlab CI/CD
           </h1>
         </div>
         <p className="text-xl text-muted-foreground max-w-2xl mx-auto">

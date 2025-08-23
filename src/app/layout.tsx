@@ -6,6 +6,17 @@ import ReduxProvider from '@/providers/ReduxProvider'
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import ClientProvider from "@/providers/ClientProvider";
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Nghĩa trang liệt sĩ Vị Xuyên',
+  description: 'Nghĩa trang liệt sĩ Vị Xuyên',
+  icons: {
+    icon: '/logo-la-co-03.jpg',
+    shortcut: '/logo-la-co-03.jpg',
+    apple: '/logo-la-co-03.jpg',
+  },
+}
 
 export default function RootLayout({
   children,
@@ -14,10 +25,6 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="vi">
-      <head>
-        <title>Website Bán Hàng & Bài Viết</title>
-        <meta name="description" content="Website bán hàng và viết bài giới thiệu" />
-      </head>
       <body>  
         <ClientProvider>
           {children} 

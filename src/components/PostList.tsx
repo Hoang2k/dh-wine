@@ -27,8 +27,6 @@ export default function PostList() {
     queryFn: getListPosts,
   })
 
-  console.log('posts', posts)
-
   if (isLoading) {
     return (
       <div className="space-y-4">

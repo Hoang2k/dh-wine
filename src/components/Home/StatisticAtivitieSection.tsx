@@ -195,7 +195,7 @@ export default function StatisticActivitieSection() {
                                             </div>
                                             <div className="w-full">
                                                 <div className="flex justify-between items-center">
-                                                    <div className="font-semibold text-lg">{item.title}</div>
+                                                    <div className="font-semibold text-left text-lg">{item.title}</div>
                                                     <div className="text-sm text-[#475467]">{item.created_at}</div>
                                                 </div>
                                                 <p className="mt-2 text-[#475467] text-left text-base line-clamp-2">{item.description}</p>

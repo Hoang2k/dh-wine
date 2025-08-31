@@ -30,7 +30,8 @@ interface RequestConfig<T = AxiosResponse> extends AxiosRequestConfig {
  * @return {*}
  */
 interface IResponse<T> extends AxiosResponse {
-  payload: T;
+  meta?: IPagination
+  data: T;
 }
 
 export type {

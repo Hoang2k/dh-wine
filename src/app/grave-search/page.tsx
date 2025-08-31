@@ -1,4 +1,5 @@
 import SearchFormComponent from "@/components/search/SearchFormComponent";
+import SearchShell from "@/components/search/SearchShell";
 import TableComponent from "@/components/search/TableComponent";
 
 export default function GraveSearchPage() {
@@ -14,9 +15,7 @@ export default function GraveSearchPage() {
             </p>
           </div>
   
-          {/* Search Form */}
-        <SearchFormComponent />
-        <TableComponent />
+        <SearchShell />
 
         </main>
       </div>

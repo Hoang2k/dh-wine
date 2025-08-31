@@ -9,9 +9,10 @@ declare global {
 }
 
 export interface IPagination {
+  page: number;
+  perPage: number;
   total: number;
-  start: number;
-  limit: number;
+  totalPages: number;
 }
 
 export interface IImage {

@@ -20,140 +20,22 @@ import {
   PaginationPrevious,
   PaginationEllipsis,
 } from "@/components/ui/pagination";
+import { Grave } from "@/types/graves";
 
 
-// =======================
-// Types
-// =======================
-type MartyrData = {
-  stt: number;
-  khu: string;
-  lo: string;
-  hang: string;
-  mo: string;
-  hoTen: string;
-  namSinh: string;
-  nguyenQuan: string;
-  nguyenQuanMoi: string;
-  donVi: string;
-  capBacChucVu: string;
-  ngayHySinh: string;
-  diaPhuongAnTang: string;
-  nguoiDiChuyen: string;
-};
+export default function TableComponent({data, total, page, pageSize, onPageChange, isLoading, isFetching, error} : {
+  data: Grave[]; total: number; page: number; pageSize: number; onPageChange: (p: number) => void; isLoading?: boolean; isFetching?: boolean; error?: any;
+}) {
 
-// =======================
-// Sample data
-// =======================
-const sampleData: MartyrData[] = [
-  {
-    stt: 1,
-    khu: "A",
-    lo: "01",
-    hang: "05",
-    mo: "12",
-    hoTen: "Nguyễn Văn Thành",
-    namSinh: "1960",
-    nguyenQuan: "Hà Nội",
-    nguyenQuanMoi: "Quận Ba Đình, Hà Nội",
-    donVi: "Trung đoàn 246",
-    capBacChucVu: "Trung sĩ",
-    ngayHySinh: "15/02/1979",
-    diaPhuongAnTang: "",
-    nguoiDiChuyen: "",
-  },
-  {
-    stt: 2,
-    khu: "A",
-    lo: "02",
-    hang: "03",
-    mo: "08",
-    hoTen: "Trần Minh Đức",
-    namSinh: "1958",
-    nguyenQuan: "Hải Phòng",
-    nguyenQuanMoi: "Quận Hồng Bàng, Hải Phòng",
-    donVi: "Tiểu đoàn 3, Trung đoàn 246",
-    capBacChucVu: "Thiếu úy",
-    ngayHySinh: "17/02/1979",
-    diaPhuongAnTang: "",
-    nguoiDiChuyen: "",
-  },
-  {
-    stt: 3,
-    khu: "B",
-    lo: "01",
-    hang: "02",
-    mo: "15",
-    hoTen: "Lê Văn Hùng",
-    namSinh: "1961",
-    nguyenQuan: "Nam Định",
-    nguyenQuanMoi: "Huyện Nghĩa Hưng, Nam Định",
-    donVi: "Trung đoàn 148",
-    capBacChucVu: "Hạ sĩ",
-    ngayHySinh: "20/02/1979",
-    diaPhuongAnTang: "Nghĩa trang liệt sĩ Nam Định",
-    nguoiDiChuyen: "Gia đình",
-  },
-  {
-    stt: 4,
-    khu: "B",
-    lo: "03",
-    hang: "01",
-    mo: "07",
-    hoTen: "Phạm Quốc Tuấn",
-    namSinh: "1959",
-    nguyenQuan: "Thái Bình",
-    nguyenQuanMoi: "Huyện Kiến Xương, Thái Bình",
-    donVi: "Trung đoàn 356",
-    capBacChucVu: "Trung úy",
-    ngayHySinh: "22/02/1979",
-    diaPhuongAnTang: "",
-    nguoiDiChuyen: "",
-  },
-  {
-    stt: 5,
-    khu: "C",
-    lo: "02",
-    hang: "04",
-    mo: "09",
-    hoTen: "Vũ Đình Long",
-    namSinh: "1962",
-    nguyenQuan: "Bắc Ninh",
-    nguyenQuanMoi: "Huyện Yên Phong, Bắc Ninh",
-    donVi: "Tiểu đoàn 2, Trung đoàn 148",
-    capBacChucVu: "Binh nhất",
-    ngayHySinh: "25/02/1979",
-    diaPhuongAnTang: "",
-    nguoiDiChuyen: "",
-  },
-];
-
-// =======================
-// Component
-// =======================
-export default function TableComponent() {
-  // state MUST be inside the component
-  const [data] = useState<MartyrData[]>(sampleData);
-
-  // Pagination state
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
-
-  // Derived pagination
-  const totalPages = Math.max(1, Math.ceil(data.length / itemsPerPage));
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = Math.min(startIndex + itemsPerPage, data.length);
-  const currentData = data.slice(startIndex, endIndex);
-
-  const handlePageChange = (page: number) => {
-    setCurrentPage(Math.min(Math.max(1, page), totalPages));
-  };
+  const totalPages = Math.max(1, Math.ceil(total / pageSize));
 
   return (
     <Card className="border-2 mt-10 border-memorial-red/20 shadow-[var(--shadow-memorial)] bg-card/90 backdrop-blur-sm">
       <CardHeader>
-        <CardTitle className="text-memorial-dark">
-          Kết quả tìm kiếm ({data.length} kết quả)
+         <CardTitle className="text-memorial-dark">
+          {isLoading ? "Đang tải..." : `Kết quả tìm kiếm (${total} kết quả)`}
+          {isFetching && !isLoading ? <span className="ml-2 text-sm opacity-70">(đang cập nhật...)</span> : null}
+          {error ? <span className="ml-2 text-sm text-red-600">• {error}</span> : null}
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -230,51 +112,51 @@ export default function TableComponent() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {currentData.map((item) => (
+                {data.map((item, index) => (
                   <TableRow
-                    key={item.stt}
+                    key={index}
                     className="hover:bg-memorial-cream/50 transition-colors border-b border-memorial-red/10"
                   >
                     <TableCell className="text-center border-r-2 border-memorial-red/30 font-medium">
-                      {item.stt}
+                      {(page - 1) * pageSize + index + 1}
                     </TableCell>
                     <TableCell className="text-center border-r border-memorial-red/20">
-                      {item.khu}
+                      {item.line.lot.area.code}
                     </TableCell>
                     <TableCell className="text-center border-r border-memorial-red/20">
-                      {item.lo}
+                      {item.line.lot.code}
                     </TableCell>
                     <TableCell className="text-center border-r border-memorial-red/20">
-                      {item.hang}
+                      {item.line.code}
                     </TableCell>
                     <TableCell className="text-center border-r-2 border-memorial-red/30">
-                      {item.mo}
+                      {item.code}
                     </TableCell>
                     <TableCell className="font-semibold text-memorial-dark border-r border-memorial-red/20">
-                      {item.hoTen}
+                      {item.soldierName}
                     </TableCell>
                     <TableCell className="text-center border-r border-memorial-red/20">
-                      {item.namSinh}
+                      {item.birthYear}
                     </TableCell>
                     <TableCell className="border-r border-memorial-red/20">
-                      {item.nguyenQuan}
+                      {[item.oldCommune, item.oldDistrict, item.oldProvince].filter(Boolean).join(', ')}
                     </TableCell>
                     <TableCell className="border-r border-memorial-red/20">
-                      {item.nguyenQuanMoi}
+                      {[item.commune, item.district, item.province].filter(Boolean).join(', ')}
                     </TableCell>
                     <TableCell className="border-r border-memorial-red/20">
-                      {item.donVi}
+                      {item.unitName}
                     </TableCell>
                     <TableCell className="text-center border-r border-memorial-red/20">
-                      {item.capBacChucVu}
+                      {item.position}
                     </TableCell>
                     <TableCell className="text-center border-r-2 border-memorial-red/30">
-                      {item.ngayHySinh}
+                      {item.deathTime}
                     </TableCell>
                     <TableCell className="border-r border-memorial-red/20">
-                      {item.diaPhuongAnTang || "—"}
+                      {item.localBurialAfterMoving}
                     </TableCell>
-                    <TableCell>{item.nguoiDiChuyen || "—"}</TableCell>
+                    <TableCell>{item.personMoving}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -288,27 +170,27 @@ export default function TableComponent() {
           <div className="mt-6 flex justify-center">
             <Pagination>
               <PaginationContent>
-                {currentPage > 1 && (
+                {page > 1 && (
                   <PaginationItem>
                     <PaginationPrevious
-                      onClick={() => handlePageChange(currentPage - 1)}
+                      onClick={() => onPageChange(page - 1)}
                       className="cursor-pointer hover:bg-memorial-cream/70"
                     />
                   </PaginationItem>
                 )}
 
                 {/* First page shortcut */}
-                {currentPage > 3 && (
+                {page > 3 && (
                   <>
                     <PaginationItem>
                       <PaginationLink
-                        onClick={() => handlePageChange(1)}
+                        onClick={() => onPageChange(1)}
                         className="cursor-pointer hover:bg-memorial-cream/70"
                       >
                         1
                       </PaginationLink>
                     </PaginationItem>
-                    {currentPage > 4 && (
+                    {page > 4 && (
                       <PaginationItem>
                         <PaginationEllipsis />
                       </PaginationItem>
@@ -319,33 +201,33 @@ export default function TableComponent() {
                 {/* Windowed pages */}
                 {Array.from({ length: totalPages }, (_, i) => i + 1)
                   .filter(
-                    (page) =>
-                      page >= Math.max(1, currentPage - 2) &&
-                      page <= Math.min(totalPages, currentPage + 2)
+                    (p) =>
+                      p >= Math.max(1, page - 2) &&
+                      p <= Math.min(totalPages, page + 2)
                   )
-                  .map((page) => (
-                    <PaginationItem key={page}>
+                  .map((p) => (
+                    <PaginationItem key={p}>
                       <PaginationLink
-                        onClick={() => handlePageChange(page)}
-                        isActive={page === currentPage}
+                        onClick={() => onPageChange(p)}
+                        isActive={p === page}
                         className="cursor-pointer hover:bg-memorial-cream/70"
                       >
-                        {page}
+                        {p}
                       </PaginationLink>
                     </PaginationItem>
                   ))}
 
                 {/* Last page shortcut */}
-                {currentPage < totalPages - 2 && (
+                {page < totalPages - 2 && (
                   <>
-                    {currentPage < totalPages - 3 && (
+                    {page < totalPages - 3 && (
                       <PaginationItem>
                         <PaginationEllipsis />
                       </PaginationItem>
                     )}
                     <PaginationItem>
                       <PaginationLink
-                        onClick={() => handlePageChange(totalPages)}
+                        onClick={() => onPageChange(totalPages)}
                         className="cursor-pointer hover:bg-memorial-cream/70"
                       >
                         {totalPages}
@@ -354,10 +236,10 @@ export default function TableComponent() {
                   </>
                 )}
 
-                {currentPage < totalPages && (
+                {page < totalPages && (
                   <PaginationItem>
                     <PaginationNext
-                      onClick={() => handlePageChange(currentPage + 1)}
+                      onClick={() => onPageChange(page + 1)}
                       className="cursor-pointer hover:bg-memorial-cream/70"
                     />
                   </PaginationItem>

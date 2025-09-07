@@ -22,10 +22,10 @@ const phoneRegex = /^(\+?84|0)(\d{9})$/;
 const BookingSchema = z.object({
     visit_type: z.number().min(1, "Vui lòng chọn loại đối tượng"),
     org_name: z.string().min(1, "Vui lòng nhập tên cá nhân/tập thể").max(256, "Tối đa 256 ký tự"),
-    representative_name: z.string().min(1, "Vui lòng nhập tên trưởng đoàn").max(100, "Tối đa 100 ký tự"),
-    phone: z.string().regex(phoneRegex, "Số điện thoại không hợp lệ"),
-    date: z.string().min(1, "Chọn ngày viếng"),
-    time: z.string().min(1, "Chọn khung giờ"),
+    representative_name: z.string().optional(),
+    representative_position: z.string().max(256, "Tối đa 256 ký tự").optional(),
+    phone: z.string().min(1, "Vui lòng nhập số điện thoại").regex(phoneRegex, "Số điện thoại không hợp lệ"),
+    time: z.string().min(1, "Vui lòng chọn thời gian đăng ký viếng"),
     group_size: z.number({
         required_error: "Vui lòng nhập số người viếng",
         invalid_type_error: "Vui lòng nhập số người viếng"
@@ -47,21 +47,20 @@ interface BookVisitFormProps {
 }
 
 export default function BookVisitForm({ onSubmit, onCancel, onNavigateToList, onNavigateToHome, onRefetchData }: BookVisitFormProps) {
-    const today = new Date().toISOString().slice(0, 10);
     const [isLoading, setIsLoading] = React.useState(false);
     const [showSuccessPopup, setShowSuccessPopup] = React.useState(false);
     const [successOrgName, setSuccessOrgName] = React.useState("");
     const [successPhone, setSuccessPhone] = React.useState("");
-    const [displayDate, setDisplayDate] = React.useState(today);
+    const [displayDateTime, setDisplayDateTime] = React.useState(moment().format('DD/MM/YYYY HH:mm'));
     const form = useForm<BookingForm>({
         resolver: zodResolver(BookingSchema),
         defaultValues: {
             visit_type: 1,
             org_name: "",
             representative_name: "",
+            representative_position: "",
             phone: "",
-            date: today,
-            time: "",
+            time: moment().format('DD/MM/YYYY HH:mm'),
             location: 1,
             agree: false,
         },
@@ -93,10 +92,10 @@ export default function BookVisitForm({ onSubmit, onCancel, onNavigateToList, on
         onNavigateToHome();
     }
 
-    function handleDateChange(e: React.ChangeEvent<HTMLInputElement>) {
+    function handleDateTimeChange(e: React.ChangeEvent<HTMLInputElement>) {
         const value = e.target.value;
-        setDisplayDate(value);
-        form.setValue("date", value);
+        setDisplayDateTime(value);
+        form.setValue("time", value);
     }
 
 
@@ -112,7 +111,29 @@ export default function BookVisitForm({ onSubmit, onCancel, onNavigateToList, on
                         <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div className="space-y-2">
-                                    <Label htmlFor="fullName">Cá nhân/tập thể đăng ký</Label>
+                                    <Label htmlFor="location">Loại đối tượng</Label>
+                                    <Select defaultValue={form.getValues("visit_type").toString()} onValueChange={(v) => {
+                                        const visitType = Number(v);
+                                        form.setValue("visit_type", visitType);
+                                        // Clear representative_name when switching to "Cá nhân"
+                                        if (visitType === 1) {
+                                            form.setValue("representative_name", "");
+                                        }
+                                    }}>
+                                        <SelectTrigger id="location" className="w-full">
+                                            <SelectValue placeholder="Chọn loại đối tượng" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="1">Cá nhân</SelectItem>
+                                            <SelectItem value="2">Tập thể</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                    {form.formState.errors.visit_type && (
+                                        <p className="text-sm text-rose-600">{form.formState.errors.visit_type.message}</p>
+                                    )}
+                                </div>
+                                <div className="space-y-2">
+                                    <Label htmlFor="fullName">Tên cá nhân/tập thể đăng ký</Label>
                                     <Input id="fullName" placeholder="VD: Nguyễn Văn A" {...form.register("org_name")} />
                                     {form.formState.errors.org_name && (
                                         <p className="text-sm text-rose-600">{form.formState.errors.org_name.message}</p>
@@ -135,8 +156,8 @@ export default function BookVisitForm({ onSubmit, onCancel, onNavigateToList, on
                                             <SelectValue placeholder="Chọn địa điểm" />
                                         </SelectTrigger>
                                         <SelectContent>
-                                            <SelectItem value="1">NTLS</SelectItem>
-                                            <SelectItem value="2">468</SelectItem>
+                                            <SelectItem value="1">Nghĩa trang Liệt sỹ Quốc gia Vị Xuyên</SelectItem>
+                                            <SelectItem value="2">Điểm cao 468</SelectItem>
                                         </SelectContent>
                                     </Select>
                                     {form.formState.errors.location && (
@@ -144,69 +165,66 @@ export default function BookVisitForm({ onSubmit, onCancel, onNavigateToList, on
                                     )}
                                 </div>
                                 <div className="space-y-2">
-                                    <Label htmlFor="location">Loại đối tượng</Label>
-                                    <Select defaultValue={form.getValues("visit_type").toString()} onValueChange={(v) => form.setValue("visit_type", Number(v))}>
-                                        <SelectTrigger id="location" className="w-full">
-                                            <SelectValue placeholder="Chọn loại đối tượng" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem value="1">Cá nhân</SelectItem>
-                                            <SelectItem value="2">Tập thể</SelectItem>
-                                        </SelectContent>
-                                    </Select>
-                                    {form.formState.errors.visit_type && (
-                                        <p className="text-sm text-rose-600">{form.formState.errors.visit_type.message}</p>
-                                    )}
-                                </div>
-                                <div className="space-y-2">
-                                    <Label htmlFor="fullName">Trưởng đoàn</Label>
-                                    <Input id="fullName" placeholder="VD: Nguyễn Văn A" {...form.register("representative_name")} />
+                                    <Label htmlFor="representative_name">Trưởng đoàn</Label>
+                                    <Input 
+                                        id="representative_name" 
+                                        placeholder="VD: Nguyễn Văn A" 
+                                        disabled={form.watch("visit_type") === 1}
+                                        className={form.watch("visit_type") === 1 ? "bg-gray-100 text-gray-400 cursor-not-allowed" : ""}
+                                        {...form.register("representative_name")} 
+                                    />
                                     {form.formState.errors.representative_name && (
                                         <p className="text-sm text-rose-600">{form.formState.errors.representative_name.message}</p>
                                     )}
                                 </div>
                                 <div className="space-y-2">
-                                    <Label htmlFor="attendees">Số người viếng</Label>
-                                    <Input id="attendees" type="number" min={1} placeholder="Nhập số người viếng" {...form.register("group_size", { valueAsNumber: true })} />
-                                    {form.formState.errors.group_size && (
-                                        <p className="text-sm text-rose-600">{form.formState.errors.group_size.message}</p>
+                                    <Label htmlFor="representative_position">Chức vụ Đảng, Chính quyền (nếu có) của trưởng đoàn/cá nhân</Label>
+                                    <Input id="representative_position" type="string" placeholder="Nhập Chức vụ Đảng, Chính quyền (nếu có)" {...form.register("representative_position")} />
+                                    {form.formState.errors.representative_position && (
+                                        <p className="text-sm text-rose-600">{form.formState.errors.representative_position.message}</p>
                                     )}
                                 </div>
                                 <div className="space-y-2">
-                                    <Label htmlFor="date">Ngày viếng</Label>
+                                    <Label htmlFor="time">Thời gian</Label>
                                     <div className="relative">
                                         <Calendar className="h-4 w-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
                                         <Input 
-                                            id="date" 
+                                            id="time" 
                                             type="text" 
-                                            value={moment(displayDate).format('DD/MM/YYYY')}
-                                            onChange={handleDateChange}
+                                            value={displayDateTime}
+                                            onChange={handleDateTimeChange}
                                             className="pl-9" 
-                                            placeholder="DD/MM/YYYY"
+                                            placeholder="DD/MM/YYYY HH:mm"
                                             onFocus={(e) => {
-                                                e.target.type = 'date';
-                                                e.target.value = displayDate;
+                                                e.target.type = 'datetime-local';
+                                                // Convert DD/MM/YYYY HH:mm to YYYY-MM-DDTHH:mm for datetime-local
+                                                const momentDate = moment(displayDateTime, 'DD/MM/YYYY HH:mm');
+                                                e.target.value = momentDate.format('YYYY-MM-DDTHH:mm');
                                             }}
                                             onBlur={(e) => {
                                                 e.target.type = 'text';
-                                                e.target.value = moment(displayDate).format('DD/MM/YYYY');
+                                                // Convert YYYY-MM-DDTHH:mm back to DD/MM/YYYY HH:mm
+                                                const momentDate = moment(e.target.value, 'YYYY-MM-DDTHH:mm');
+                                                if (momentDate.isValid()) {
+                                                    const formattedValue = momentDate.format('DD/MM/YYYY HH:mm');
+                                                    setDisplayDateTime(formattedValue);
+                                                    form.setValue("time", formattedValue);
+                                                }
                                             }}
                                         />
-                                    </div>
-                                    {form.formState.errors.date && (
-                                        <p className="text-sm text-rose-600">{form.formState.errors.date.message}</p>
-                                    )}
-                                </div>
-                                <div className="space-y-2">
-                                    <Label htmlFor="time">Giờ viếng</Label>
-                                    <div className="relative">
-                                        <Calendar className="h-4 w-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                                        <Input id="time" type="time" min={today} className="pl-9" {...form.register("time")} />
                                     </div>
                                     {form.formState.errors.time && (
                                         <p className="text-sm text-rose-600">{form.formState.errors.time.message}</p>
                                     )}
                                 </div>
+                                <div className="space-y-2">
+                                    <Label htmlFor="attendees">Số người</Label>
+                                    <Input id="attendees" type="number" min={1} placeholder="Nhập số người viếng" {...form.register("group_size", { valueAsNumber: true })} />
+                                    {form.formState.errors.group_size && (
+                                        <p className="text-sm text-rose-600">{form.formState.errors.group_size.message}</p>
+                                    )}
+                                </div>
+                                
                             </div>
 
                             <Separator />
@@ -222,10 +240,10 @@ export default function BookVisitForm({ onSubmit, onCancel, onNavigateToList, on
                             )}
 
                             <div className="flex items-center gap-2 pt-2">
-                                <Button type="submit" className="gap-2 bg-emerald-700 hover:bg-emerald-800" disabled={isLoading}>
+                                <Button type="submit" className="gap-2 bg-emerald-700 hover:bg-emerald-800 hover:cursor-pointer" disabled={isLoading}>
                                     <Check className="h-4 w-4" /> Gửi đăng ký
                                 </Button>
-                                <Button type="button" variant="outline" onClick={onCancel} className="gap-2">
+                                <Button type="button" variant="outline" onClick={onCancel} className="gap-2 hover:cursor-pointer">
                                     <X className="h-4 w-4" /> Hủy
                                     {isLoading && <Loader2 className="h-4 w-4 animate-spin" />}
                                 </Button>
@@ -242,7 +260,6 @@ export default function BookVisitForm({ onSubmit, onCancel, onNavigateToList, on
                         <CardTitle className="text-base">Hướng dẫn nhanh</CardTitle>
                     </CardHeader>
                     <CardContent className="text-sm text-muted-foreground space-y-2">
-                        <p>• Mỗi khung giờ tối đa 50 người. Vui lòng chọn khung giờ khác nếu đã đủ.</p>
                         <p>• Trang phục lịch sự, giữ không gian yên tĩnh khi vào khu tưởng niệm.</p>
                         <p>• Nếu cần hỗ trợ, liên hệ <a href="tel:0123456789" className="underline text-emerald-700">0123 456 789</a>.</p>
                     </CardContent>
@@ -254,7 +271,7 @@ export default function BookVisitForm({ onSubmit, onCancel, onNavigateToList, on
                     </CardHeader>
                     <CardContent className="text-sm text-muted-foreground space-y-2">
                         <p>• Đăng ký cần được ban quản lý duyệt trước khi có hiệu lực.</p>
-                        <p>• Mọi thay đổi / hủy cần thực hiện trước 24 giờ.</p>
+                        <p>• Mọi thay đổi / hủy cần liên hệ với ban quản lý nghĩa trang trước 24 giờ.</p>
                         <p>• Dữ liệu cá nhân được bảo mật theo quy định hiện hành.</p>
                     </CardContent>
                 </Card>

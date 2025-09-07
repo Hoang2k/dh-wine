@@ -9,6 +9,45 @@ import { TBookVisit } from "@/types/book-visit";
 import moment from 'moment';
 
 
+const columns = [
+    {
+        header: "STT",
+        accessorKey: "stt",
+        className: "text-center",
+    },
+    
+    {
+        header: "Thời gian",
+        accessorKey: "time",
+        className: "text-center",
+    },
+    
+    {
+        header: "Tên cá nhân/tập thể đăng ký",
+        accessorKey: "org_name",
+        className: "text-left",
+    },
+    
+    {
+        header: "Trưởng đoàn",
+        accessorKey: "representative_name",
+        className: "text-left",
+    },
+    
+    {
+        header: "Chức vụ Đảng, Chính quyền (nếu có) của trưởng đoàn/cá nhân",
+        accessorKey: "representative_position", 
+        className: "text-center",
+    },
+    
+    {
+        header: "Số người",
+        accessorKey: "group_size",  
+        className: "text-center",
+    },
+]       
+
+
 function Toolbar({ onAdd, keyword, setKeyword, date, setDate, onSearch, isLoading, isFetching }: { 
     onAdd: () => void; 
     keyword: string; 
@@ -28,13 +67,13 @@ function Toolbar({ onAdd, keyword, setKeyword, date, setDate, onSearch, isLoadin
     };
 
     const handleDateFocus = (e: React.FocusEvent<HTMLInputElement>) => {
-        e.target.type = 'datetime-local';
+        e.target.type = 'date';
         e.target.value = displayDate || '';
     };
 
     const handleDateBlur = (e: React.FocusEvent<HTMLInputElement>) => {
         e.target.type = 'text';
-        e.target.value = displayDate ? moment(displayDate).format('HH:mm DD/MM/YYYY') : '';
+        e.target.value = displayDate ? moment(displayDate).format('DD/MM/YYYY') : '';
     };
 
     // Sync displayDate with date prop
@@ -42,50 +81,52 @@ function Toolbar({ onAdd, keyword, setKeyword, date, setDate, onSearch, isLoadin
         setDisplayDate(date);
     }, [date]);
     return (
-        <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-            <div className="flex items-center gap-2">
-                <div className="flex items-center gap-2 w-full md:w-[420px]">
-                    <div className="relative w-full flex gap-x-8">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                        <Input
-                            value={keyword}
-                            onChange={(e) => setKeyword(e.target.value)}
-                            placeholder="Tìm theo tên cá nhân/tập thể"
-                            className="pl-9"
-                        />
-                    </div>
-                </div>
-                <div className="relative ">
+        <div className="space-y-3">
+            <div className="flex flex-col sm:flex-row gap-3">
+            {/* Search Input - Full width on mobile, fixed width on desktop */}
+            <div className="relative sm:w-[300px]">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                    value={keyword}
+                    onChange={(e) => setKeyword(e.target.value)}
+                    placeholder="Tìm theo tên cá nhân/tập thể"
+                    className="pl-9 w-full"
+                />
+            </div>
+            <div className="relative w-full sm:w-[140px] lg:w-[200px]">
                     <Calendar className="h-4 w-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
                     <Input 
-                        value={displayDate ? moment(displayDate).format('HH:mm DD/MM/YYYY') : ''} 
+                        value={displayDate ? moment(displayDate).format('DD/MM/YYYY') : ''} 
                         onChange={handleDateChange}
                         id="date" 
                         type="text" 
-                        className="pl-9" 
-                        placeholder="HH:mm DD/MM/YYYY"
+                        className="pl-9 w-full" 
+                        placeholder="DD/MM/YYYY"
                         onFocus={handleDateFocus}
                         onBlur={handleDateBlur}
                     />
                 </div>
                 <Button 
                     onClick={onSearch} 
-                    className="gap-2 bg-emerald-700 hover:bg-emerald-800" 
+                    className="gap-2 bg-emerald-700 hover:bg-emerald-800 w-full sm:w-auto whitespace-nowrap" 
                     disabled={isLoading || isFetching}
+                    size="sm"
                 >
                     {isLoading || isFetching ? (
                         <Loader2 className="h-4 w-4 animate-spin" />
                     ) : (
                         <Search className="h-4 w-4" />
                     )}
-                    {isLoading || isFetching ? "Đang tìm..." : "Tìm kiếm"}
+                    Tìm kiếm
                 </Button>
             </div>
 
-
-            <div className="flex items-center gap-2">
-                <Button onClick={onAdd} className="gap-2 bg-emerald-700 hover:bg-emerald-800">
-                    <Plus className="h-4 w-4" /> Đăng ký mới
+            {/* Add Button Row */}
+            <div className="flex justify-end">
+                <Button onClick={onAdd} className="gap-2 bg-emerald-700 hover:bg-emerald-800 w-full sm:w-auto">
+                    <Plus className="h-4 w-4" /> 
+                    <span className="sm:hidden">Đăng ký mới</span>
+                    <span className="hidden sm:inline">Đăng ký mới</span>
                 </Button>
             </div>
         </div>
@@ -130,9 +171,9 @@ export default function ListBookVisit({
         }
         
         if (date) {
-            // Convert datetime-local to YYYY-MM-DD HH:mm format for search
+            // Convert datetime-local to YYYY-MM-DD format for search (date only)
             const momentDate = moment(date);
-            searchParams.time = momentDate.format('YYYY-MM-DD HH:mm');
+            searchParams.time = momentDate.format('YYYY-MM-DD');
         }
         
         onSearch(searchParams);
@@ -184,15 +225,9 @@ export default function ListBookVisit({
                 <table className="w-full text-sm">
                     <thead className="bg-emerald-50/70 text-emerald-900">
                         <tr>
-                            {[
-                                "STT",
-                                "Ngày đăng ký",
-                                "Người đăng ký",
-                                "Trưởng đoàn",
-                                "Số người",
-                            ].map((h) => (
-                                <th key={h} className="text-left font-medium px-4 py-3 whitespace-nowrap">
-                                    {h}
+                            {columns.map((h) => (
+                                <th key={h.accessorKey} className={`${h.className} font-medium px-4 py-3 whitespace-nowrap`}>
+                                    {h.header}
                                 </th>
                             ))}
                         </tr>
@@ -211,13 +246,14 @@ export default function ListBookVisit({
                             <>
                         {rows.map((r, index) => (
                             <tr key={r.id} className="border-t hover:bg-muted/40">
-                                <td className="px-4 py-3 font-medium whitespace-nowrap">
+                                <td className="px-4 py-3 font-medium whitespace-nowrap text-center">
                                     {(currentPage - 1) * pageSize + index + 1}
                                 </td>
-                                <td className="px-4 py-3 whitespace-nowrap">{moment(r.time).format('hh:mm DD/MM/YYYY') || "-"}</td>
-                                <td className="px-4 py-3 whitespace-nowrap">{r.org_name}</td>
-                                <td className="px-4 py-3 whitespace-nowrap">{r.representative_name}</td>
-                                <td className="px-4 py-3 whitespace-nowrap">{r.group_size}</td>
+                                <td className="px-4 py-3 whitespace-nowrap text-center">{moment(r.time).format('hh:mm DD/MM/YYYY') || "-"}</td>
+                                <td className="px-4 py-3 whitespace-nowrap text-left">{r.org_name}</td>
+                                <td className="px-4 py-3 whitespace-nowrap text-left">{r.representative_name}</td>
+                                <td className="px-4 py-3 whitespace-nowrap text-center">{r.representative_position || "-"}</td>
+                                <td className="px-4 py-3 whitespace-nowrap text-center">{r.group_size}</td>
                             </tr>
                         ))}
                                 {rows.length === 0 && !isLoading && (
@@ -233,15 +269,15 @@ export default function ListBookVisit({
                 </table>
             </div>
             {/* Pagination */}
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-muted-foreground">
-                <div className="flex items-center gap-4">
-                    <div>
+            <div className="flex flex-col gap-4 text-sm text-muted-foreground">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                    <div className="text-center sm:text-left">
                         Hiển thị {totalRecords > 0 ? `${startRecord}-${endRecord}` : '0'} trong tổng số {totalRecords} mục
                     </div>
-                    <div className="flex items-center gap-2">
-                        <span>Hiển thị:</span>
+                    <div className="flex items-center gap-2 w-full sm:w-auto justify-center sm:justify-start">
+                        <span className="text-xs sm:text-sm">Hiển thị:</span>
                         <Select value={localPageSize.toString()} onValueChange={handlePageSizeChange}>
-                            <SelectTrigger className="w-20 h-8">
+                            <SelectTrigger className="w-16 h-8 text-xs">
                                 <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
@@ -250,33 +286,34 @@ export default function ListBookVisit({
                                 <SelectItem value="50">50</SelectItem>
                             </SelectContent>
                         </Select>
-                        <span>mục/trang</span>
+                        <span className="text-xs sm:text-sm">mục/trang</span>
                     </div>
                 </div>
                 
                 {totalPages > 1 && (
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center justify-center gap-1 sm:gap-2">
                         <Button 
                             variant="outline" 
                             size="sm" 
                             onClick={() => handlePageChange(localCurrentPage - 1)}
                             disabled={localCurrentPage <= 1 || isLoading || isFetching}
+                            className="text-xs sm:text-sm"
                         >
-                            <ChevronLeft className="h-4 w-4" />
-                            Trước
+                            <ChevronLeft className="h-3 w-3 sm:h-4 sm:w-4" />
+                            <span className="hidden sm:inline">Trước</span>
                         </Button>
                         
                         <div className="flex items-center gap-1">
-                            {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                            {Array.from({ length: Math.min(3, totalPages) }, (_, i) => {
                                 let pageNum;
-                                if (totalPages <= 5) {
+                                if (totalPages <= 3) {
                                     pageNum = i + 1;
-                                } else if (localCurrentPage <= 3) {
+                                } else if (localCurrentPage <= 2) {
                                     pageNum = i + 1;
-                                } else if (localCurrentPage >= totalPages - 2) {
-                                    pageNum = totalPages - 4 + i;
+                                } else if (localCurrentPage >= totalPages - 1) {
+                                    pageNum = totalPages - 2 + i;
                                 } else {
-                                    pageNum = localCurrentPage - 2 + i;
+                                    pageNum = localCurrentPage - 1 + i;
                                 }
                                 
                                 return (
@@ -286,14 +323,14 @@ export default function ListBookVisit({
                                         size="sm"
                                         onClick={() => handlePageChange(pageNum)}
                                         disabled={isLoading || isFetching}
-                                        className="w-8 h-8 p-0"
+                                        className="w-7 h-7 sm:w-8 sm:h-8 p-0 text-xs sm:text-sm"
                                     >
                                         {pageNum}
                                     </Button>
                                 );
                             })}
-                            {totalPages > 5 && localCurrentPage < totalPages - 2 && (
-                                <span className="text-muted-foreground px-2">...</span>
+                            {totalPages > 3 && localCurrentPage < totalPages - 1 && (
+                                <span className="text-muted-foreground px-1 text-xs">...</span>
                             )}
                         </div>
                         
@@ -302,18 +339,19 @@ export default function ListBookVisit({
                             size="sm" 
                             onClick={() => handlePageChange(localCurrentPage + 1)}
                             disabled={localCurrentPage >= totalPages || isLoading || isFetching}
+                            className="text-xs sm:text-sm"
                         >
-                            Sau
-                            <ChevronRight className="h-4 w-4" />
+                            <span className="hidden sm:inline">Sau</span>
+                            <ChevronRight className="h-3 w-3 sm:h-4 sm:w-4" />
                         </Button>
                         
-                        {totalPages > 5 && localCurrentPage < totalPages - 2 && (
+                        {totalPages > 3 && localCurrentPage < totalPages - 1 && (
                             <Button 
                                 variant="outline" 
                                 size="sm" 
                                 onClick={() => handlePageChange(totalPages)}
                                 disabled={isLoading || isFetching}
-                                className="ml-2"
+                                className="ml-1 w-7 h-7 sm:w-8 sm:h-8 p-0 text-xs sm:text-sm"
                             >
                                 {totalPages}
                             </Button>

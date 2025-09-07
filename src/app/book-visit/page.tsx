@@ -48,12 +48,8 @@ export default function BookVisit() {
 
   async function onSubmit(values: TBookVisitCreate) {
     try {
-      const payload = {
-        ...values,
-        time: values.date + " " + values.time,
-        group_size: values.group_size,
-      }
-      await createBookVisit(payload);
+
+      await createBookVisit(values);
     } catch (error) {
       console.error("Error creating book visit:", error);
       throw error;
@@ -108,7 +104,7 @@ export default function BookVisit() {
                 hoặc tạo đăng ký mới ngay tại đây.
               </p>
             </div>
-            <div className="grid grid-cols-3 divide-x rounded-2xl bg-white/70 backdrop-blur border">
+            <div className="grid grid-cols-2 divide-x rounded-2xl bg-white/70 backdrop-blur border">
               <div className="p-4 flex items-center gap-2">
                 <Calendar className="h-5 w-5 text-emerald-700" />
                 <div>
@@ -120,14 +116,7 @@ export default function BookVisit() {
                 <Clock className="h-5 w-5 text-emerald-700" />
                 <div>
                   <div className="text-xs text-muted-foreground">Khung giờ</div>
-                  <div className="font-medium">07:00–17:00</div>
-                </div>
-              </div>
-              <div className="p-4 flex items-center gap-2">
-                <Users className="h-5 w-5 text-emerald-700" />
-                <div>
-                  <div className="text-xs text-muted-foreground">Sức chứa / giờ</div>
-                  <div className="font-medium">50 người</div>
+                  <div className="font-medium">07:30–17:30</div>
                 </div>
               </div>
             </div>

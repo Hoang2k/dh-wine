@@ -3,6 +3,7 @@ export type TBookVisit = {
     visit_type: number;
     org_name: string;
     representative_name: string;
+    representative_position?: string;
     time: string;   
     group_size: number;
     location: number;
@@ -11,7 +12,8 @@ export type TBookVisit = {
 export type TBookVisitCreate = {
     visit_type: number;
     org_name: string;
-    representative_name: string;
+    representative_name?: string;
+    representative_position?: string;
     time: string;   
     group_size: number;
     location: number;

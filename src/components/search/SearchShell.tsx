@@ -1,8 +1,9 @@
 'use client';
+import { IResponse } from "@/axios/types";
 import SearchFormComponent from "./SearchFormComponent";
 import TableComponent from "./TableComponent";
 import { getGraves } from "@/services/graves-search";
-import { GraveFilter } from "@/types/graves";
+import { Grave, GraveFilter } from "@/types/graves";
 import { useQuery } from "@tanstack/react-query";
 import { useCallback, useMemo, useState } from "react";
 
@@ -34,7 +35,7 @@ export default function SearchShell() {
     error,
     refetch,
     isFetching,
-  } = useQuery<any>({
+  } = useQuery<IResponse<Grave[]>>({
     queryKey: ["graves", filters, page, pageSize],
     queryFn: () => getGraves({ ...filters, page, pageSize }),
   });

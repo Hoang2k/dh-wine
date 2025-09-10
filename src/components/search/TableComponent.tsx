@@ -121,13 +121,13 @@ export default function TableComponent({data, total, page, pageSize, onPageChang
                       {(page - 1) * pageSize + index + 1}
                     </TableCell>
                     <TableCell className="text-center border-r border-memorial-red/20">
-                      {item.line.lot.area.code}
+                      {item.area}
                     </TableCell>
                     <TableCell className="text-center border-r border-memorial-red/20">
-                      {item.line.lot.code}
+                      {item.lot}
                     </TableCell>
                     <TableCell className="text-center border-r border-memorial-red/20">
-                      {item.line.code}
+                      {item.line}
                     </TableCell>
                     <TableCell className="text-center border-r-2 border-memorial-red/30">
                       {item.code}

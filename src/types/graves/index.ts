@@ -23,5 +23,7 @@ export type Grave = {
     deathTime: string;
     localBurialAfterMoving: string | null;
     personMoving: string | null;
-    line: any;
+    line: number;
+    lot: number;
+    area: number;
 }

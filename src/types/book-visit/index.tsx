@@ -14,7 +14,7 @@ export type TBookVisitCreate = {
     org_name: string;
     representative_name?: string;
     representative_position?: string;
-    time: string;   
+    time: Date | string;   
     group_size: number;
     location: number;
     phone: string;

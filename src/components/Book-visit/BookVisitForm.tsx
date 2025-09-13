@@ -15,6 +15,7 @@ import { Separator } from "@/components/ui/separator";
 import { Calendar, Check, X, Phone, Mail, NotebookPen, Loader2 } from "lucide-react";
 import SuccessPopup from "./SuccessPopup";
 import moment from 'moment';
+import { BOOK_VISIT_LOCATIONS, BOOK_VISIT_TYPES } from "@/constants";
 
 // ========== Types & Validation ==========
 const phoneRegex = /^(\+?84|0)(\d{9})$/;
@@ -31,6 +32,7 @@ const BookingSchema = z.object({
         invalid_type_error: "Vui lòng nhập số người viếng"
     }).min(1, "Vui lòng nhập số người viếng"),
     location: z.number().min(1, "Chọn địa điểm"),
+    note: z.string().optional(), // Add note field
     agree: z.boolean().refine((val) => val === true, {
         message: "Bạn cần đồng ý điều khoản",
     }),
@@ -55,13 +57,15 @@ export default function BookVisitForm({ onSubmit, onCancel, onNavigateToList, on
     const form = useForm<BookingForm>({
         resolver: zodResolver(BookingSchema),
         defaultValues: {
-            visit_type: 1,
+            visit_type: 0,
             org_name: "",
             representative_name: "",
             representative_position: "",
             phone: "",
             time: moment().format('DD/MM/YYYY HH:mm'),
+            group_size: 1,
             location: 1,
+            note: "",
             agree: false,
         },
     });
@@ -124,8 +128,11 @@ export default function BookVisitForm({ onSubmit, onCancel, onNavigateToList, on
                                             <SelectValue placeholder="Chọn loại đối tượng" />
                                         </SelectTrigger>
                                         <SelectContent>
-                                            <SelectItem value="1">Cá nhân</SelectItem>
-                                            <SelectItem value="2">Tập thể</SelectItem>
+                                            {BOOK_VISIT_TYPES.map((type) => (
+                                                <SelectItem key={type.id} value={type.id.toString()}>
+                                                    {type.name}
+                                                </SelectItem>
+                                            ))}
                                         </SelectContent>
                                     </Select>
                                     {form.formState.errors.visit_type && (
@@ -156,8 +163,11 @@ export default function BookVisitForm({ onSubmit, onCancel, onNavigateToList, on
                                             <SelectValue placeholder="Chọn địa điểm" />
                                         </SelectTrigger>
                                         <SelectContent>
-                                            <SelectItem value="1">Nghĩa trang Liệt sỹ Quốc gia Vị Xuyên</SelectItem>
-                                            <SelectItem value="2">Điểm cao 468</SelectItem>
+                                            {BOOK_VISIT_LOCATIONS.map((location) => (
+                                                <SelectItem key={location.id} value={location.id.toString()}>
+                                                    {location.name}
+                                                </SelectItem>
+                                            ))}
                                         </SelectContent>
                                     </Select>
                                     {form.formState.errors.location && (
@@ -227,6 +237,17 @@ export default function BookVisitForm({ onSubmit, onCancel, onNavigateToList, on
                                 
                             </div>
 
+                            {/* Note Field */}
+                            <div className="space-y-2">
+                                <Label htmlFor="note">Ghi chú</Label>
+                                <Textarea
+                                    id="note"
+                                    placeholder="Ghi chú thêm (tùy chọn)"
+                                    className="min-h-[80px]"
+                                    {...form.register("note")}
+                                />
+                            </div>
+
                             <Separator />
 
                             <div className="flex items-start gap-3">
@@ -292,11 +313,22 @@ export default function BookVisitForm({ onSubmit, onCancel, onNavigateToList, on
             {/* Success Popup */}
             <SuccessPopup
                 isOpen={showSuccessPopup}
-                orgName={successOrgName}
-                phone={successPhone}
+                orgName={form.getValues("org_name")}
+                phone={form.getValues("phone")}
+                bookVisitData={form.getValues()} // Pass the form data
                 onClose={() => setShowSuccessPopup(false)}
-                onNo={handlePopupNo}
-                onYes={handlePopupYes}
+                onNo={() => {
+                    setShowSuccessPopup(false);
+                    // Clear BookVisit flags when user chooses "Không"
+                    localStorage.removeItem('fromBookVisit');
+                    localStorage.removeItem('bookVisitData');
+                    onNavigateToList();
+                }}
+                onYes={(bookVisitData) => {
+                    setShowSuccessPopup(false);
+                    // Navigate to cart page
+                    window.location.href = "/cart";
+                }}
             />
         </div>
     );

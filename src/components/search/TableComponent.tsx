@@ -11,15 +11,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-  PaginationEllipsis,
-} from "@/components/ui/pagination";
+import Pagination from "../ui/pagination";
 import { Grave } from "@/types/graves";
 
 
@@ -27,7 +19,6 @@ export default function TableComponent({data, total, page, pageSize, onPageChang
   data: Grave[]; total: number; page: number; pageSize: number; onPageChange: (p: number) => void; isLoading?: boolean; isFetching?: boolean; error?: any;
 }) {
 
-  const totalPages = Math.max(1, Math.ceil(total / pageSize));
 
   return (
     <Card className="border-2 mt-10 border-memorial-red/20 shadow-[var(--shadow-memorial)] bg-card/90 backdrop-blur-sm">
@@ -166,88 +157,18 @@ export default function TableComponent({data, total, page, pageSize, onPageChang
         </ScrollArea>
 
         {/* Pagination */}
-        {totalPages > 1 && (
-          <div className="mt-6 flex justify-center">
-            <Pagination>
-              <PaginationContent>
-                {page > 1 && (
-                  <PaginationItem>
-                    <PaginationPrevious
-                      onClick={() => onPageChange(page - 1)}
-                      className="cursor-pointer hover:bg-memorial-cream/70"
-                    />
-                  </PaginationItem>
-                )}
-
-                {/* First page shortcut */}
-                {page > 3 && (
-                  <>
-                    <PaginationItem>
-                      <PaginationLink
-                        onClick={() => onPageChange(1)}
-                        className="cursor-pointer hover:bg-memorial-cream/70"
-                      >
-                        1
-                      </PaginationLink>
-                    </PaginationItem>
-                    {page > 4 && (
-                      <PaginationItem>
-                        <PaginationEllipsis />
-                      </PaginationItem>
-                    )}
-                  </>
-                )}
-
-                {/* Windowed pages */}
-                {Array.from({ length: totalPages }, (_, i) => i + 1)
-                  .filter(
-                    (p) =>
-                      p >= Math.max(1, page - 2) &&
-                      p <= Math.min(totalPages, page + 2)
-                  )
-                  .map((p) => (
-                    <PaginationItem key={p}>
-                      <PaginationLink
-                        onClick={() => onPageChange(p)}
-                        isActive={p === page}
-                        className="cursor-pointer hover:bg-memorial-cream/70"
-                      >
-                        {p}
-                      </PaginationLink>
-                    </PaginationItem>
-                  ))}
-
-                {/* Last page shortcut */}
-                {page < totalPages - 2 && (
-                  <>
-                    {page < totalPages - 3 && (
-                      <PaginationItem>
-                        <PaginationEllipsis />
-                      </PaginationItem>
-                    )}
-                    <PaginationItem>
-                      <PaginationLink
-                        onClick={() => onPageChange(totalPages)}
-                        className="cursor-pointer hover:bg-memorial-cream/70"
-                      >
-                        {totalPages}
-                      </PaginationLink>
-                    </PaginationItem>
-                  </>
-                )}
-
-                {page < totalPages && (
-                  <PaginationItem>
-                    <PaginationNext
-                      onClick={() => onPageChange(page + 1)}
-                      className="cursor-pointer hover:bg-memorial-cream/70"
-                    />
-                  </PaginationItem>
-                )}
-              </PaginationContent>
-            </Pagination>
-          </div>
-        )}
+        <div className="mt-6">
+          <Pagination
+            totalRecords={total}
+            currentPage={page}
+            pageSize={pageSize}
+            onPageChange={onPageChange}
+            onPageSizeChange={() => {}} // No page size change for this component
+            isLoading={isLoading}
+            isFetching={isFetching}
+            showPageSizeSelector={false}
+          />
+        </div>
       </CardContent>
     </Card>
   );

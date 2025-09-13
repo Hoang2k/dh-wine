@@ -91,3 +91,9 @@ export interface dataError {
     message: string;
   };
 }
+
+export interface IColumn {
+  header: string;
+  accessorKey: string;
+  className?: string;
+}

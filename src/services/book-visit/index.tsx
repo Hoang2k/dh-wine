@@ -7,7 +7,7 @@ export const getBookVisit = async (params: {
   org_name?: string;
   time?: string;
   page?: number;
-  pageSize?: number;
+  per_page?: number;
 }): Promise<IResponse<TBookVisit[] | {
   data: TBookVisit[];
   total: number;

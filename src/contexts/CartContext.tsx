@@ -70,7 +70,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     };
 
     const removeFromCart = (serviceItemId: string) => {
-        setCartItems(prev => prev.filter(item => item.service_item.id !== serviceItemId));
+        setCartItems(prev => prev.filter(item => item.service_item.id.toString() !== serviceItemId));
         setSelectedItems(prev => prev.filter(id => id !== serviceItemId));
     };
 
@@ -81,7 +81,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         }
         setCartItems(prev =>
             prev.map(item =>
-                item.service_item.id === serviceItemId
+                item.service_item.id.toString() === serviceItemId
                     ? { ...item, quantity }
                     : item
             )
@@ -102,7 +102,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     };
 
     const selectAllItems = () => {
-        setSelectedItems(cartItems.map(item => item.service_item.id));
+        setSelectedItems(cartItems.map(item => item.service_item.id.toString()));
     };
 
     const deselectAllItems = () => {
@@ -110,7 +110,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     };
 
     const getSelectedItems = () => {
-        return cartItems.filter(item => selectedItems.includes(item.service_item.id));
+        return cartItems.filter(item => selectedItems.includes(item.service_item.id.toString()));
     };
 
     const getTotalQuantity = () => {
@@ -118,7 +118,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     };
 
     const getTotalAmount = () => {
-        return getSelectedItems().reduce((total, item) => total + (item.service_item.unitPrice * item.quantity), 0);
+        return getSelectedItems().reduce((total, item) => total + (item.service_item.unitPrice ? item.service_item.unitPrice * item.quantity : 0), 0);
     };
 
     const value: CartContextType = {

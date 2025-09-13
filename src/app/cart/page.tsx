@@ -106,7 +106,8 @@ export default function CartPage() {
         };
     }, [checkBookVisitFlags, hasNavigatedAway]);
 
-    const formatPrice = (price: number) => {
+    const formatPrice = (price: number | undefined) => {
+        if (!price) return '0 VND';
         return new Intl.NumberFormat('vi-VN', {
             style: 'currency',
             currency: 'VND'
@@ -115,8 +116,8 @@ export default function CartPage() {
 
     const handleQuantityChange = (item: TCartItem, newQuantity: number) => {
         if (newQuantity >= 1) {
-            updateQuantity(item.service_item.id, newQuantity);
-        }
+            updateQuantity(item.service_item.id.toString(), newQuantity);
+        }   
     };
 
     const handleDeleteItem = (itemId: string) => {
@@ -304,8 +305,8 @@ export default function CartPage() {
                                             {/* Checkbox */}
                                             <Checkbox
                                                 id={`item-${item.service_item.id}`}
-                                                checked={selectedItems.includes(item.service_item.id)}
-                                                onCheckedChange={() => toggleItemSelection(item.service_item.id)}
+                                                checked={selectedItems.includes(item.service_item.id.toString())}
+                                                onCheckedChange={() => toggleItemSelection(item.service_item.id.toString())}
                                             />
 
                                             {/* Product Image */}
@@ -323,11 +324,6 @@ export default function CartPage() {
                                                 <h3 className="font-medium text-lg mb-1 line-clamp-2">
                                                     {item.service_item.name}
                                                 </h3>
-                                                {item.service_item.category && (
-                                                    <Badge variant="secondary" className="text-xs mb-2">
-                                                        {item.service_item.category}
-                                                    </Badge>
-                                                )}
                                                 <p className="text-emerald-600 font-semibold">
                                                     {formatPrice(item.service_item.unitPrice)}
                                                 </p>
@@ -362,7 +358,7 @@ export default function CartPage() {
                                             {/* Total Price */}
                                             <div className="text-right">
                                                 <p className="font-semibold text-lg">
-                                                    {formatPrice(item.service_item.unitPrice * item.quantity)}
+                                                    {formatPrice(item.service_item.unitPrice ? item.service_item.unitPrice * item.quantity : 0)}
                                                 </p>
                                             </div>
 
@@ -370,7 +366,7 @@ export default function CartPage() {
                                             <Button
                                                 variant="ghost"
                                                 size="sm"
-                                                onClick={() => handleDeleteItem(item.service_item.id)}
+                                                onClick={() => handleDeleteItem(item.service_item.id.toString())}
                                                 className="text-red-600 hover:text-red-700 hover:bg-red-50"
                                             >
                                                 <Trash2 className="h-4 w-4" />

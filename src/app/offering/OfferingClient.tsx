@@ -86,20 +86,23 @@ export default function OfferingClient() {
                             className="pl-9"
                         />
                     </div>
-                    {/* Debug info - remove in production */}
-                    {process.env.NODE_ENV === 'development' && (
-                        <div className="text-xs text-muted-foreground">
-                            API Status: {isLoading ? 'Loading...' : error ? 'Error' : 'Success'} | 
-                            Items: {serviceItems.length}
-                        </div>
-                    )}
                         <div className="flex gap-2 flex-wrap">
                             <Button
-                                variant={selectedCategory === "" ? "default" : "outline"}
-                                onClick={() => setSelectedCategory("")}
+                                variant="default"
+                                onClick={() => refetch()}
                                 size="sm"
                             >
-                                Tất cả
+                                Tìm kiếm
+                            </Button>
+                            <Button
+                                variant="outline"
+                                onClick={() => {
+                                    setSearch("");
+                                    setSelectedCategory("");
+                                }}
+                                size="sm"
+                            >
+                                Xóa bộ lọc
                             </Button>
                         </div>
                     </div>

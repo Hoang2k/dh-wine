@@ -12,7 +12,7 @@ export type TServiceItem = {
     pricingType: number; // 1=fixed, 2=choices, 3=min_only
     unitPrice?: number; // when pricing_type is fixed
     priceChoices?: number[]; // when pricing_type is choices
-    min_price?: number; // when pricing_type is min_only
+    minPrice?: number; // when pricing_type is min_only
 
     // Quantity
     modeQty: number; // 1=fixed, 2=choice, 3=range
@@ -22,7 +22,7 @@ export type TServiceItem = {
     maxQty?: number; // when mode is range
 
     isActive: 0 | 1;
-    image_media_id?: number | string; // media id or url depending on API
+    imageMediaId?: number | string; // media id or url depending on API
     created_at: string; // ISO datetime
     updated_at?: string; // ISO datetime if provided
 

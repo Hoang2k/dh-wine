@@ -3,6 +3,7 @@ export interface TServiceOrderItem {
     unitPrice: number;
     serviceId: number;
     totalAmount: number;
+    minPrice?: number;
 }
 
 export interface TServiceOrder {

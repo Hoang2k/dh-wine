@@ -16,7 +16,8 @@ import Image from "next/image";
 import { useParams } from "next/navigation";
 import { useCart } from "@/contexts/CartContext";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-
+import { SERVICE_ITEM_MODE_QTY, SERVICE_ITEM_PRICING_TYPE } from "@/constants/service-item";
+import { formatPrice } from "@/utils";
 
 async function getServiceItemData(id: string): Promise<TServiceItem> {
     try {
@@ -33,7 +34,7 @@ async function getServiceItemData(id: string): Promise<TServiceItem> {
 export default function OfferingDetailPage() {
     const params = useParams();
     const id = params.id as string;
-    const [quantity, setQuantity] = React.useState(1);
+    const [quantity, setQuantity] = React.useState<number | string>(1);
     const [selectedPrice, setSelectedPrice] = React.useState<number | null>(null);
     const { addToCart } = useCart();
 
@@ -44,25 +45,19 @@ export default function OfferingDetailPage() {
         staleTime: 5 * 60 * 1000, // Consider data fresh for 5 minutes
     });
 
-    const formatPrice = (price: number) => {
-        return new Intl.NumberFormat('vi-VN', {
-            style: 'currency',
-            currency: 'VND'
-        }).format(price);
-    };
-
     // Initialize selected price when serviceItem loads
     React.useEffect(() => {
         if (serviceItem) {
-            if (serviceItem.pricingType === 1 && serviceItem.unitPrice) {
+            if (serviceItem.pricingType === SERVICE_ITEM_PRICING_TYPE.FIXED && serviceItem.unitPrice) {
                 // Fixed pricing
                 setSelectedPrice(serviceItem.unitPrice);
-            } else if (serviceItem.pricingType === 2 && serviceItem.priceChoices && serviceItem.priceChoices.length > 0) {
+            } else if (serviceItem.pricingType === SERVICE_ITEM_PRICING_TYPE.CHOICES && serviceItem.priceChoices && serviceItem.priceChoices.length > 0) {
                 // Choices pricing - select first option
                 setSelectedPrice(serviceItem.priceChoices[0]);
-            } else if (serviceItem.pricingType === 3 && serviceItem.min_price) {
+            } else if (serviceItem.pricingType === SERVICE_ITEM_PRICING_TYPE.MIN_ONLY && serviceItem.minPrice) {
+                console.log("Min only pricing", serviceItem.minPrice);
                 // Min only pricing - start with min price
-                setSelectedPrice(serviceItem.min_price);
+                setSelectedPrice(serviceItem.minPrice);
             }
         }
     }, [serviceItem]);
@@ -71,13 +66,13 @@ export default function OfferingDetailPage() {
         if (serviceItem) {
             let maxQty = 1;
             
-            if (serviceItem.modeQty === 1 && serviceItem.fixedQty) {
+            if (serviceItem.modeQty === SERVICE_ITEM_MODE_QTY.FIXED && serviceItem.fixedQty) {
                 // Fixed quantity
                 maxQty = serviceItem.fixedQty;
-            } else if (serviceItem.modeQty === 2 && serviceItem.choicesQty && serviceItem.choicesQty.length > 0) {
+            } else if (serviceItem.modeQty === SERVICE_ITEM_MODE_QTY.CHOICES && serviceItem.choicesQty && serviceItem.choicesQty.length > 0) {
                 // Choices quantity - use max from choices
                 maxQty = Math.max(...serviceItem.choicesQty);
-            } else if (serviceItem.modeQty === 3 && serviceItem.maxQty) {
+            } else if (serviceItem.modeQty === SERVICE_ITEM_MODE_QTY.RANGE && serviceItem.maxQty) {
                 // Range quantity
                 maxQty = serviceItem.maxQty;
             } else if (serviceItem.stockQuantity) {
@@ -93,27 +88,65 @@ export default function OfferingDetailPage() {
 
     const handleAddToCart = () => {
         if (serviceItem && selectedPrice !== null) {
+            // Validate min price for MIN_ONLY pricing type
+            if (serviceItem.pricingType === SERVICE_ITEM_PRICING_TYPE.MIN_ONLY && 
+                serviceItem.minPrice && selectedPrice < serviceItem.minPrice) {
+                alert(`Giá phải ≥ ${formatPrice(serviceItem.minPrice)}`);
+                return;
+            }
+            
             // Create a modified service item with the selected price
             const cartItem = {
                 ...serviceItem,
                 unitPrice: selectedPrice
             };
-            addToCart(cartItem, quantity);
+            addToCart(cartItem, quantity as number);
         }
     };
 
     const handleBuyNow = () => {
         if (serviceItem && selectedPrice !== null) {
+            // Validate min price for MIN_ONLY pricing type
+            if (serviceItem.pricingType === SERVICE_ITEM_PRICING_TYPE.MIN_ONLY && 
+                serviceItem.minPrice && selectedPrice < serviceItem.minPrice) {
+                alert(`Giá phải ≥ ${formatPrice(serviceItem.minPrice)}`);
+                return;
+            }
+            
             // Create a modified service item with the selected price
             const cartItem = {
                 ...serviceItem,
                 unitPrice: selectedPrice
             };
-            addToCart(cartItem, quantity);
+            addToCart(cartItem, quantity as number);
             console.log("Added to cart, redirecting...");
             // Redirect to cart page
             window.location.href = "/cart";
         }
+    };
+
+    // Helper function to check if quantity is valid
+    const isQuantityValid = () => {
+        if (quantity === "" || quantity === null || quantity === undefined) {
+            return false;
+        }
+        
+        const qty = typeof quantity === 'string' ? parseInt(quantity) : quantity;
+        if (isNaN(qty) || qty < 1) {
+            return false;
+        }
+
+        if (serviceItem) {
+            if (serviceItem.modeQty === SERVICE_ITEM_MODE_QTY.FIXED && serviceItem.fixedQty) {
+                return qty === serviceItem.fixedQty;
+            } else if (serviceItem.modeQty === SERVICE_ITEM_MODE_QTY.CHOICES && serviceItem.choicesQty) {
+                return serviceItem.choicesQty.includes(qty);
+            } else if (serviceItem.modeQty === SERVICE_ITEM_MODE_QTY.RANGE) {
+                return qty >= (serviceItem.minQty || 1) && qty <= (serviceItem.maxQty || 100);
+            }
+        }
+        
+        return true;
     };
 
     if (isLoading) {
@@ -254,19 +287,31 @@ export default function OfferingDetailPage() {
                                             </div>
                                         ))}
                                     </div>
-                                ) : serviceItem.pricingType === 3 && serviceItem.min_price ? (
+                                ) : serviceItem.pricingType === SERVICE_ITEM_PRICING_TYPE.MIN_ONLY && serviceItem.minPrice ? (
                                     // Min only pricing
                                     <div className="space-y-2">
                                         <Input
                                             type="number"
                                             value={selectedPrice || ""}
-                                            onChange={(e) => setSelectedPrice(parseFloat(e.target.value) || serviceItem.min_price || 0)}
-                                            min={serviceItem.min_price}
-                                            placeholder={`Tối thiểu ${formatPrice(serviceItem.min_price)}`}
+                                            onChange={(e) => {
+                                                const value = parseFloat(e.target.value);
+                                                if (e.target.value === "") {
+                                                    setSelectedPrice(null);
+                                                } else if (!isNaN(value)) {
+                                                    setSelectedPrice(value);
+                                                }
+                                            }}
+                                            min={serviceItem.minPrice}
+                                            placeholder={`Tối thiểu ${formatPrice(serviceItem.minPrice)}`}
                                             className="w-40"
                                         />
+                                                                                {selectedPrice !== null && selectedPrice < serviceItem.minPrice && (
+                                            <p className="text-sm text-red-500">
+                                                Vui lòng nhập giá ≥ {formatPrice(serviceItem.minPrice)}
+                                            </p>
+                                        )}
                                         <p className="text-sm text-muted-foreground">
-                                            Nhập giá ≥ {formatPrice(serviceItem.min_price)}
+                                            Giá tối thiểu của sản phầm là ≥ {formatPrice(serviceItem.minPrice)}, vui lòng nhập giá ≥ {formatPrice(serviceItem.minPrice)}
                                         </p>
                                     </div>
                                 ) : (
@@ -296,7 +341,7 @@ export default function OfferingDetailPage() {
                             <Label className="text-lg font-semibold mb-3 block">
                                 Số lượng
                             </Label>
-                            {serviceItem.modeQty === 1 && serviceItem.fixedQty ? (
+                            {serviceItem.modeQty === SERVICE_ITEM_MODE_QTY.FIXED && serviceItem.fixedQty ? (
                                 // Fixed quantity
                                 <div className="flex items-center gap-2">
                                     <Input
@@ -304,9 +349,8 @@ export default function OfferingDetailPage() {
                                         disabled
                                         className="w-20 text-center"
                                     />
-                                    <span className="text-sm text-muted-foreground">(Số lượng cố định)</span>
                                 </div>
-                            ) : serviceItem.modeQty === 2 && serviceItem.choicesQty ? (
+                            ) : serviceItem.modeQty === SERVICE_ITEM_MODE_QTY.CHOICES && serviceItem.choicesQty ? (
                                 // Choices quantity
                                 <Select
                                     value={quantity.toString()}
@@ -323,22 +367,31 @@ export default function OfferingDetailPage() {
                                         ))}
                                     </SelectContent>
                                 </Select>
-                            ) : serviceItem.modeQty === 3 ? (
+                            ) : serviceItem.modeQty === SERVICE_ITEM_MODE_QTY.RANGE ? (
                                 // Range quantity
                                 <div className="space-y-2">
                                     <div className="flex items-center gap-3">
                                         <Button
                                             variant="outline"
                                             size="sm"
-                                            onClick={() => handleQuantityChange(quantity - 1)}
-                                            disabled={quantity <= (serviceItem.minQty || 1)}
+                                            onClick={() => handleQuantityChange(quantity as number - 1)}
+                                            disabled={quantity as number <= (serviceItem.minQty || 1)}
                                         >
                                             <Minus className="h-4 w-4" />
                                         </Button>
                                         <Input
                                             type="number"
                                             value={quantity}
-                                            onChange={(e) => handleQuantityChange(parseInt(e.target.value) || 1)}
+                                            onChange={(e) => {
+                                                if (e.target.value === "") {
+                                                    setQuantity("");
+                                                } else {
+                                                    const value = parseInt(e.target.value);
+                                                    if (!isNaN(value)) {
+                                                        handleQuantityChange(value);
+                                                    }
+                                                }
+                                            }}
                                             min={serviceItem.minQty || 1}
                                             max={serviceItem.maxQty || 100}
                                             className="w-20 text-center"
@@ -346,8 +399,8 @@ export default function OfferingDetailPage() {
                                         <Button
                                             variant="outline"
                                             size="sm"
-                                            onClick={() => handleQuantityChange(quantity + 1)}
-                                            disabled={quantity >= (serviceItem.maxQty || 100)}
+                                            onClick={() => handleQuantityChange(quantity as number + 1)}
+                                            disabled={quantity as number >= (serviceItem.maxQty || 100)}
                                         >
                                             <Plus className="h-4 w-4" />
                                         </Button>
@@ -362,8 +415,8 @@ export default function OfferingDetailPage() {
                                     <Button
                                         variant="outline"
                                         size="sm"
-                                        onClick={() => handleQuantityChange(quantity - 1)}
-                                        disabled={quantity <= 1}
+                                        onClick={() => handleQuantityChange(quantity as number - 1)}
+                                        disabled={quantity as number <= 1}
                                     >
                                         <Minus className="h-4 w-4" />
                                     </Button>
@@ -378,8 +431,8 @@ export default function OfferingDetailPage() {
                                     <Button
                                         variant="outline"
                                         size="sm"
-                                        onClick={() => handleQuantityChange(quantity + 1)}
-                                        disabled={quantity >= (serviceItem.stockQuantity || 1)}
+                                        onClick={() => handleQuantityChange(quantity as number + 1)}
+                                        disabled={quantity as number >= (serviceItem.stockQuantity || 1)}
                                     >
                                         <Plus className="h-4 w-4" />
                                     </Button>
@@ -392,7 +445,7 @@ export default function OfferingDetailPage() {
                             <div className="flex justify-between items-center">
                                 <span className="text-lg font-semibold">Tổng cộng:</span>
                                 <span className="text-2xl font-bold text-emerald-600">
-                                    {formatPrice((selectedPrice || serviceItem.unitPrice || 0) * quantity)}
+                                    {formatPrice((selectedPrice || serviceItem.unitPrice || 0) * (typeof quantity === 'string' ? parseInt(quantity) || 1 : quantity))}
                                 </span>
                             </div>
                         </div>
@@ -401,7 +454,8 @@ export default function OfferingDetailPage() {
                         <div className="space-y-3">
                             <Button
                                 onClick={handleAddToCart}
-                                className="w-full bg-emerald-700 hover:bg-emerald-800"
+                                disabled={selectedPrice === null || !isQuantityValid() || (serviceItem.pricingType === SERVICE_ITEM_PRICING_TYPE.MIN_ONLY && serviceItem.minPrice && selectedPrice !== null && selectedPrice < serviceItem.minPrice) || false}
+                                className="hover:cursor-pointer w-full bg-emerald-700 hover:bg-emerald-800 disabled:opacity-50 disabled:cursor-not-allowed"
                                 size="lg"
                             >
                                 <ShoppingCart className="h-5 w-5 mr-2" />
@@ -409,8 +463,9 @@ export default function OfferingDetailPage() {
                             </Button>
                             <Button
                                 onClick={handleBuyNow}
+                                disabled={selectedPrice === null || !isQuantityValid() || (serviceItem.pricingType === SERVICE_ITEM_PRICING_TYPE.MIN_ONLY && serviceItem.minPrice && selectedPrice !== null && selectedPrice < serviceItem.minPrice) || false}
                                 variant="outline"
-                                className="w-full border-emerald-700 text-emerald-700 hover:bg-emerald-50"
+                                className="hover:cursor-pointer w-full border-emerald-700 text-emerald-700 hover:bg-emerald-50 disabled:opacity-50 disabled:cursor-not-allowed"
                                 size="lg"
                             >
                                 <CreditCard className="h-5 w-5 mr-2" />

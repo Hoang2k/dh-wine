@@ -2,7 +2,6 @@ import axiosInstance from "@/axios";
 import { TServiceItem } from "@/types/offerings";
 
 export const getServiceItems = async (params?: { 
-    category?: string; 
     search?: string; 
     page?: number; 
     per_page?: number 

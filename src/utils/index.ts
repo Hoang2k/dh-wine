@@ -228,3 +228,16 @@ export const handleConnectLine = () => {
 
     window.location.href = lineAuthUrl;
     }
+
+/**
+ * @description: Format price
+ * @param {number} price
+ * @return {string} formatted price
+ */
+export const formatPrice = (price: number) => {
+  if (!price) return '0 VND';
+  return new Intl.NumberFormat('vi-VN', {
+    style: 'currency',
+    currency: 'VND'
+  }).format(price);
+}

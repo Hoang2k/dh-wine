@@ -2,6 +2,7 @@ import axiosInstance from "@/axios";
 
 export interface TVNPayCreateRequest {
     orderId: number;
+    returnUrl?: string; // Add returnUrl as optional property
 }
 
 export interface TVNPayCreateResponse {

@@ -18,7 +18,6 @@ async function getServiceItemsData(params: { search?: string; category?: string 
         // Call actual API
         const response = await getServiceItems({
             search: params.search,
-            category: params.category,
             page: 1,
             per_page: 50
         });
@@ -43,10 +42,6 @@ export default function OfferingClient() {
     });
 
     const serviceItems = data?.data || [];
-    // Get categories from API data
-    const categories = serviceItems.length > 0 
-        ? Array.from(new Set(serviceItems.map(item => item.category).filter(Boolean)))
-        : [];
 
     const formatPrice = (price: number) => {
         return new Intl.NumberFormat('vi-VN', {
@@ -106,16 +101,6 @@ export default function OfferingClient() {
                             >
                                 Tất cả
                             </Button>
-                            {categories.map((category) => (
-                            <Button
-                                key={category}
-                                variant={selectedCategory === category ? "default" : "outline"}
-                                onClick={() => setSelectedCategory(category || "")}
-                                size="sm"
-                            >
-                                    {category}
-                                </Button>
-                            ))}
                         </div>
                     </div>
                 </div>
@@ -161,11 +146,6 @@ export default function OfferingClient() {
                                             fill
                                             className="object-cover group-hover:scale-105 transition-transform duration-300"
                                         />
-                                        {item.category && (
-                                            <Badge className="absolute top-2 left-2 bg-emerald-600">
-                                                {item.category}
-                                            </Badge>
-                                        )}
                                     </div>
                                     <CardContent className="p-4">
                                         <h3 className="font-medium text-lg mb-2 line-clamp-2">

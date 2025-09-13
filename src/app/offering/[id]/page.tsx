@@ -260,7 +260,7 @@ export default function OfferingDetailPage() {
                                         <Input
                                             type="number"
                                             value={selectedPrice || ""}
-                                            onChange={(e) => setSelectedPrice(parseFloat(e.target.value) || serviceItem.min_price)}
+                                            onChange={(e) => setSelectedPrice(parseFloat(e.target.value) || serviceItem.min_price || 0)}
                                             min={serviceItem.min_price}
                                             placeholder={`Tối thiểu ${formatPrice(serviceItem.min_price)}`}
                                             className="w-40"
@@ -285,18 +285,6 @@ export default function OfferingDetailPage() {
                                 <h3 className="text-lg font-semibold mb-2">Mô tả sản phẩm</h3>
                                 <p className="text-muted-foreground leading-relaxed">
                                     {serviceItem.description}
-                                </p>
-                            </div>
-                        )}
-
-                        {/* Stock Info */}
-                        {serviceItem.stock_quantity && (
-                            <div>
-                                <h3 className="text-lg font-semibold mb-2">Tình trạng sản phẩm</h3>
-                                <p className="text-muted-foreground">
-                                    Còn lại: <span className="font-semibold text-emerald-600">
-                                        {serviceItem.stock_quantity} sản phẩm
-                                    </span>
                                 </p>
                             </div>
                         )}

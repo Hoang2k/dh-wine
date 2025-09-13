@@ -134,3 +134,19 @@ export const STATUS_SUBSCRIPTION = {
   INCOMPLETE_EXPIRED: 6,
   TRIAL: 7
 }
+
+/**
+ * Book visit location options
+ */
+export const BOOK_VISIT_LOCATIONS = [
+  { id: 1, name: "Nghĩa trang Liệt sĩ Vị Xuyên" },
+  { id: 2, name: "Điểm cao 468" }
+] as const;
+
+/**
+ * Book visit type options
+ */
+export const BOOK_VISIT_TYPES = [
+  { id: 1, name: "Cá nhân" },
+  { id: 2, name: "Tập thể" }
+] as const;

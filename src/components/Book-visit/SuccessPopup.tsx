@@ -11,10 +11,22 @@ interface SuccessPopupProps {
   phone: string;
   onClose: () => void;
   onNo: () => void;
-  onYes: () => void;
+  onYes: (bookVisitData: any) => void;
+  bookVisitData?: any; // Add bookVisitData prop
 }
 
-export default function SuccessPopup({ isOpen, orgName, phone, onClose, onNo, onYes }: SuccessPopupProps) {
+export default function SuccessPopup({ isOpen, orgName, phone, onClose, onNo, onYes, bookVisitData }: SuccessPopupProps) {
+  const handleYes = () => {
+    // Save book visit data to localStorage
+    if (bookVisitData) {
+      localStorage.setItem('bookVisitData', JSON.stringify(bookVisitData));
+      localStorage.setItem('fromBookVisit', 'true');
+      localStorage.setItem('directFromBookVisit', 'true'); // Add this flag
+    }
+    // Redirect to offering page
+    window.location.href = "/offering";
+  };
+
   if (!isOpen) return null;
 
   return (
@@ -82,7 +94,7 @@ export default function SuccessPopup({ isOpen, orgName, phone, onClose, onNo, on
                   Không
                 </Button>
                 <Button
-                  onClick={onYes}
+                  onClick={handleYes}
                   className="flex-1 bg-emerald-700 hover:bg-emerald-800"
                 >
                   Có

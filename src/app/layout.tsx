@@ -6,6 +6,7 @@ import ReduxProvider from '@/providers/ReduxProvider'
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import ClientProvider from "@/providers/ClientProvider";
+import { CartProvider } from "@/contexts/CartContext";
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
@@ -27,7 +28,9 @@ export default function RootLayout({
     <html lang="vi">
       <body>  
         <ClientProvider>
-          {children} 
+          <CartProvider>
+            {children} 
+          </CartProvider>
         </ClientProvider>
       </body>
     </html>

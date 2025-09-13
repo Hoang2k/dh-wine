@@ -28,6 +28,7 @@ export default function Header() {
     { href: '/', label: 'Trang chủ' },
     { href: '/about', label: 'Giới thiệu' },
     { href: '/book-visit', label: 'Đặt lịch viếng' },
+    { href: '/offering', label: 'Đặt đồ lễ' },
     { href: '/grave-search', label: 'Tra cứu mộ' },
     { href: '/golden-book', label: 'Sổ vàng tri ân' },
     { href: '/news', label: 'Tin tức' },
@@ -126,7 +127,7 @@ export default function Header() {
                 ref={i === 0 ? firstLinkRef : undefined}
                 href={item.href}
                 onClick={() => setIsMobileMenuOpen(false)}
-                className={`block border-[#ececec] border-b-1 px-4 py-3 text-base transition-colors duration-200 ${
+                className={`block hover:cursor-pointer border-[#ececec] border-b-1 px-4 py-3 text-base transition-colors duration-200 ${
                   isActive(item.href)
                     ? 'text-[#087443] font-semibold bg-green-50'
                     : 'text-gray-800 hover:bg-gray-100 hover:text-[#087443]'

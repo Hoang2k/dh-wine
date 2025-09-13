@@ -4,12 +4,14 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
-import { Search, Plus, Calendar, Loader2, ChevronLeft, ChevronRight } from "lucide-react";
+import { Search, Plus, Calendar, Loader2 } from "lucide-react";
 import { TBookVisit } from "@/types/book-visit";
 import moment from 'moment';
+import Pagination from "../ui/pagination";
+import { IColumn } from "@/types/common";
 
 
-const columns = [
+const columns: IColumn[] = [
     {
         header: "STT",
         accessorKey: "stt",
@@ -144,6 +146,7 @@ interface ListBookVisitProps {
     currentPage?: number;
     pageSize?: number;
     onPageChange?: (page: number) => void;
+    onPageSizeChange?: (pageSize: number) => void;
 }
 
 export default function ListBookVisit({ 
@@ -156,7 +159,8 @@ export default function ListBookVisit({
     totalRecords = 0, 
     currentPage = 1, 
     pageSize = 20,
-    onPageChange
+    onPageChange,
+    onPageSizeChange
 }: ListBookVisitProps) {
     const [keyword, setKeyword] = React.useState("");
     const [date, setDate] = React.useState("");
@@ -179,11 +183,10 @@ export default function ListBookVisit({
         onSearch(searchParams);
     };
 
-    const handlePageSizeChange = (newPageSize: string) => {
-        const size = Number(newPageSize);
-        setLocalPageSize(size);
-        if (onPageChange) {
-            onPageChange(1); // Reset to first page when changing page size
+    const handlePageSizeChange = (newPageSize: number) => {
+        setLocalPageSize(newPageSize);
+        if (onPageSizeChange) {
+            onPageSizeChange(newPageSize);
         }
     };
 
@@ -203,10 +206,6 @@ export default function ListBookVisit({
         setLocalPageSize(pageSize);
     }, [pageSize]);
 
-    // Calculate pagination info
-    const totalPages = Math.ceil(totalRecords / localPageSize);
-    const startRecord = (localCurrentPage - 1) * localPageSize + 1;
-    const endRecord = Math.min(localCurrentPage * localPageSize, totalRecords);
 
 
     return (
@@ -269,96 +268,15 @@ export default function ListBookVisit({
                 </table>
             </div>
             {/* Pagination */}
-            <div className="flex flex-col gap-4 text-sm text-muted-foreground">
-                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-                    <div className="text-center sm:text-left">
-                        Hiển thị {totalRecords > 0 ? `${startRecord}-${endRecord}` : '0'} trong tổng số {totalRecords} mục
-                    </div>
-                    <div className="flex items-center gap-2 w-full sm:w-auto justify-center sm:justify-start">
-                        <span className="text-xs sm:text-sm">Hiển thị:</span>
-                        <Select value={localPageSize.toString()} onValueChange={handlePageSizeChange}>
-                            <SelectTrigger className="w-16 h-8 text-xs">
-                                <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="10">10</SelectItem>
-                                <SelectItem value="20">20</SelectItem>
-                                <SelectItem value="50">50</SelectItem>
-                            </SelectContent>
-                        </Select>
-                        <span className="text-xs sm:text-sm">mục/trang</span>
-                    </div>
-                </div>
-                
-                {totalPages > 1 && (
-                    <div className="flex items-center justify-center gap-1 sm:gap-2">
-                        <Button 
-                            variant="outline" 
-                            size="sm" 
-                            onClick={() => handlePageChange(localCurrentPage - 1)}
-                            disabled={localCurrentPage <= 1 || isLoading || isFetching}
-                            className="text-xs sm:text-sm"
-                        >
-                            <ChevronLeft className="h-3 w-3 sm:h-4 sm:w-4" />
-                            <span className="hidden sm:inline">Trước</span>
-                        </Button>
-                        
-                        <div className="flex items-center gap-1">
-                            {Array.from({ length: Math.min(3, totalPages) }, (_, i) => {
-                                let pageNum;
-                                if (totalPages <= 3) {
-                                    pageNum = i + 1;
-                                } else if (localCurrentPage <= 2) {
-                                    pageNum = i + 1;
-                                } else if (localCurrentPage >= totalPages - 1) {
-                                    pageNum = totalPages - 2 + i;
-                                } else {
-                                    pageNum = localCurrentPage - 1 + i;
-                                }
-                                
-                                return (
-                                    <Button
-                                        key={pageNum}
-                                        variant={localCurrentPage === pageNum ? "default" : "outline"}
-                                        size="sm"
-                                        onClick={() => handlePageChange(pageNum)}
-                                        disabled={isLoading || isFetching}
-                                        className="w-7 h-7 sm:w-8 sm:h-8 p-0 text-xs sm:text-sm"
-                                    >
-                                        {pageNum}
-                                    </Button>
-                                );
-                            })}
-                            {totalPages > 3 && localCurrentPage < totalPages - 1 && (
-                                <span className="text-muted-foreground px-1 text-xs">...</span>
-                            )}
-                        </div>
-                        
-                        <Button 
-                            variant="outline" 
-                            size="sm" 
-                            onClick={() => handlePageChange(localCurrentPage + 1)}
-                            disabled={localCurrentPage >= totalPages || isLoading || isFetching}
-                            className="text-xs sm:text-sm"
-                        >
-                            <span className="hidden sm:inline">Sau</span>
-                            <ChevronRight className="h-3 w-3 sm:h-4 sm:w-4" />
-                        </Button>
-                        
-                        {totalPages > 3 && localCurrentPage < totalPages - 1 && (
-                            <Button 
-                                variant="outline" 
-                                size="sm" 
-                                onClick={() => handlePageChange(totalPages)}
-                                disabled={isLoading || isFetching}
-                                className="ml-1 w-7 h-7 sm:w-8 sm:h-8 p-0 text-xs sm:text-sm"
-                            >
-                                {totalPages}
-                            </Button>
-                        )}
-                    </div>
-                )}
-            </div>
+            <Pagination
+                totalRecords={totalRecords}
+                currentPage={localCurrentPage}
+                pageSize={localPageSize}
+                onPageChange={handlePageChange}
+                onPageSizeChange={handlePageSizeChange}
+                isLoading={isLoading}
+                isFetching={isFetching}
+            />
         </div>
     );
 }

@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from 'react'
 import { FaBars, FaTimes } from 'react-icons/fa'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
+import CartIcon from './CartIcon'
 import Logo from '../../src/assets/image/logo.png'
 
 export default function Header() {
@@ -77,10 +78,19 @@ export default function Header() {
                 </li>
               ))}
             </ul>
+            
+            {/* Shopping Cart Icon */}
+            <div className="ml-4">
+              <CartIcon />
+            </div>
           </nav>
 
-          {/* button open menu (Mobile) */}
-          <div className="lg:hidden">
+          {/* Mobile Menu Controls */}
+          <div className="lg:hidden flex items-center gap-2">
+            {/* Shopping Cart Icon for Mobile */}
+            <CartIcon />
+            
+            {/* Menu Toggle Button */}
             <button
               onClick={toggleMobileMenu}
               className="text-gray-700 hover:text-[#087443] p-2 text-2xl"

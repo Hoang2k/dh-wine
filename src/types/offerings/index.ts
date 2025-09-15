@@ -15,11 +15,15 @@ export type TServiceItem = {
     minPrice?: number; // when pricing_type is min_only
 
     // Quantity
-    modeQty: number; // 1=fixed, 2=choice, 3=range
-    fixedQty?: number; // when mode_qty is fixed
-    choicesQty?: number[]; // when mode_qty is choices
-    minQty?: number; // when mode is range (default 1)
-    maxQty?: number; // when mode is range
+    modeQty: number;
+    fixedQty?: number;
+    choicesQty?: number[];
+    minQty?: number;
+    maxQty?: number; 
+    quantityShow?: number;
+    quantityActual?: number;
+    weight?: number;
+    size?: string;
 
     isActive: 0 | 1;
     imageMediaId?: number | string; // media id or url depending on API

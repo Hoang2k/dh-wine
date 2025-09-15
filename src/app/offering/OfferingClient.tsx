@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Search, ShoppingCart, Eye } from "lucide-react";
 import { getServiceItems } from "@/services/offerings";
 import { TServiceItem } from "@/types/offerings";
+import { SERVICE_ITEM_PRICING_TYPE } from "@/constants/service-item";
 import Link from "next/link";
 import Image from "next/image";
 import { useCart } from "@/contexts/CartContext";
@@ -50,6 +51,18 @@ export default function OfferingClient() {
         }).format(price);
     };
 
+    const getDisplayPrice = (item: TServiceItem) => {
+        if (item.pricingType === SERVICE_ITEM_PRICING_TYPE.FIXED && item.unitPrice) {
+            return item.unitPrice;
+        } else if (item.pricingType === SERVICE_ITEM_PRICING_TYPE.CHOICES && item.priceChoices && item.priceChoices.length > 0) {
+            // For choices pricing, show minimum price
+            return Math.min(...item.priceChoices);
+        } else if (item.pricingType === SERVICE_ITEM_PRICING_TYPE.MIN_ONLY && item.minPrice) {
+            return item.minPrice;
+        }
+        return 0;
+    };
+
     return (
         <div className="min-h-[100dvh]">
             {/* Hero Section */}
@@ -73,7 +86,7 @@ export default function OfferingClient() {
             </section>
 
             {/* Content */}
-            <div className="container mx-auto px-4 pb-20">
+            <div className="container mx-auto px-4 lg:px-30 pb-20">
                 {/* Search and Filter */}
                 <div className="my-8">
                 <div className="flex flex-col sm:flex-row gap-4 mb-6">
@@ -155,7 +168,7 @@ export default function OfferingClient() {
                                             {item.name}
                                         </h3>
                                         <p className="text-emerald-600 font-semibold text-xl mb-3">
-                                            {formatPrice(item?.unitPrice || 0)}
+                                            {formatPrice(getDisplayPrice(item))}
                                         </p>
                                         <div className="flex gap-2">
                                             <Button asChild className="flex-1" size="sm">

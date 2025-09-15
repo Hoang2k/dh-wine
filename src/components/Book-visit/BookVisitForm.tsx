@@ -108,9 +108,6 @@ export default function BookVisitForm({ onSubmit, onCancel, onNavigateToList, on
             {/* Left: Form */}
             <div className="md:col-span-2">
                 <Card className="border-emerald-100">
-                    <CardHeader>
-                        <CardTitle className="text-base">Thông tin đăng ký</CardTitle>
-                    </CardHeader>
                     <CardContent className="space-y-4">
                         <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -252,8 +249,8 @@ export default function BookVisitForm({ onSubmit, onCancel, onNavigateToList, on
 
                             <div className="flex items-start gap-3">
                                 <Checkbox id="agree" checked={form.watch("agree")} onCheckedChange={(v) => form.setValue("agree", Boolean(v))} />
-                                <Label htmlFor="agree" className="leading-6 text-sm text-muted-foreground">
-                                    Tôi xác nhận thông tin trên là chính xác và đồng ý với <a className="underline text-emerald-700" href="#" onClick={(e) => e.preventDefault()}>Điều khoản</a> của ban quản lý.
+                                <Label htmlFor="agree" className="">
+                                    Tôi xác nhận thông tin trên là chính xác và đồng ý với điều khoản của ban quản lý.
                                 </Label>
                             </div>
                             {form.formState.errors.agree && (

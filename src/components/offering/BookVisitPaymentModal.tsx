@@ -8,9 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { X, User, Phone, Calendar, Users, MapPin, RotateCcw, Mail } from "lucide-react";
-import { createServiceOrder } from "@/services/service-order";
 import { Textarea } from "@/components/ui/textarea";
-import { z } from "zod";
 
 interface BookVisitPaymentModalProps {
     isOpen: boolean;

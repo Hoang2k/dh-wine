@@ -31,18 +31,23 @@ async function getServiceItemsData(params: { search?: string; category?: string 
 }
 
 export default function OfferingClient() {
-    const [search, setSearch] = React.useState("");
+    const [searchInput, setSearchInput] = React.useState("");
+    const [searchQuery, setSearchQuery] = React.useState("");
     const [selectedCategory, setSelectedCategory] = React.useState<string>("");
     const { addToCart } = useCart();
 
     const { data, isLoading, error, refetch } = useQuery({
-        queryKey: ["service-items", search, selectedCategory],
-        queryFn: () => getServiceItemsData({ search, category: selectedCategory }),
+        queryKey: ["service-items", searchQuery, selectedCategory],
+        queryFn: () => getServiceItemsData({ search: searchQuery, category: selectedCategory }),
         retry: 1, // Retry once if API fails
         staleTime: 5 * 60 * 1000, // Consider data fresh for 5 minutes
     });
 
     const serviceItems = data?.data || [];
+
+    const handleSearch = () => {
+        setSearchQuery(searchInput);
+    };
 
     const formatPrice = (price: number) => {
         return new Intl.NumberFormat('vi-VN', {
@@ -93,30 +98,37 @@ export default function OfferingClient() {
                     <div className="relative flex-1">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                         <Input
-                            value={search}
-                            onChange={(e) => setSearch(e.target.value)}
+                            value={searchInput}
+                            onChange={(e) => setSearchInput(e.target.value)}
                             placeholder="Tìm kiếm sản phẩm..."
                             className="pl-9"
+                            onKeyDown={(e) => {
+                                if (e.key === 'Enter') {
+                                    handleSearch();
+                                }
+                            }}
                         />
                     </div>
                         <div className="flex gap-2 flex-wrap">
                             <Button
                                 variant="default"
-                                onClick={() => refetch()}
+                                onClick={handleSearch}
                                 size="sm"
+                                className="hover:cursor-pointer"
                             >
                                 Tìm kiếm
                             </Button>
                             <Button
-                                variant="outline"
-                                onClick={() => {
-                                    setSearch("");
-                                    setSelectedCategory("");
-                                }}
-                                size="sm"
-                            >
-                                Xóa bộ lọc
-                            </Button>
+                            variant="outline"
+                            onClick={() => {
+                                setSearchQuery("");
+                                setSelectedCategory("");
+                                setSearchInput("");
+                            }}
+                            size="sm"
+                        >
+                            Xóa bộ lọc
+                        </Button>
                         </div>
                     </div>
                 </div>

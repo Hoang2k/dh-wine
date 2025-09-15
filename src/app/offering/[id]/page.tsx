@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { ArrowLeft, ShoppingCart, CreditCard, Plus, Minus } from "lucide-react";
+import { ArrowLeft, ShoppingCart, CreditCard, Plus, Minus, ChevronLeft, ChevronRight } from "lucide-react";
 import { getServiceItemById } from "@/services/offerings";
 import { TServiceItem } from "@/types/offerings";
 import Link from "next/link";
@@ -18,6 +18,7 @@ import { useCart } from "@/contexts/CartContext";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { SERVICE_ITEM_MODE_QTY, SERVICE_ITEM_PRICING_TYPE } from "@/constants/service-item";
 import { formatPrice } from "@/utils";
+import { toast } from "react-toastify";
 
 async function getServiceItemData(id: string): Promise<TServiceItem> {
     try {
@@ -36,6 +37,8 @@ export default function OfferingDetailPage() {
     const id = params.id as string;
     const [quantity, setQuantity] = React.useState<number | string>(1);
     const [selectedPrice, setSelectedPrice] = React.useState<number | null>(null);
+    const [selectedImageIndex, setSelectedImageIndex] = React.useState(0);
+    const [slideDirection, setSlideDirection] = React.useState<'left' | 'right' | null>(null);
     const { addToCart } = useCart();
 
     const { data: serviceItem, isLoading, error, refetch } = useQuery({
@@ -100,7 +103,15 @@ export default function OfferingDetailPage() {
                 ...serviceItem,
                 unitPrice: selectedPrice
             };
-            addToCart(cartItem, quantity as number);
+            const qty = typeof quantity === 'string' ? parseInt(quantity) || 1 : quantity;
+            const result = addToCart(cartItem, qty);
+            
+            // Show appropriate toast message
+            if (result.success) {
+                toast.success(result.message);
+            } else {
+                toast.error(result.message);
+            }
         }
     };
 
@@ -118,10 +129,18 @@ export default function OfferingDetailPage() {
                 ...serviceItem,
                 unitPrice: selectedPrice
             };
-            addToCart(cartItem, quantity as number);
-            console.log("Added to cart, redirecting...");
-            // Redirect to cart page
-            window.location.href = "/cart";
+            const qty = typeof quantity === 'string' ? parseInt(quantity) || 1 : quantity;
+            const result = addToCart(cartItem, qty);
+            
+            // Show appropriate toast message
+            if (result.success) {
+                toast.success(result.message);
+                console.log("Added to cart, redirecting...");
+                // Redirect to cart page
+                window.location.href = "/cart";
+            } else {
+                toast.error(result.message);
+            }
         }
     };
 
@@ -147,6 +166,64 @@ export default function OfferingDetailPage() {
         }
         
         return true;
+    };
+
+    // Get multiple images for the product
+    const getProductImages = () => {
+        if (!serviceItem) return [];
+        
+        const images = [];
+        
+        // Add main image
+        if (serviceItem.imageMedia?.path) {
+            images.push(serviceItem.imageMedia.path);
+        }
+        
+        // Add additional mock images for demonstration
+        const additionalImages = [
+            "/placeholder.jpg",
+            "/placeholder.jpg", 
+            "/placeholder.jpg",
+            "/placeholder.jpg"
+        ];
+        
+        return [...images, ...additionalImages];
+    };
+
+    const productImages = getProductImages();
+
+    // Reset slide direction after animation
+    React.useEffect(() => {
+        if (slideDirection) {
+            const timer = setTimeout(() => {
+                setSlideDirection(null);
+            }, 400); // Match animation duration
+            return () => clearTimeout(timer);
+        }
+    }, [slideDirection]);
+
+    // Navigation functions for image slider
+    const goToPreviousImage = () => {
+        setSlideDirection('left');
+        setSelectedImageIndex((prev) => 
+            prev === 0 ? productImages.length - 1 : prev - 1
+        );
+    };
+
+    const goToNextImage = () => {
+        setSlideDirection('right');
+        setSelectedImageIndex((prev) => 
+            prev === productImages.length - 1 ? 0 : prev + 1
+        );
+    };
+
+    // Handle thumbnail click with slide direction
+    const handleThumbnailClick = (index: number) => {
+        if (index === selectedImageIndex) return;
+        
+        const direction = index > selectedImageIndex ? 'right' : 'left';
+        setSlideDirection(direction);
+        setSelectedImageIndex(index);
     };
 
     if (isLoading) {
@@ -199,7 +276,7 @@ export default function OfferingDetailPage() {
     return (
         <div className="min-h-[100dvh]">
             {/* Header */}
-            <div className="container mx-auto px-4 py-6">
+            <div className="container mx-auto px-4 lg:px-30 py-6">
                 <Button variant="ghost" asChild className="mb-6">
                     <Link href="/offering">
                         <ArrowLeft className="h-4 w-4 mr-2" />
@@ -209,7 +286,7 @@ export default function OfferingDetailPage() {
             </div>
 
             {/* Content */}
-            <div className="container mx-auto px-4 pb-20">
+            <div className="container mx-auto lg:px-30 px-4 pb-20">
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -218,14 +295,81 @@ export default function OfferingDetailPage() {
                 >
                     {/* Product Image */}
                     <div className="space-y-4">
-                        <div className="aspect-square relative overflow-hidden rounded-lg">
-                            <Image
-                                src={serviceItem.imageMedia?.path || "/placeholder.jpg"}
-                                alt={serviceItem.name}
-                                fill
-                                className="object-cover"
-                            />
+                        {/* Main Image */}
+                        <div className="aspect-square relative overflow-hidden rounded-lg border-2 border-gray-200 group">
+                            <motion.div
+                                key={selectedImageIndex}
+                                initial={{ 
+                                    x: slideDirection === 'right' ? '100%' : slideDirection === 'left' ? '-100%' : 0,
+                                    opacity: 0
+                                }}
+                                animate={{ 
+                                    x: 0, 
+                                    opacity: 1 
+                                }}
+                                transition={{ 
+                                    duration: 0.4,
+                                    ease: "easeInOut"
+                                }}
+                                className="absolute inset-0"
+                            >
+                                <Image
+                                    src={productImages[selectedImageIndex] || "/placeholder.jpg"}
+                                    alt={serviceItem.name}
+                                    fill
+                                    className="object-cover"
+                                />
+                            </motion.div>
+                            
+                            {/* Navigation Arrows */}
+                            {productImages.length > 1 && (
+                                <>
+                                    <button
+                                        onClick={goToPreviousImage}
+                                        className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                                    >
+                                        <ChevronLeft className="h-4 w-4" />
+                                    </button>
+                                    <button
+                                        onClick={goToNextImage}
+                                        className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                                    >
+                                        <ChevronRight className="h-4 w-4" />
+                                    </button>
+                                </>
+                            )}
+                            
+                            {/* Image Counter */}
+                            {productImages.length > 1 && (
+                                <div className="absolute bottom-2 right-2 bg-black/50 text-white px-2 py-1 rounded text-sm">
+                                    {selectedImageIndex + 1} / {productImages.length}
+                                </div>
+                            )}
                         </div>
+                        
+                        {/* Thumbnail Images */}
+                        {/* {productImages.length > 1 && (
+                            <div className="grid grid-cols-5 gap-2">
+                                {productImages.map((image, index) => (
+                                    <button
+                                        key={index}
+                                        onClick={() => handleThumbnailClick(index)}
+                                        className={`aspect-square relative overflow-hidden rounded-lg border-2 transition-all duration-200 ${
+                                            selectedImageIndex === index
+                                                ? 'border-emerald-500 ring-2 ring-emerald-200'
+                                                : 'border-gray-200 hover:border-gray-300'
+                                        }`}
+                                    >
+                                        <Image
+                                            src={image}
+                                            alt={`${serviceItem.name} - Image ${index + 1}`}
+                                            fill
+                                            className="object-cover"
+                                        />
+                                    </button>
+                                ))}
+                            </div>
+                        )} */}
                     </div>
 
                     {/* Product Info */}
@@ -236,11 +380,11 @@ export default function OfferingDetailPage() {
                             </h1>
                             
                             {/* Pricing Type Selection */}
-                            <div className="mb-4">
+                            <div className="mb-4 lg:flex items-center gap-8">
                                 <Label className="text-lg font-semibold mb-3 block">
-                                    Chọn loại
+                                    Phân loại
                                 </Label>
-                                {serviceItem.pricingType === 1 && serviceItem.unitPrice ? (
+                                {serviceItem.pricingType === SERVICE_ITEM_PRICING_TYPE.FIXED && serviceItem.unitPrice ? (
                                     // Fixed pricing
                                     <div className="flex items-center gap-2">
                                         <Input
@@ -249,9 +393,9 @@ export default function OfferingDetailPage() {
                                             className="w-40"
                                         />
                                     </div>
-                                ) : serviceItem.pricingType === 2 && serviceItem.priceChoices ? (
+                                ) : serviceItem.pricingType === SERVICE_ITEM_PRICING_TYPE.CHOICES && serviceItem.priceChoices ? (
                                     // Choices pricing - using styled checkboxes like the image
-                                    <div className="grid grid-cols-2 gap-3">
+                                    <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                                         {serviceItem.priceChoices.map((price, index) => (
                                             <div 
                                                 key={index}
@@ -269,7 +413,7 @@ export default function OfferingDetailPage() {
                                                         {formatPrice(price)}
                                                     </span>
                                                     {selectedPrice === price && (
-                                                        <div className="w-5 h-5 bg-emerald-500 rounded-full flex items-center justify-center">
+                                                        <div className="ml-2 w-5 h-5 bg-emerald-500 rounded-full flex items-center justify-center">
                                                             <svg 
                                                                 className="w-3 h-3 text-white" 
                                                                 fill="currentColor" 
@@ -334,10 +478,41 @@ export default function OfferingDetailPage() {
                             </div>
                         )}
 
+                        {/* Product Specifications */}
+                        <div className="space-y-3">
+                            <h3 className="text-lg font-semibold mb-3">Thông số sản phẩm</h3>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                {serviceItem.weight && (
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-sm font-medium text-gray-600">Cân nặng: </span>
+                                        <span className="text-lg font-semibold text-emerald-700">
+                                            {serviceItem.weight}g
+                                        </span>
+                                    </div>
+                                )}
+                                {serviceItem.size && (
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-sm font-medium text-gray-600">Kích thước: </span>
+                                        <span className="text-lg font-semibold text-emerald-700">
+                                            {serviceItem.size} (cm)
+                                        </span>
+                                    </div>
+                                )}
+                                {serviceItem.quantityShow && (
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-sm font-medium text-gray-600">Số lượng đã đặt: </span>
+                                        <span className="text-lg font-semibold text-emerald-700">
+                                            {serviceItem.quantityShow} sản phẩm
+                                        </span>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+
                         <Separator />
 
                         {/* Quantity Selection */}
-                        <div>
+                        <div className="flex items-center gap-8">
                             <Label className="text-lg font-semibold mb-3 block">
                                 Số lượng
                             </Label>
@@ -351,22 +526,28 @@ export default function OfferingDetailPage() {
                                     />
                                 </div>
                             ) : serviceItem.modeQty === SERVICE_ITEM_MODE_QTY.CHOICES && serviceItem.choicesQty ? (
-                                // Choices quantity
-                                <Select
-                                    value={quantity.toString()}
-                                    onValueChange={(value) => setQuantity(parseInt(value))}
-                                >
-                                    <SelectTrigger className="w-32">
-                                        <SelectValue />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {serviceItem.choicesQty.map((qty, index) => (
-                                            <SelectItem key={index} value={qty.toString()}>
-                                                {qty}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
+                                // Choices quantity - using styled checkboxes like the image
+                                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                                    {serviceItem.choicesQty.map((qty, index) => (
+                                        <div 
+                                            key={index}
+                                            className={`
+                                                relative border-2 rounded-lg py-1 px-4 box-border cursor-pointer transition-all duration-200
+                                                ${quantity === qty 
+                                                    ? 'border-emerald-500 bg-emerald-50' 
+                                                    : 'border-gray-300 hover:border-gray-400'
+                                                }
+                                            `}
+                                            onClick={() => setQuantity(qty)}
+                                        >
+                                            <div className="flex items-center justify-between">
+                                                <span className="font-medium text-gray-700">
+                                                    {qty}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
                             ) : serviceItem.modeQty === SERVICE_ITEM_MODE_QTY.RANGE ? (
                                 // Range quantity
                                 <div className="space-y-2">
@@ -451,11 +632,11 @@ export default function OfferingDetailPage() {
                         </div>
 
                         {/* Action Buttons */}
-                        <div className="space-y-3">
+                        <div className="flex gap-3">
                             <Button
                                 onClick={handleAddToCart}
                                 disabled={selectedPrice === null || !isQuantityValid() || (serviceItem.pricingType === SERVICE_ITEM_PRICING_TYPE.MIN_ONLY && serviceItem.minPrice && selectedPrice !== null && selectedPrice < serviceItem.minPrice) || false}
-                                className="hover:cursor-pointer w-full bg-emerald-700 hover:bg-emerald-800 disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="hover:cursor-pointer bg-emerald-700 hover:bg-emerald-800 disabled:opacity-50 disabled:cursor-not-allowed"
                                 size="lg"
                             >
                                 <ShoppingCart className="h-5 w-5 mr-2" />
@@ -465,11 +646,11 @@ export default function OfferingDetailPage() {
                                 onClick={handleBuyNow}
                                 disabled={selectedPrice === null || !isQuantityValid() || (serviceItem.pricingType === SERVICE_ITEM_PRICING_TYPE.MIN_ONLY && serviceItem.minPrice && selectedPrice !== null && selectedPrice < serviceItem.minPrice) || false}
                                 variant="outline"
-                                className="hover:cursor-pointer w-full border-emerald-700 text-emerald-700 hover:bg-emerald-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="hover:cursor-pointer border-emerald-700 text-emerald-700 hover:bg-emerald-50 disabled:opacity-50 disabled:cursor-not-allowed"
                                 size="lg"
                             >
                                 <CreditCard className="h-5 w-5 mr-2" />
-                                Mua ngay
+                                Đặt ngay
                             </Button>
                         </div>
                     </div>

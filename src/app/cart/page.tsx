@@ -7,17 +7,19 @@ import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { 
-    Trash2, 
-    ShoppingCart, 
-    CreditCard, 
-    Plus, 
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+    Trash2,
+    ShoppingCart,
+    CreditCard,
+    Plus,
     Minus,
     ArrowLeft,
     CheckSquare,
     Square,
     Mail,
-    MapPin
+    MapPin,
+    Loader2
 } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
 import { TCartItem } from "@/types/offerings";
@@ -29,6 +31,7 @@ import BookVisitPaymentModal from "@/components/offering/BookVisitPaymentModal";
 import { createServiceOrder } from "@/services/service-order";
 import { TServiceOrder, TServiceOrderItem } from "@/types/service-order";
 import { createVNPayPayment, TVNPayCreateRequest } from "@/services/payment";
+import { SERVICE_ITEM_MODE_QTY } from "@/constants/service-item";
 
 export default function CartPage() {
     const {
@@ -49,12 +52,18 @@ export default function CartPage() {
     const [bookVisitData, setBookVisitData] = React.useState<any>(null);
     const [fromBookVisit, setFromBookVisit] = React.useState(false);
     const [hasNavigatedAway, setHasNavigatedAway] = React.useState(false);
+    
+    // Loading states
+    const [isPageLoading, setIsPageLoading] = React.useState(true);
+    const [isUpdatingQuantity, setIsUpdatingQuantity] = React.useState<string | null>(null);
+    const [isDeletingItem, setIsDeletingItem] = React.useState<string | null>(null);
+    const [isProcessingPayment, setIsProcessingPayment] = React.useState(false);
 
     // Check BookVisit flags whenever the component becomes visible
     const checkBookVisitFlags = React.useCallback(() => {
         const isFromBookVisit = localStorage.getItem('fromBookVisit') === 'true';
         const savedBookVisitData = localStorage.getItem('bookVisitData');
-        
+
         if (isFromBookVisit && savedBookVisitData && !hasNavigatedAway) {
             setFromBookVisit(true);
             setBookVisitData(JSON.parse(savedBookVisitData));
@@ -67,6 +76,11 @@ export default function CartPage() {
     // Check flags on component mount
     React.useEffect(() => {
         checkBookVisitFlags();
+        // Simulate page loading
+        const timer = setTimeout(() => {
+            setIsPageLoading(false);
+        }, 500);
+        return () => clearTimeout(timer);
     }, [checkBookVisitFlags]);
 
     // Track navigation away from cart
@@ -104,27 +118,55 @@ export default function CartPage() {
             document.removeEventListener('visibilitychange', handleVisibilityChange);
             window.removeEventListener('focus', handleFocus);
         };
-    }, [checkBookVisitFlags, hasNavigatedAway]);
+    }, [hasNavigatedAway, checkBookVisitFlags]);
 
-    const formatPrice = (price: number | undefined) => {
-        if (!price) return '0 VND';
+    const formatPrice = (price: number) => {
         return new Intl.NumberFormat('vi-VN', {
             style: 'currency',
             currency: 'VND'
         }).format(price);
     };
 
-    const handleQuantityChange = (item: TCartItem, newQuantity: number) => {
+    const handleQuantityChange = async (item: TCartItem, newQuantity: number) => {
         if (newQuantity >= 1) {
+            // Add validation for RANGE mode like in offering detail
+            if (item.service_item.modeQty === SERVICE_ITEM_MODE_QTY.RANGE) {
+                const minQty = item.service_item.minQty || 1;
+                const maxQty = item.service_item.maxQty || 100;
+                
+                if (newQuantity < minQty || newQuantity > maxQty) {
+                    // Show error message or prevent the change
+                    alert(`Số lượng phải từ ${minQty} đến ${maxQty}`);
+                    return;
+                }
+            }
+            
+            setIsUpdatingQuantity(item.service_item.id.toString());
+            // Simulate API call delay
+            await new Promise(resolve => setTimeout(resolve, 300));
             updateQuantity(item.service_item.id.toString(), newQuantity);
-        }   
+            setIsUpdatingQuantity(null);
+        }
     };
 
-    const handleDeleteItem = (itemId: string) => {
+    const handleChoicesQuantityChange = async (item: TCartItem, newQuantity: number) => {
+        setIsUpdatingQuantity(item.service_item.id.toString());
+        // Simulate API call delay
+        await new Promise(resolve => setTimeout(resolve, 300));
+        updateQuantity(item.service_item.id.toString(), newQuantity);
+        setIsUpdatingQuantity(null);
+    };
+
+    const handleDeleteItem = async (itemId: string) => {
+        setIsDeletingItem(itemId);
+        // Simulate API call delay
+        await new Promise(resolve => setTimeout(resolve, 500));
         removeFromCart(itemId);
+        setIsDeletingItem(null);
     };
 
     const handlePayment = async (paymentData: any) => {
+        setIsProcessingPayment(true);
         try {
             // Prepare order items from selected cart items
             const selectedItems = getSelectedItems();
@@ -182,13 +224,15 @@ export default function CartPage() {
         } catch (error) {
             console.error("Error creating service order or payment:", error);
             alert('Có lỗi xảy ra khi đặt hàng. Vui lòng thử lại.');
+        } finally {
+            setIsProcessingPayment(false);
         }
     };
 
     const handlePaymentClick = () => {
         // Re-check flags before showing payment modal
         checkBookVisitFlags();
-        
+
         if (fromBookVisit && !hasNavigatedAway) {
             setShowBookVisitPaymentModal(true);
         } else {
@@ -206,17 +250,29 @@ export default function CartPage() {
     const isAllSelected = cartItems.length > 0 && selectedItems.length === cartItems.length;
     const hasSelectedItems = selectedItems.length > 0;
 
+    // Show loading screen
+    if (isPageLoading) {
+        return (
+            <div className="min-h-[100dvh] flex items-center justify-center">
+                <div className="text-center">
+                    <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-emerald-600" />
+                    <p className="text-lg font-medium text-gray-600">Đang tải giỏ hàng...</p>
+                </div>
+            </div>
+        );
+    }
+
     if (cartItems.length === 0) {
         return (
             <div className="min-h-[100dvh]">
-                <div className="container mx-auto px-4 py-8">
+                <div className="container mx-auto lg:px-30 px-4 py-8">
                     <Button variant="ghost" asChild className="mb-6">
                         <Link href="/offering">
                             <ArrowLeft className="h-4 w-4 mr-2" />
                             Quay lại danh sách sản phẩm
                         </Link>
                     </Button>
-                    
+
                     <div className="text-center py-12">
                         <ShoppingCart className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
                         <h2 className="text-2xl font-semibold mb-2">Giỏ hàng trống</h2>
@@ -237,14 +293,14 @@ export default function CartPage() {
     return (
         <div className="min-h-[100dvh]">
             {/* Header */}
-            <div className="container mx-auto px-4 py-6">
+            <div className="container mx-auto lg:px-30 px-4 py-6">
                 <Button variant="ghost" asChild className="mb-6">
                     <Link href="/offering">
                         <ArrowLeft className="h-4 w-4 mr-2" />
                         Quay lại danh sách sản phẩm
                     </Link>
                 </Button>
-                
+
                 <div className="flex items-center justify-between mb-6">
                     <h1 className="text-2xl font-bold text-emerald-900">Giỏ hàng</h1>
                     <Badge variant="secondary" className="text-sm">
@@ -254,13 +310,16 @@ export default function CartPage() {
             </div>
 
             {/* Content */}
-            <div className="container mx-auto px-4 pb-20">
+            <div className="container mx-auto lg:px-30 px-4 pb-20">
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     {/* Cart Items */}
                     <div className="lg:col-span-2 space-y-4">
-                        {/* Select All */}
-                        <Card>
-                            <CardContent className="p-4">
+                        {/* Cart Items List */}
+                        {/* Column Headers with Select All */}
+                        <div className="bg-gray-50 rounded-lg p-4 mb-4">
+                            {/* Column Headers - Hidden on mobile */}
+                            <div className="hidden md:flex items-center space-x-4 mb-4">
+                                {/* Select All Controls */}
                                 <div className="flex items-center justify-between">
                                     <div className="flex items-center space-x-3">
                                         <Checkbox
@@ -278,6 +337,48 @@ export default function CartPage() {
                                             Chọn tất cả ({cartItems.length} sản phẩm)
                                         </Label>
                                     </div>
+                                </div>
+
+                                {/* Ảnh sản phẩm */}
+                                <div className="w-16 flex-shrink-0"></div>
+                                {/* Tên sản phẩm */}
+                                <div className="flex-1 min-w-0"></div>
+
+                                {/* Số lượng */}
+                                <div className="w-32">
+                                    <span className="text-sm font-medium text-gray-600">Số lượng</span>
+                                </div>
+
+                                {/* Số tiền */}
+                                <div className="w-24 text-right">
+                                    <span className="text-sm font-medium text-gray-600">Số tiền</span>
+                                </div>
+
+                                {/* Thao tác */}
+                                <div className="w-16 text-center">
+                                    <span className="text-sm font-medium text-gray-600">Thao tác</span>
+                                </div>
+                            </div>
+
+                            {/* Select All Controls - Mobile */}
+                            <div className="md:hidden mb-4">
+                                <div className="flex items-center justify-between">
+                                    <div className="flex items-center space-x-3">
+                                        <Checkbox
+                                            id="select-all-mobile"
+                                            checked={isAllSelected}
+                                            onCheckedChange={(checked) => {
+                                                if (checked) {
+                                                    selectAllItems();
+                                                } else {
+                                                    deselectAllItems();
+                                                }
+                                            }}
+                                        />
+                                        <Label htmlFor="select-all-mobile" className="font-medium">
+                                            Chọn tất cả ({cartItems.length} sản phẩm)
+                                        </Label>
+                                    </div>
                                     {hasSelectedItems && (
                                         <Button
                                             variant="ghost"
@@ -288,10 +389,10 @@ export default function CartPage() {
                                         </Button>
                                     )}
                                 </div>
-                            </CardContent>
-                        </Card>
+                            </div>
+                        </div>
 
-                        {/* Cart Items List */}
+                        {/* Cart Items */}
                         {cartItems.map((item) => (
                             <motion.div
                                 key={item.service_item.id}
@@ -301,7 +402,8 @@ export default function CartPage() {
                             >
                                 <Card className="hover:shadow-md transition-shadow">
                                     <CardContent className="p-4">
-                                        <div className="flex items-center space-x-4">
+                                        {/* Desktop Layout */}
+                                        <div className="hidden md:flex items-center space-x-4">
                                             {/* Checkbox */}
                                             <Checkbox
                                                 id={`item-${item.service_item.id}`}
@@ -325,52 +427,219 @@ export default function CartPage() {
                                                     {item.service_item.name}
                                                 </h3>
                                                 <p className="text-emerald-600 font-semibold">
-                                                    {formatPrice(item.service_item.unitPrice)}
+                                                    {formatPrice(item.service_item.unitPrice || 0)}
                                                 </p>
                                             </div>
 
                                             {/* Quantity Controls */}
-                                            <div className="flex items-center space-x-2">
-                                                <Button
-                                                    variant="outline"
-                                                    size="sm"
-                                                    onClick={() => handleQuantityChange(item, item.quantity - 1)}
-                                                    disabled={item.quantity <= 1}
-                                                >
-                                                    <Minus className="h-4 w-4" />
-                                                </Button>
-                                                <Input
-                                                    type="number"
-                                                    value={item.quantity}
-                                                    onChange={(e) => handleQuantityChange(item, parseInt(e.target.value) || 1)}
-                                                    min={1}
-                                                    className="w-16 text-center"
-                                                />
-                                                <Button
-                                                    variant="outline"
-                                                    size="sm"
-                                                    onClick={() => handleQuantityChange(item, item.quantity + 1)}
-                                                >
-                                                    <Plus className="h-4 w-4" />
-                                                </Button>
+                                            <div className="flex items-center space-x-2 w-38">
+                                                {item.service_item.modeQty === SERVICE_ITEM_MODE_QTY.FIXED ? (
+                                                    // FIXED mode: disable all controls, show fixed quantity
+                                                    <div className="flex items-center space-x-2">
+                                                        <Input
+                                                            value={item.service_item.fixedQty || 1}
+                                                            disabled
+                                                            className="w-16 text-center bg-gray-100"
+                                                        />
+                                                    </div>
+                                                ) : item.service_item.modeQty === SERVICE_ITEM_MODE_QTY.CHOICES && item.service_item.choicesQty ? (
+                                                    // CHOICES mode: show dropdown with choices
+                                                    <div className="flex items-center space-x-2">
+                                                        <Select
+                                                            value={item.quantity.toString()}
+                                                            onValueChange={(value) => handleChoicesQuantityChange(item, parseInt(value))}
+                                                        >
+                                                            <SelectTrigger className="w-20">
+                                                                <SelectValue />
+                                                            </SelectTrigger>
+                                                            <SelectContent>
+                                                                {item.service_item.choicesQty.map((qty, index) => (
+                                                                    <SelectItem key={index} value={qty.toString()}>
+                                                                        {qty}
+                                                                    </SelectItem>
+                                                                ))}
+                                                            </SelectContent>
+                                                        </Select>
+                                                    </div>
+                                                ) : (
+                                                    // RANGE mode: normal +/- controls with proper validation
+                                                    <div className="space-y-2">
+                                                        <div className="flex items-center space-x-2">
+                                                            <Button
+                                                                variant="outline"
+                                                                size="sm"
+                                                                onClick={() => handleQuantityChange(item, item.quantity - 1)}
+                                                                disabled={item.quantity <= (item.service_item.minQty || 1)}
+                                                            >
+                                                                <Minus className="h-4 w-4" />
+                                                            </Button>
+                                                            <Input
+                                                                type="number"
+                                                                value={item.quantity}
+                                                                onChange={(e) => handleQuantityChange(item, parseInt(e.target.value) || 1)}
+                                                                min={item.service_item.minQty || 1}
+                                                                max={item.service_item.maxQty || 100}
+                                                                className="w-16 text-center"
+                                                            />
+                                                            <Button
+                                                                variant="outline"
+                                                                size="sm"
+                                                                onClick={() => handleQuantityChange(item, item.quantity + 1)}
+                                                                disabled={item.quantity >= (item.service_item.maxQty || 100)}
+                                                            >
+                                                                <Plus className="h-4 w-4" />
+                                                            </Button>
+                                                        </div>
+                                                        <p className="text-sm text-muted-foreground">
+                                                            Nhập số lượng từ {item.service_item.minQty || 1} đến {item.service_item.maxQty || 100}
+                                                        </p>
+                                                    </div>
+                                                )}
                                             </div>
 
                                             {/* Total Price */}
-                                            <div className="text-right">
+                                            <div className="text-right w-24">
                                                 <p className="font-semibold text-lg">
                                                     {formatPrice(item.service_item.unitPrice ? item.service_item.unitPrice * item.quantity : 0)}
                                                 </p>
                                             </div>
 
                                             {/* Delete Button */}
-                                            <Button
-                                                variant="ghost"
-                                                size="sm"
-                                                onClick={() => handleDeleteItem(item.service_item.id.toString())}
-                                                className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                                            >
-                                                <Trash2 className="h-4 w-4" />
-                                            </Button>
+                                            <div className="w-16 text-center">
+                                                <Button
+                                                    variant="ghost"
+                                                    size="sm"
+                                                    onClick={() => handleDeleteItem(item.service_item.id.toString())}
+                                                    className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                                                    disabled={isDeletingItem === item.service_item.id.toString()}
+                                                >
+                                                    {isDeletingItem === item.service_item.id.toString() ? (
+                                                        <Loader2 className="h-4 w-4 animate-spin" />
+                                                    ) : (
+                                                        <Trash2 className="h-4 w-4" />
+                                                    )}
+                                                </Button>
+                                            </div>
+                                        </div>
+
+                                        {/* Mobile Layout */}
+                                        <div className="md:hidden space-y-4">
+                                            {/* Header with checkbox and delete */}
+                                            <div className="flex items-start justify-between">
+                                                <div className="flex items-start space-x-3">
+                                                    <Checkbox
+                                                        id={`item-mobile-${item.service_item.id}`}
+                                                        checked={selectedItems.includes(item.service_item.id.toString())}
+                                                        onCheckedChange={() => toggleItemSelection(item.service_item.id.toString())}
+                                                    />
+                                                    <div className="relative w-20 h-20 flex-shrink-0">
+                                                        <Image
+                                                            src={item.service_item.imageMedia?.path || "/placeholder.jpg"}
+                                                            alt={item.service_item.name}
+                                                            fill
+                                                            className="object-cover rounded-lg"
+                                                        />
+                                                    </div>
+                                                </div>
+                                                <Button
+                                                    variant="ghost"
+                                                    size="sm"
+                                                    onClick={() => handleDeleteItem(item.service_item.id.toString())}
+                                                    className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                                                    disabled={isDeletingItem === item.service_item.id.toString()}
+                                                >
+                                                    {isDeletingItem === item.service_item.id.toString() ? (
+                                                        <Loader2 className="h-4 w-4 animate-spin" />
+                                                    ) : (
+                                                        <Trash2 className="h-4 w-4" />
+                                                    )}
+                                                </Button>
+                                            </div>
+
+                                            {/* Product Info */}
+                                            <div className="ml-8">
+                                                <h3 className="font-medium text-lg mb-2 line-clamp-2">
+                                                    {item.service_item.name}
+                                                </h3>
+                                                <p className="text-emerald-600 font-semibold mb-3">
+                                                    {formatPrice(item.service_item.unitPrice || 0)}
+                                                </p>
+
+                                                {/* Quantity Controls */}
+                                                <div className="mb-3">
+                                                    <label className="text-sm font-medium text-gray-600 mb-2 block">Số lượng:</label>
+                                                    {item.service_item.modeQty === SERVICE_ITEM_MODE_QTY.FIXED ? (
+                                                        // FIXED mode: disable all controls, show fixed quantity
+                                                        <div className="flex items-center space-x-2">
+                                                            <Input
+                                                                value={item.service_item.fixedQty || item.quantity}
+                                                                disabled
+                                                                className="w-20 text-center bg-gray-100"
+                                                            />
+                                                        </div>
+                                                    ) : item.service_item.modeQty === SERVICE_ITEM_MODE_QTY.CHOICES && item.service_item.choicesQty ? (
+                                                        // CHOICES mode: show dropdown with choices
+                                                        <div className="flex items-center space-x-2">
+                                                            <Select
+                                                                value={item.quantity.toString()}
+                                                                onValueChange={(value) => handleChoicesQuantityChange(item, parseInt(value))}
+                                                            >
+                                                                <SelectTrigger className="w-24">
+                                                                    <SelectValue />
+                                                                </SelectTrigger>
+                                                                <SelectContent>
+                                                                    {item.service_item.choicesQty.map((qty, index) => (
+                                                                        <SelectItem key={index} value={qty.toString()}>
+                                                                            {qty}
+                                                                        </SelectItem>
+                                                                    ))}
+                                                                </SelectContent>
+                                                            </Select>
+                                                        </div>
+                                                    ) : (
+                                                        // RANGE mode: normal +/- controls with proper validation
+                                                        <div className="space-y-2">
+                                                            <div className="flex items-center space-x-2">
+                                                                <Button
+                                                                    variant="outline"
+                                                                    size="sm"
+                                                                    onClick={() => handleQuantityChange(item, item.quantity - 1)}
+                                                                    disabled={item.quantity <= (item.service_item.minQty || 1)}
+                                                                >
+                                                                    <Minus className="h-4 w-4" />
+                                                                </Button>
+                                                                <Input
+                                                                    type="number"
+                                                                    value={item.quantity}
+                                                                    onChange={(e) => handleQuantityChange(item, parseInt(e.target.value) || 1)}
+                                                                    min={item.service_item.minQty || 1}
+                                                                    max={item.service_item.maxQty || 100}
+                                                                    className="w-20 text-center"
+                                                                />
+                                                                <Button
+                                                                    variant="outline"
+                                                                    size="sm"
+                                                                    onClick={() => handleQuantityChange(item, item.quantity + 1)}
+                                                                    disabled={item.quantity >= (item.service_item.maxQty || 100)}
+                                                                >
+                                                                    <Plus className="h-4 w-4" />
+                                                                </Button>
+                                                            </div>
+                                                            <p className="text-sm text-muted-foreground">
+                                                                Nhập số lượng từ {item.service_item.minQty || 1} đến {item.service_item.maxQty || 100}
+                                                            </p>
+                                                        </div>
+                                                    )}
+                                                </div>
+
+                                                {/* Total Price */}
+                                                <div className="flex justify-between items-center">
+                                                    <span className="text-sm font-medium text-gray-600">Tổng cộng:</span>
+                                                    <p className="font-semibold text-lg">
+                                                        {formatPrice(item.service_item.unitPrice ? item.service_item.unitPrice * item.quantity : 0)}
+                                                    </p>
+                                                </div>
+                                            </div>
                                         </div>
                                     </CardContent>
                                 </Card>
@@ -383,7 +652,7 @@ export default function CartPage() {
                         <Card className="sticky top-4">
                             <CardContent className="p-6">
                                 <h3 className="text-lg font-semibold mb-4">Tóm tắt đơn hàng</h3>
-                                
+
                                 <div className="space-y-3 mb-6">
                                     <div className="flex justify-between">
                                         <span>Số lượng sản phẩm:</span>
@@ -404,14 +673,14 @@ export default function CartPage() {
                                 <div className="space-y-3">
                                     <Button
                                         onClick={handlePaymentClick}
-                                        disabled={!hasSelectedItems}
+                                        disabled={!hasSelectedItems || isProcessingPayment}
                                         className="w-full bg-emerald-700 hover:bg-emerald-800"
                                         size="lg"
                                     >
                                         <CreditCard className="h-5 w-5 mr-2" />
                                         Thanh toán
                                     </Button>
-                                    
+
                                     <Button
                                         variant="outline"
                                         asChild

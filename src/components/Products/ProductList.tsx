@@ -1,11 +1,13 @@
 'use client'
 
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { addToCart, Product as CartProduct, Product } from '@/lib/slices/cartSlice'
 import Cart from '@/components/Cart/Cart'
 import { IProduct } from '@/types/products';
 import Image from 'next/image'
-
+import { toast } from 'react-toastify'
+import { RootState } from '@/lib/store'
+import { SERVICE_ITEM_MODE_QTY } from '@/constants/service-item';
 
 interface ProductListProps {
   products: IProduct[];
@@ -13,15 +15,36 @@ interface ProductListProps {
 
 export default function ProductList({ products }: ProductListProps) {
   const dispatch = useDispatch()
+  const cartItems = useSelector((state: RootState) => state.cart.items)
 
   const handleAddToCart = (product: IProduct) => {
+    const productId = typeof product.id === 'string' ? parseInt(product.id, 10) : product.id
+    const existingItem = cartItems.find(item => item.id === productId)
+    const modeQty = SERVICE_ITEM_MODE_QTY.RANGE // Default to RANGE for products without modeQty
+    
+    if (modeQty === SERVICE_ITEM_MODE_QTY.FIXED) { // FIXED
+      if (existingItem) {
+        toast.error("Sản phẩm đã tồn tại trong giỏ hàng")
+        return
+      }
+    }
+    
     const cartProduct: CartProduct = {
-      id: typeof product.id === 'string' ? parseInt(product.id, 10) : product.id,
+      id: productId,
       name: product.name,
       price: product.price,
-      quantity: 1
+      quantity: 1,
+      modeQty: modeQty
     }
+    
     dispatch(addToCart(cartProduct))
+    
+    // Show appropriate success message
+    if (modeQty === 2 && existingItem) {
+      toast.success("Cập nhật sản phẩm trong giỏ hàng thành công")
+    } else {
+      toast.success("Thêm vào giỏ hàng thành công")
+    }
   }
 
   return (

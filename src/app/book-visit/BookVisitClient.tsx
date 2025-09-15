@@ -89,7 +89,7 @@ export default function BookVisitClient() {
       {/* Hero */}
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_0%,rgba(13,110,0,0.08),transparent_50%),radial-gradient(circle_at_80%_100%,rgba(0,110,189,0.08),transparent_50%)]" />
-        <div className="container mx-auto px-4 py-10 md:py-14 relative">
+        <div className="container mx-auto px-4 lg:px-30 py-10 md:py-8 relative">
           <motion.div
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
@@ -101,9 +101,9 @@ export default function BookVisitClient() {
                 Đặt lịch viếng
               </h1>
               <p className="text-muted-foreground mt-1 max-w-prose">
-                Sắp xếp thời gian viếng thăm một cách trang trọng và thuận tiện. Quý khách có thể xem danh sách đã đăng ký
-                hoặc tạo đăng ký mới ngay tại đây.
+                Sắp xếp thời gian viếng thăm một cách trang trọng và thuận tiện.
               </p>
+              <p className="text-muted-foreground mt-1 max-w-prose">Quý khách có thể xem danh sách đã đăng ký hoặc tạo đăng ký mới ngay tại đây.</p>
             </div>
             <div className="grid grid-cols-2 divide-x rounded-2xl bg-white/70 backdrop-blur border">
               <div className="p-4 flex items-center gap-2">
@@ -126,11 +126,8 @@ export default function BookVisitClient() {
       </section>
 
       {/* Content */}
-      <div className="container mx-auto px-4 pb-20">
+      <div className="container mx-auto px-4 lg:px-30 pb-20">
         <Card className="border-none shadow-lg">
-          <CardHeader className="pb-0">
-            <CardTitle className="text-lg">Quản lý lịch viếng</CardTitle>
-          </CardHeader>
           <CardContent>
             <Tabs value={tab} onValueChange={setTab} className="mt-4">
               <TabsList className="grid grid-cols-2 w-full md:w-[480px] rounded-xl">

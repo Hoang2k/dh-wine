@@ -4,7 +4,7 @@ import { TServiceItem, TCartItem } from "@/types/offerings";
 
 interface CartContextType {
     cartItems: TCartItem[];
-    addToCart: (serviceItem: TServiceItem, quantity: number) => void;
+    addToCart: (serviceItem: TServiceItem, quantity: number) => { success: boolean; message?: string };
     removeFromCart: (serviceItemId: string) => void;
     updateQuantity: (serviceItemId: string, quantity: number) => void;
     clearCart: () => void;
@@ -52,21 +52,49 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     }, [selectedItems]);
 
     const addToCart = (serviceItem: TServiceItem, quantity: number) => {
-        setCartItems(prev => {
-            const existingItem = prev.find(item => item.service_item.id === serviceItem.id);
-            if (existingItem) {
-                // If item exists, update quantity and move to top
-                const updatedItem = { ...existingItem, quantity: existingItem.quantity + quantity };
-                const otherItems = prev.filter(item => item.service_item.id !== serviceItem.id);
-                return [updatedItem, ...otherItems];
-            } else {
-                // If new item, add to top
-                return [{ service_item: serviceItem, quantity }, ...prev];
-            }
-        });
+        const existingItem = cartItems.find(item => item.service_item.id === serviceItem.id);
         
-        // Only select the newly added item, deselect others
-        setSelectedItems([serviceItem.id.toString()]);
+        // Handle different modeQty behaviors
+        if (serviceItem.modeQty === 1) { // FIXED
+            if (existingItem) {
+                return { success: false, message: "Sản phẩm đã tồn tại trong giỏ hàng" };
+            } else {
+                setCartItems(prev => [{ service_item: serviceItem, quantity }, ...prev]);
+                setSelectedItems([serviceItem.id.toString()]);
+                return { success: true, message: "Thêm vào giỏ hàng thành công" };
+            }
+        } else if (serviceItem.modeQty === 2) { // CHOICES
+            if (existingItem) {
+                // Update existing product without increasing quantity
+                setCartItems(prev => {
+                    const updatedItem = { ...existingItem, service_item: serviceItem, quantity };
+                    const otherItems = prev.filter(item => item.service_item.id !== serviceItem.id);
+                    return [updatedItem, ...otherItems];
+                });
+                setSelectedItems([serviceItem.id.toString()]);
+                return { success: true, message: "Cập nhật sản phẩm trong giỏ hàng thành công" };
+            } else {
+                setCartItems(prev => [{ service_item: serviceItem, quantity }, ...prev]);
+                setSelectedItems([serviceItem.id.toString()]);
+                return { success: true, message: "Thêm vào giỏ hàng thành công" };
+            }
+        } else { // RANGE (modeQty === 3) or default behavior
+            setCartItems(prev => {
+                if (existingItem) {
+                    // If item exists, update quantity and move to top
+                    const updatedItem = { ...existingItem, quantity: existingItem.quantity + quantity };
+                    const otherItems = prev.filter(item => item.service_item.id !== serviceItem.id);
+                    return [updatedItem, ...otherItems];
+                } else {
+                    // If new item, add to top
+                    return [{ service_item: serviceItem, quantity }, ...prev];
+                }
+            });
+            
+            // Only select the newly added item, deselect others
+            setSelectedItems([serviceItem.id.toString()]);
+            return { success: true, message: "Thêm vào giỏ hàng thành công" };
+        }
     };
 
     const removeFromCart = (serviceItemId: string) => {

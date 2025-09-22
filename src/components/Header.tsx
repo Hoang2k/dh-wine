@@ -27,14 +27,14 @@ export default function Header() {
 
   const menuItems = [
     { href: '/', label: 'Trang chủ' },
-    { href: '/about', label: 'Giới thiệu' },
-    { href: '/book-visit', label: 'Đặt lịch viếng' },
-    { href: '/offering', label: 'Đặt đồ lễ' },
-    { href: '/grave-search', label: 'Tra cứu mộ' },
-    { href: '/golden-book', label: 'Sổ vàng tri ân' },
-    { href: '/news', label: 'Tin tức' },
-    { href: '/find-comrade', label: 'Nhắn tìm đồng đội' },
-    { href: '/contact', label: 'Liên hệ' },
+    { href: '/gioi-thieu', label: 'Giới thiệu' },
+    { href: '/dat-lich-vieng', label: 'Đặt lịch viếng' },
+    { href: '/dat-do-le', label: 'Đặt đồ lễ' },
+    { href: '/tra-cuu', label: 'Tra cứu mộ' },
+    { href: '/so-vang-tri-an', label: 'Sổ vàng tri ân' },
+    { href: '/tin-tuc', label: 'Tin tức' },
+    { href: '/nhan-tim-dong-doi', label: 'Nhắn tìm đồng đội' },
+    { href: '/lien-he', label: 'Liên hệ' },
   ]
 
   const isActive = (href: string) => (href === '/' ? pathname === '/' : pathname.startsWith(href))

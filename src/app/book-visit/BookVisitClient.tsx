@@ -14,7 +14,7 @@ import BookVisitForm from "@/components/Book-visit/BookVisitForm";
 import ListBookVisit from "@/components/Book-visit/ListBookVisit";
 import { createBookVisit, getBookVisit } from "@/services/book-visit";
 import { TBookVisit, TBookVisitCreate } from "@/types/book-visit";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import moment from "moment";
 
 async function getBookVisitData(params: { org_name?: string; time?: string; page?: number; per_page?: number } = {}) {
@@ -40,6 +40,7 @@ export default function BookVisitClient() {
   const [page, setPage] = React.useState(1);
   const [pageSize, setPageSize] = React.useState(20);
   const today = new Date().toISOString().slice(0, 10);
+  const queryClient = useQueryClient();
 
   async function onSubmit(values: TBookVisitCreate) {
     try {
@@ -47,6 +48,9 @@ export default function BookVisitClient() {
         ...values,
         time: moment(values.time, 'DD/MM/YYYY HH:mm', true).format('YYYY-MM-DD HH:mm'),
       });
+      
+      // Invalidate and refetch the book visit query after successful creation
+      await queryClient.invalidateQueries({ queryKey: ["book-visit"] });
     } catch (error) {
       console.error("Error creating book visit:", error);
       throw error;
@@ -55,6 +59,8 @@ export default function BookVisitClient() {
 
   function handleNavigateToList() {
     setTab("list");
+    // Force refetch when navigating to list
+    refetch();
   }
 
   function handleNavigateToHome() {
@@ -74,6 +80,8 @@ export default function BookVisitClient() {
   const { data: bookVisitsData, isLoading, error, refetch, isFetching } = useQuery<any>({
     queryKey: ["book-visit", filters, page, pageSize],
     queryFn: () => getBookVisitData({ ...filters, page, per_page: pageSize }),
+    staleTime: 0, // Always consider data stale to ensure fresh data
+    refetchOnMount: true, // Enable refetch on mount
   });
 
   const bookVisits = bookVisitsData?.data || [];

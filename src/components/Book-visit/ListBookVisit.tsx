@@ -83,7 +83,7 @@ function Toolbar({ onAdd, keyword, setKeyword, date, setDate, onSearch, isLoadin
         setDisplayDate(date);
     }, [date]);
     return (
-        <div className="space-y-3">
+        <div className="flex flex-col lg:flex-row gap-3 lg:justify-between">
             <div className="flex flex-col sm:flex-row gap-3">
             {/* Search Input - Full width on mobile, fixed width on desktop */}
             <div className="relative sm:w-[300px]">
@@ -110,7 +110,7 @@ function Toolbar({ onAdd, keyword, setKeyword, date, setDate, onSearch, isLoadin
                 </div>
                 <Button 
                     onClick={onSearch} 
-                    className="gap-2 bg-emerald-700 hover:bg-emerald-800 w-full sm:w-auto whitespace-nowrap" 
+                    className="gap-2 bg-emerald-700 hover:bg-emerald-800 hover:cursor-pointer w-full sm:w-auto whitespace-nowrap" 
                     disabled={isLoading || isFetching}
                     size="sm"
                 >
@@ -123,12 +123,12 @@ function Toolbar({ onAdd, keyword, setKeyword, date, setDate, onSearch, isLoadin
                 </Button>
             </div>
 
-            {/* Add Button Row */}
-            <div className="flex justify-end">
+            {/* Add Button - Right aligned on PC */}
+            <div className="flex justify-end lg:justify-end">
                 <Button onClick={onAdd} className="gap-2 bg-emerald-700 hover:bg-emerald-800 w-full sm:w-auto">
                     <Plus className="h-4 w-4" /> 
-                    <span className="sm:hidden">Đăng ký mới</span>
-                    <span className="hidden sm:inline">Đăng ký mới</span>
+                    <span className="sm:hidden hover:cursor-pointer">Đăng ký mới</span>
+                    <span className="hidden sm:inline hover:cursor-pointer">Đăng ký mới</span>
                 </Button>
             </div>
         </div>

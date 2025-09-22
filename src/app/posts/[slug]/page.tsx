@@ -3,7 +3,11 @@ import { Metadata } from 'next';
 import React from 'react';
 import { getListPosts, getPostDetail } from '@/services/user';
 import PostDetail from '@/components/PostDetail';
+import TeammateDetailClient from './TeammateDetailClient';
 import { Post } from '@/types/post';
+
+// Enable ISR - revalidate every 300 seconds (5 minutes)
+export const revalidate = 300;
 
 type PageParams = Promise<{
   slug: string;
@@ -13,6 +17,27 @@ export async function generateMetadata({ params }: { params: PageParams }): Prom
   const resolvedParams = await params;
   
   try {
+    // Check if it's a teammate post by checking the slug pattern
+    if (resolvedParams.slug.startsWith('tim-dong-doi-')) {
+      return {
+        title: 'Chi tiết tìm đồng đội - Nghĩa trang liệt sĩ Vị Xuyên',
+        description: 'Chi tiết thông tin tìm kiếm đồng đội liệt sĩ đã hy sinh vì Tổ quốc.',
+        keywords: [
+          'tìm kiếm liệt sĩ',
+          'đồng đội',
+          'anh hùng liệt sĩ',
+          'Vị Xuyên',
+          'nghĩa trang liệt sĩ',
+          'chi tiết liệt sĩ'
+        ],
+        openGraph: {
+          title: 'Chi tiết tìm đồng đội - Nghĩa trang liệt sĩ Vị Xuyên',
+          description: 'Chi tiết thông tin tìm kiếm đồng đội liệt sĩ đã hy sinh vì Tổ quốc.',
+          type: 'article',
+        },
+      };
+    }
+
     // Fetch post data để tạo metadata
     const postData = await getPostDetail(resolvedParams.slug);
     const post: Post = postData.data || postData;
@@ -26,7 +51,7 @@ export async function generateMetadata({ params }: { params: PageParams }): Prom
         description: post.body.substring(0, 160) + (post.body.length > 160 ? '...' : ''),
         type: 'article',
         url: `/posts/${resolvedParams.slug}`,
-        siteName: 'Your Site Name',
+        siteName: 'Nghĩa trang liệt sĩ Vị Xuyên',
       }, //Để social media hiển thị preview đẹp
       twitter: {
         card: 'summary',
@@ -61,6 +86,11 @@ export async function generateStaticParams() {
 // SEO-optimized page component
 export default async function PostPage(props: {params: PageParams}) {
   const resolvedParams = await props.params;
+  
+  // Check if it's a teammate post
+  if (resolvedParams.slug.startsWith('tim-dong-doi-')) {
+    return <TeammateDetailClient />;
+  }
   
   return (
     <div className="container mx-auto px-4 py-8">

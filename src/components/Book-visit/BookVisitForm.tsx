@@ -54,6 +54,9 @@ export default function BookVisitForm({ onSubmit, onCancel, onNavigateToList, on
     const [successOrgName, setSuccessOrgName] = React.useState("");
     const [successPhone, setSuccessPhone] = React.useState("");
     const [displayDateTime, setDisplayDateTime] = React.useState(moment().format('DD/MM/YYYY HH:mm'));
+    const [showDateTimePicker, setShowDateTimePicker] = React.useState(false);
+    const [selectedDate, setSelectedDate] = React.useState(moment());
+    const [selectedTime, setSelectedTime] = React.useState(moment().format('HH:mm'));
     const form = useForm<BookingForm>({
         resolver: zodResolver(BookingSchema),
         defaultValues: {
@@ -96,11 +99,41 @@ export default function BookVisitForm({ onSubmit, onCancel, onNavigateToList, on
         onNavigateToHome();
     }
 
-    function handleDateTimeChange(e: React.ChangeEvent<HTMLInputElement>) {
-        const value = e.target.value;
-        setDisplayDateTime(value);
-        form.setValue("time", value);
+function handleDateTimeChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const value = e.target.value;
+    // Allow any input while typing
+    setDisplayDateTime(value);
+    form.setValue("time", value);
+}
+
+function handleDateTimeFocus() {
+    setShowDateTimePicker(true);
+    // Parse current value to set picker state
+    const momentDate = moment(displayDateTime, 'DD/MM/YYYY HH:mm');
+    if (momentDate.isValid()) {
+        setSelectedDate(momentDate);
+        setSelectedTime(momentDate.format('HH:mm'));
     }
+}
+
+function handleDateSelect(date: moment.Moment) {
+    setSelectedDate(date);
+    const newDateTime = date.format('DD/MM/YYYY') + ' ' + selectedTime;
+    setDisplayDateTime(newDateTime);
+    form.setValue("time", newDateTime);
+}
+
+function handleTimeChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const time = e.target.value;
+    setSelectedTime(time);
+    const newDateTime = selectedDate.format('DD/MM/YYYY') + ' ' + time;
+    setDisplayDateTime(newDateTime);
+    form.setValue("time", newDateTime);
+}
+
+function handleDateTimePickerClose() {
+    setShowDateTimePicker(false);
+}
 
 
     return (
@@ -200,25 +233,69 @@ export default function BookVisitForm({ onSubmit, onCancel, onNavigateToList, on
                                             type="text" 
                                             value={displayDateTime}
                                             onChange={handleDateTimeChange}
+                                            onFocus={handleDateTimeFocus}
                                             className="pl-9" 
                                             placeholder="DD/MM/YYYY HH:mm"
-                                            onFocus={(e) => {
-                                                e.target.type = 'datetime-local';
-                                                // Convert DD/MM/YYYY HH:mm to YYYY-MM-DDTHH:mm for datetime-local
-                                                const momentDate = moment(displayDateTime, 'DD/MM/YYYY HH:mm');
-                                                e.target.value = momentDate.format('YYYY-MM-DDTHH:mm');
-                                            }}
-                                            onBlur={(e) => {
-                                                e.target.type = 'text';
-                                                // Convert YYYY-MM-DDTHH:mm back to DD/MM/YYYY HH:mm
-                                                const momentDate = moment(e.target.value, 'YYYY-MM-DDTHH:mm');
-                                                if (momentDate.isValid()) {
-                                                    const formattedValue = momentDate.format('DD/MM/YYYY HH:mm');
-                                                    setDisplayDateTime(formattedValue);
-                                                    form.setValue("time", formattedValue);
-                                                }
-                                            }}
+                                            readOnly
                                         />
+                                        
+                                        {/* Custom DateTime Picker */}
+                                        {showDateTimePicker && (
+                                            <div className="absolute top-full left-0 right-0 z-50 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg p-4">
+                                                <div className="space-y-4">
+                                                    {/* Date Picker */}
+                                                    <div>
+                                                        <Label className="text-sm font-medium">Chọn ngày</Label>
+                                                        <Input
+                                                            type="date"
+                                                            value={selectedDate.format('YYYY-MM-DD')}
+                                                            onChange={(e) => {
+                                                                const date = moment(e.target.value);
+                                                                if (date.isValid()) {
+                                                                    handleDateSelect(date);
+                                                                }
+                                                            }}
+                                                            className="mt-1"
+                                                        />
+                                                    </div>
+                                                    
+                                                    {/* Time Picker */}
+                                                    <div>
+                                                        <Label className="text-sm font-medium">Chọn giờ</Label>
+                                                        <Input
+                                                            type="time"
+                                                            value={selectedTime}
+                                                            onChange={handleTimeChange}
+                                                            className="mt-1"
+                                                        />
+                                                    </div>
+                                                    
+                                                    {/* Action Buttons */}
+                                                    <div className="flex gap-2 pt-2">
+                                                        <Button 
+                                                            type="button" 
+                                                            size="sm" 
+                                                            onClick={handleDateTimePickerClose}
+                                                            className="bg-emerald-700 hover:bg-emerald-800"
+                                                        >
+                                                            Xong
+                                                        </Button>
+                                                        <Button 
+                                                            type="button" 
+                                                            variant="outline" 
+                                                            size="sm" 
+                                                            onClick={() => {
+                                                                const now = moment();
+                                                                handleDateSelect(now);
+                                                                setSelectedTime(now.format('HH:mm'));
+                                                            }}
+                                                        >
+                                                            Bây giờ
+                                                        </Button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        )}
                                     </div>
                                     {form.formState.errors.time && (
                                         <p className="text-sm text-rose-600">{form.formState.errors.time.message}</p>

@@ -166,32 +166,26 @@ export default function OfferingClient() {
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ duration: 0.3 }}
                             >
-                                <Card className="group hover:shadow-lg transition-shadow duration-300">
-                                    <div className="aspect-square relative overflow-hidden rounded-t-lg">
-                                        <Image
-                                            src={item.imageMedia?.path || "/placeholder.jpg"}
-                                            alt={item.name}
-                                            fill
-                                            className="object-cover group-hover:scale-105 transition-transform duration-300"
-                                        />
-                                    </div>
-                                    <CardContent className="p-4">
-                                        <h3 className="font-medium text-lg mb-2 line-clamp-2">
-                                            {item.name}
-                                        </h3>
-                                        <p className="text-emerald-600 font-semibold text-xl mb-3">
-                                            {formatPrice(getDisplayPrice(item))}
-                                        </p>
-                                        <div className="flex gap-2">
-                                            <Button asChild className="flex-1" size="sm">
-                                                <Link href={`/offering/${item.id}`}>
-                                                    <Eye className="h-4 w-4 mr-2" />
-                                                    Xem chi tiết
-                                                </Link>
-                                            </Button>
+                                <Link href={`/offering/${item.id}`} className="block">
+                                    <Card className="group pt-0 hover:shadow-lg transition-shadow duration-300 cursor-pointer">
+                                        <div className="aspect-square relative overflow-hidden rounded-t-lg">
+                                            <Image
+                                                src={item.imageMedia?.path || "/placeholder.jpg"}
+                                                alt={item.name}
+                                                fill
+                                                className="object-cover group-hover:scale-105 transition-transform duration-300"
+                                            />
                                         </div>
-                                    </CardContent>
-                                </Card>
+                                        <CardContent className="p-4">
+                                            <h3 className="font-medium text-lg mb-2 line-clamp-2">
+                                                {item.name}
+                                            </h3>
+                                            <p className="text-emerald-600 font-semibold text-xl">
+                                                {formatPrice(getDisplayPrice(item))}
+                                            </p>
+                                        </CardContent>
+                                    </Card>
+                                </Link>
                             </motion.div>
                         ))}
                     </div>

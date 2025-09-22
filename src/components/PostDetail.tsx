@@ -1,49 +1,40 @@
-'use client';
-
-import { useQuery } from '@tanstack/react-query';
 import { getPostDetail } from '@/services/user';
 import { Post } from '@/types/post';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { Skeleton } from '@/components/ui/skeleton';
 import { Eye, Heart, HeartCrack } from 'lucide-react';
 
 interface PostDetailProps {
   postId: string;
 }
 
-export default function PostDetail({ postId }: PostDetailProps) {
-  const {
-    data: postData,
-    isLoading,
-    error,
-    isError,
-  } = useQuery({
-    queryKey: ['post', postId],
-    queryFn: () => getPostDetail(postId),
-    enabled: !!postId,
-    staleTime: 5 * 60 * 1000, // 5 minutes
-    retry: 2,
-  });
-
-  if (isLoading) {
-    return <PostDetailSkeleton />;
+// Server-side data fetching function
+async function getPostData(postId: string): Promise<Post | null> {
+  try {
+    const postData = await getPostDetail(postId);
+    return postData.data || postData;
+  } catch (error) {
+    console.error('Error fetching post:', error);
+    return null;
   }
+}
 
-  if (isError || !postData) {
+// Server Component for SEO-optimized post display
+export default async function PostDetail({ postId }: PostDetailProps) {
+  const post = await getPostData(postId);
+
+  if (!post) {
     return (
       <Card className="max-w-4xl mx-auto">
         <CardContent className="p-8 text-center">
           <p className="text-destructive text-lg">
-            {error instanceof Error ? error.message : 'Không thể tải bài viết'}
+            Không thể tải bài viết
           </p>
         </CardContent>
       </Card>
     );
   }
-
-  const post: Post = postData.data || postData;
 
   return (
     <article className="max-w-4xl mx-auto">
@@ -99,42 +90,5 @@ export default function PostDetail({ postId }: PostDetailProps) {
         </CardContent>
       </Card>
     </article>
-  );
-}
-
-function PostDetailSkeleton() {
-  return (
-    <div className="max-w-4xl mx-auto">
-      <Card>
-        <CardHeader>
-          <Skeleton className="h-8 w-3/4" />
-          <div className="flex gap-4 mt-4">
-            <Skeleton className="h-4 w-20" />
-            <Skeleton className="h-4 w-16" />
-            <Skeleton className="h-4 w-16" />
-          </div>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="flex gap-2">
-            <Skeleton className="h-6 w-16" />
-            <Skeleton className="h-6 w-20" />
-            <Skeleton className="h-6 w-14" />
-          </div>
-          <Separator />
-          <div className="space-y-3">
-            <Skeleton className="h-4 w-full" />
-            <Skeleton className="h-4 w-full" />
-            <Skeleton className="h-4 w-3/4" />
-            <Skeleton className="h-4 w-full" />
-            <Skeleton className="h-4 w-2/3" />
-          </div>
-          <Separator />
-          <div className="flex justify-between">
-            <Skeleton className="h-4 w-24" />
-            <Skeleton className="h-4 w-32" />
-          </div>
-        </CardContent>
-      </Card>
-    </div>
   );
 } 

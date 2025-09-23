@@ -24,13 +24,16 @@ const nextConfig: NextConfig = {
       { source: '/nhan-tim-dong-doi', destination: '/posts' },
       { source: '/nhan-tim-dong-doi/:slug', destination: '/posts/:slug' },
       { source: '/lien-he', destination: '/contact' },
+
       { source: '/huong-dan-mua-hang', destination: '/purchase-instructions' },
-      { source: '/phuong-thuc-than-toan', destination: '/payment-methods' },
+
+      { source: '/phuong-thuc-thanh-toan', destination: '/payment-methods' },
+      { source: '/bao-hanh-doi-tra', destination: '/warranty-return' },
+
+      { source: '/chinh-sach-giao-hang', destination: '/delivery-policy' },
+
       { source: '/chinh-sach-bao-mat', destination: '/privacy-policy' },
-      { source: '/chinh-sach-thanh-toan', destination: '/payment-methods' },
-      { source: '/chinh-sach-doi-tra', destination: '/warranty-return' },
-      { source: '/chinh-sach-giao-hang', destination: '/shipping-policy' },
-      { source: '/chinh-sach-bao-mat', destination: '/privacy-policy' },
+
       { source: '/gio-hang', destination: '/cart' },
     ];
   },

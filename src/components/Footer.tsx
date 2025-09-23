@@ -71,7 +71,7 @@ export default function Footer() {
     },
     {
       title: "Bảo hành và đổi trả",
-      url: "/chinh-sach-doi-tra"
+      url: "/bao-hanh-doi-tra"
     },
     {
       title: "Chính sách bảo mật",

@@ -1,8 +1,8 @@
 import "../assets/css/globals.css";
 import 'react-toastify/dist/ReactToastify.css';
 import ClientProvider from "@/providers/ClientProvider";
+import StructuredData from "@/components/StructuredData";
 import type { Metadata } from 'next'
-import StructuredData from '@/components/StructuredData';
 
 export const metadata: Metadata = {
   title: {
@@ -36,42 +36,6 @@ export const metadata: Metadata = {
     icon: '/logo-la-co-03.jpg',
     shortcut: '/logo-la-co-03.jpg',
     apple: '/logo-la-co-03.jpg',
-  },
-  openGraph: {
-    type: "website",
-    locale: "vi_VN",
-    url: "https://ntlsvx.com",
-    siteName: "Nghĩa trang liệt sĩ Vị Xuyên",
-    title: "Nghĩa trang liệt sĩ Vị Xuyên",
-    description: "Nghĩa trang liệt sĩ Vị Xuyên - Nơi tưởng niệm các anh hùng liệt sĩ",
-    images: [
-      {
-        url: "/logo-la-co-03.jpg",
-        width: 1200,
-        height: 630,
-        alt: "Nghĩa trang liệt sĩ Vị Xuyên",
-      }
-    ],
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Nghĩa trang liệt sĩ Vị Xuyên',
-    description: 'Nghĩa trang liệt sĩ Vị Xuyên - Nơi tưởng niệm các anh hùng liệt sĩ',
-    images: ['/logo-la-co-03.jpg'],
-  },
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: { 
-      index: true, 
-      follow: true, 
-      "max-snippet": -1, 
-      "max-image-preview": "large",
-      "max-video-preview": -1,
-    },
-  },
-  verification: {
-    google: 'your-google-verification-code', // Add your Google Search Console verification code
   },
 }
 

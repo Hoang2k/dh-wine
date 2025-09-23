@@ -176,7 +176,7 @@ export default function PaymentPopup({ isOpen, onClose, onConfirm, totalAmount, 
                                     className="flex-1 bg-emerald-700 hover:bg-emerald-800"
                                 >
                                     <CreditCard className="h-4 w-4 mr-2" />
-                                    Thanh toán
+                                    Xác nhận thanh toán
                                 </Button>
                             </div>
                         </form>

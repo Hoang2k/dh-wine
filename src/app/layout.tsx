@@ -33,9 +33,9 @@ export const metadata: Metadata = {
     canonical: '/',
   },
   icons: {
-    icon: '/logo-la-co-03.jpg',
-    shortcut: '/logo-la-co-03.jpg',
-    apple: '/logo-la-co-03.jpg',
+    icon: '/l1.jpg',
+    shortcut: '/l1.jpg',
+    apple: '/l1.jpg',
   },
 }
 

@@ -5,7 +5,7 @@ import { FaBars, FaTimes } from 'react-icons/fa'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import CartIcon from './CartIcon'
-import Logo from '../../src/assets/image/logo.png'
+import Logo from '../../src/assets/image/l1.jpg'
 
 export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)

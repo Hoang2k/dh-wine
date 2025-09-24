@@ -51,9 +51,6 @@ const sections = [
           <li>
             <strong>Thông tin giao dịch</strong>: đơn đặt lễ, gói dịch vụ, lịch sử thanh toán.
           </li>
-          <li>
-            <strong>Thông tin kỹ thuật</strong>: địa chỉ IP, loại trình duyệt, thiết bị, cookies và dữ liệu nhật ký.
-          </li>
         </ul>
       </>
     ),
@@ -154,9 +151,9 @@ const sections = [
     title: "8. Liên hệ",
     content: (
       <ul className="mt-1 space-y-1">
-        <li className="flex items-center gap-2"><Mail className="h-4 w-4" aria-hidden /> <span>Email: <a className="underline hover:no-underline" href="mailto:support@example.com">support@example.com</a></span></li>
-        <li className="flex items-center gap-2"><Phone className="h-4 w-4" aria-hidden /> <span>Hotline: 0123 456 789</span></li>
-        <li className="flex items-center gap-2"><MapPin className="h-4 w-4" aria-hidden /> <span>Địa chỉ: Hà Giang, Việt Nam</span></li>
+        <li className="flex items-center gap-2"><Mail className="h-4 w-4" aria-hidden /> <span>Email: <a className="underline hover:no-underline" href="mailto:tttuanttvl@gmail.com">tttuanttvl@gmail.com</a></span></li>
+        <li className="flex items-center gap-2"><Phone className="h-4 w-4" aria-hidden /> <span>Hotline: 0988.678.938</span></li>
+        <li className="flex items-center gap-2"><MapPin className="h-4 w-4" aria-hidden /> <span>Địa chỉ: Thôn 18, xã Vị Xuyên, tỉnh Tuyên Quang</span></li>
       </ul>
     ),
   },
@@ -255,29 +252,12 @@ export default function PrivacyPolicyPage() {
               <span className="text-xs font-medium">Cam kết bảo vệ dữ liệu</span>
             </div>
             <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">Chính sách bảo mật</h1>
-            <p className="text-muted-foreground max-w-2xl">
+            <p className="text-muted-foreground">
               Chính sách này giải thích cách chúng tôi thu thập, sử dụng, chia sẻ và bảo vệ thông tin cá nhân khi bạn
-              sử dụng các dịch vụ giới thiệu, đặt lễ, thanh toán và tra cứu tại website nghĩa trang liệt sĩ Vị Xuyên.
+              sử dụng các dịch vụ giới thiệu, đặt lễ, thanh toán và tra cứu tại Website Nghĩa trang Liệt sĩ Vị Xuyên.
             </p>
           </div>
         </header>
-
-        {/* On-page TOC */}
-        <nav aria-label="Mục lục" className="mb-8">
-          <ul className="flex flex-wrap gap-2">
-            {sections.map((s) => (
-              <li key={s.id}>
-                <a
-                  href={`#${s.id}`}
-                  className="inline-flex items-center gap-2 rounded-full border bg-background px-3 py-1 text-sm hover:bg-accent hover:text-accent-foreground transition"
-                >
-                  {s.icon}
-                  <span>{s.title.replace(/^\d+\.\s*/, "")}</span>
-                </a>
-              </li>
-            ))}
-          </ul>
-        </nav>
 
         {/* Content sections */}
         <div>
@@ -291,8 +271,8 @@ export default function PrivacyPolicyPage() {
           <h3 className="mb-1 text-base font-semibold">Yêu cầu dữ liệu cá nhân</h3>
           <p className="text-sm text-muted-foreground">
             Để thực hiện các quyền liên quan đến dữ liệu cá nhân (truy cập/xóa/chỉnh sửa), vui lòng gửi yêu cầu đến
-            <a className="mx-1 underline hover:no-underline" href="mailto:support@example.com">support@example.com</a>
-            kèm thông tin xác thực (ID đơn đặt lễ, số điện thoại đã dùng).
+            <a className="mx-1 underline hover:no-underline" href="mailto:tttuanttvl@gmail.com">tttuanttvl@gmail.com</a>
+            kèm thông tin xác thực.
           </p>
         </aside>
       </div>

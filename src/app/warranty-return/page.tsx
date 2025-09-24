@@ -138,28 +138,11 @@ export default function WarrantyReturnPolicyPage() {
             <span className="text-xs font-medium">Cam kết chất lượng & hỗ trợ đổi sản phẩm lỗi</span>
           </div>
           <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">Chính sách bảo hành, đổi trả</h1>
-          <p className="text-muted-foreground max-w-2xl">
+          <p className="text-muted-foreground">
             Quy định đổi trả cho sản phẩm lỗi/không đúng loại, điều khoản không hoàn tiền khi không đến nhận hàng, cam kết
             chất lượng đồ lễ và thông tin liên hệ khiếu nại.
           </p>
         </header>
-
-        {/* TOC */}
-        <nav aria-label="Mục lục" className="mb-8">
-          <ul className="flex flex-wrap gap-2">
-            {sections.map((s) => (
-              <li key={s.id}>
-                <a
-                  href={`#${s.id}`}
-                  className="inline-flex items-center gap-2 rounded-full border bg-background px-3 py-1 text-sm hover:bg-accent hover:text-accent-foreground transition"
-                >
-                  {s.icon}
-                  <span>{s.title.replace(/^\d+\.\s*/, "")}</span>
-                </a>
-              </li>
-            ))}
-          </ul>
-        </nav>
 
         {/* Content */}
         <div>

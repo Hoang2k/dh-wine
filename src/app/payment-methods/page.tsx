@@ -1,8 +1,17 @@
-import React from "react";
+import {
+  CreditCard,
+  Shield,
+  ArrowRight,
+  HelpCircle,
+  CheckCircle2,
+  Banknote,
+  Info,
+  ExternalLink,
+} from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import Script from "next/script";
-import { CreditCard, Shield, ArrowRight, HelpCircle, CheckCircle2, Banknote, Info, ExternalLink } from "lucide-react";
+import React from "react";
 
 // SERVER COMPONENT (App Router). Do NOT add "use client" here.
 // Place this file at: app/(marketing)/phuong-thuc-thanh-toan/page.tsx
@@ -34,11 +43,11 @@ export const metadata: Metadata = {
 
 const steps = [
   {
-    title: "Chọn \"Thanh toán\"",
+    title: 'Chọn "Thanh toán"',
     desc: "Nhập thông tin cần thiết",
   },
   {
-    title: "Chọn \"Xác nhận thanh toán\"",
+    title: 'Chọn "Xác nhận thanh toán"',
     desc: "Hệ thống chuyển hướng đến trang thanh toán do VNPAY cung cấp (Hosted UI).",
   },
   {
@@ -70,14 +79,24 @@ const faqs = [
   },
 ];
 
-function StepItem({ index, title, desc }: { index: number; title: string; desc: string }) {
+function StepItem({
+  index,
+  title,
+  desc,
+}: {
+  index: number;
+  title: string;
+  desc: string;
+}) {
   return (
     <li className="group relative rounded-2xl border bg-card p-5 transition hover:shadow-md">
       <div className="flex items-start gap-4">
-        <div className="flex h-10 w-10 items-center justify-center rounded-xl border bg-background font-semibold">{index}</div>
+        <div className="flex h-10 w-10 items-center justify-center rounded-xl border bg-background font-semibold">
+          {index}
+        </div>
         <div>
           <h3 className="font-semibold leading-none tracking-tight">{title}</h3>
-          <p className="mt-1 text-sm text-muted-foreground">{desc}</p>
+          <p className="mt-1 text-sm">{desc}</p>
         </div>
       </div>
     </li>
@@ -87,8 +106,11 @@ function StepItem({ index, title, desc }: { index: number; title: string; desc: 
 function FAQItem({ q, a }: { q: string; a: string }) {
   return (
     <div className="rounded-xl border p-4">
-      <div className="mb-1 flex items-center gap-2 font-medium"><HelpCircle className="h-4 w-4" aria-hidden />{q}</div>
-      <p className="text-sm text-muted-foreground">{a}</p>
+      <div className="mb-1 flex items-center gap-2 font-medium">
+        <HelpCircle className="h-4 w-4" aria-hidden />
+        {q}
+      </div>
+      <p className="text-sm">{a}</p>
     </div>
   );
 }
@@ -105,7 +127,12 @@ export default function PaymentMethodPage() {
           "@type": "BreadcrumbList",
           itemListElement: [
             { "@type": "ListItem", position: 1, name: "Trang chủ", item: "/" },
-            { "@type": "ListItem", position: 2, name: "Phương thức thanh toán", item: "/phuong-thuc-thanh-toan" },
+            {
+              "@type": "ListItem",
+              position: 2,
+              name: "Phương thức thanh toán",
+              item: "/phuong-thuc-thanh-toan",
+            },
           ],
         })}
       </Script>
@@ -139,35 +166,54 @@ export default function PaymentMethodPage() {
         <header className="mb-8 sm:mb-12 space-y-4">
           <div className="inline-flex items-center gap-2 rounded-full bg-blue-50/60 px-3 py-1 text-blue-700 ring-1 ring-blue-200 dark:bg-blue-400/10 dark:text-blue-300 dark:ring-blue-900/40">
             <CreditCard className="h-4 w-4" aria-hidden />
-            <span className="text-xs font-medium">Thanh toán duy nhất qua VNPAY</span>
+            <span className="text-xs font-medium">
+              Thanh toán duy nhất qua VNPAY
+            </span>
           </div>
-          <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">Phương thức thanh toán</h1>
-          <p className="text-muted-foreground max-w-2xl">
-            Chúng tôi hỗ trợ <strong>một</strong> phương thức thanh toán: chuyển hướng sang <strong>VNPAY</strong> để
-            quét QR hoặc xác thực ngân hàng. Nhanh chóng, an toàn và tiện lợi.
+          <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
+            Phương thức thanh toán
+          </h1>
+          <p className="text-muted-foreground">
+            Chúng tôi hỗ trợ <strong>một</strong> phương thức thanh toán: chuyển
+            hướng sang <strong>VNPAY</strong> để quét QR hoặc xác thực ngân
+            hàng. Nhanh chóng, an toàn và tiện lợi.
           </p>
-          <div className="text-sm text-muted-foreground">Cập nhật gần nhất: <time dateTime={updatedAt}>{updatedAt}</time></div>
         </header>
 
         {/* Cards: Only one method (VNPAY) */}
         <section aria-labelledby="method">
-          <h2 id="method" className="sr-only">Phương thức</h2>
+          <h2 id="method" className="sr-only">
+            Phương thức
+          </h2>
           <div className="grid gap-6 md:grid-cols-2">
             <div className="rounded-2xl border bg-card p-6 shadow-sm">
               <div className="flex items-start gap-4">
-                <div className="rounded-xl border bg-background p-3"><CreditCard className="h-6 w-6" aria-hidden /></div>
+                <div className="rounded-xl border bg-background p-3">
+                  <CreditCard className="h-6 w-6" aria-hidden />
+                </div>
                 <div className="flex-1">
-                  <h3 className="text-lg font-semibold">VNPAY (Hosted UI)</h3>
-                  <p className="mt-1 text-sm text-muted-foreground">
-                    Bạn sẽ được chuyển sang trang thanh toán của VNPAY để quét QR hoặc chọn ngân hàng.
+                  <h3 className="text-lg font-semibold">VNPAY</h3>
+                  <p className="mt-1 text-sm">
+                    Bạn sẽ được chuyển sang trang thanh toán của VNPAY để quét
+                    QR hoặc chọn ngân hàng.
                   </p>
                   <ul className="mt-3 space-y-2 text-sm">
-                    <li className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4" aria-hidden /> Nhanh chóng và phổ biến</li>
-                    <li className="flex items-center gap-2"><Shield className="h-4 w-4" aria-hidden /> Bảo mật trên hạ tầng VNPAY</li>
-                    <li className="flex items-center gap-2"><Banknote className="h-4 w-4" aria-hidden /> Hỗ trợ chuyển khoản/QR đa ngân hàng</li>
+                    <li className="flex items-center gap-2">
+                      <CheckCircle2 className="h-4 w-4" aria-hidden /> Nhanh
+                      chóng và phổ biến
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <Shield className="h-4 w-4" aria-hidden /> Bảo mật trên hạ
+                      tầng VNPAY
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <Banknote className="h-4 w-4" aria-hidden /> Hỗ trợ chuyển
+                      khoản/QR đa ngân hàng
+                    </li>
                   </ul>
-                  <p className="mt-2 text-xs text-muted-foreground">
-                    Bằng cách tiếp tục, bạn đồng ý với các điều khoản thanh toán và chính sách bảo mật.
+                  <p className="mt-2 text-xs">
+                    Bằng cách tiếp tục, bạn đồng ý với các điều khoản thanh toán
+                    và chính sách bảo mật.
                   </p>
                 </div>
               </div>
@@ -175,14 +221,27 @@ export default function PaymentMethodPage() {
 
             {/* Info card */}
             <div className="rounded-2xl border bg-card p-6 shadow-sm">
-              <div className="mb-2 flex items-center gap-2 font-semibold"><Info className="h-4 w-4" aria-hidden />Lưu ý quan trọng</div>
-              <ul className="list-disc ml-5 space-y-2 text-sm text-muted-foreground">
-                <li>Sau khi thanh toán thành công, bạn sẽ được chuyển về trang kết quả tại website.</li>
-                <li>Nếu thoát trình duyệt giữa chừng, đơn có thể ở trạng thái chờ; bạn có thể thanh toán lại từ lịch sử đơn.</li>
+              <div className="mb-2 flex items-center gap-2 font-semibold">
+                <Info className="h-4 w-4" aria-hidden />
+                Lưu ý quan trọng
+              </div>
+              <ul className="list-disc ml-5 space-y-2 text-sm">
+                <li>
+                  Sau khi thanh toán thành công, bạn sẽ được chuyển về trang kết
+                  quả tại website.
+                </li>
+                <li>
+                  Nếu thoát trình duyệt giữa chừng, đơn có thể ở trạng thái chờ;
+                  bạn có thể thanh toán lại từ lịch sử đơn.
+                </li>
               </ul>
               <div className="mt-3 text-sm">
-                <Link href="/privacy-policy" className="inline-flex items-center gap-1 underline hover:no-underline">
-                  Xem Chính sách bảo mật <ExternalLink className="h-3.5 w-3.5" />
+                <Link
+                  href="/privacy-policy"
+                  className="inline-flex items-center gap-1 underline hover:no-underline"
+                >
+                  Xem Chính sách bảo mật{" "}
+                  <ExternalLink className="h-3.5 w-3.5" />
                 </Link>
               </div>
             </div>
@@ -191,17 +250,23 @@ export default function PaymentMethodPage() {
 
         {/* Steps */}
         <section aria-labelledby="steps" className="mt-10">
-          <h2 id="steps" className="text-base font-semibold">Quy trình thanh toán VNPAY</h2>
-          <ol className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <h2 id="steps" className="text-base font-semibold">
+            Quy trình thanh toán VNPAY
+          </h2>
+          <ol className="mt-4 list-decimal list-inside space-y-2 text-md">
             {steps.map((s, i) => (
-              <StepItem key={s.title} index={i + 1} title={s.title} desc={s.desc} />
+              <li key={s.title}>
+                <span className="font-medium">{s.title}:</span> {s.desc}
+              </li>
             ))}
           </ol>
         </section>
 
         {/* FAQ */}
         <section aria-labelledby="faq" className="mt-12">
-          <h2 id="faq" className="text-base font-semibold">Câu hỏi thường gặp</h2>
+          <h2 id="faq" className="text-base font-semibold">
+            Câu hỏi thường gặp
+          </h2>
           <div className="mt-4 grid gap-4 md:grid-cols-2">
             {faqs.map((f) => (
               <FAQItem key={f.q} q={f.q} a={f.a} />
@@ -211,9 +276,18 @@ export default function PaymentMethodPage() {
 
         {/* Contact */}
         <section aria-labelledby="contact" className="mt-12">
-          <h2 id="contact" className="text-base font-semibold">Liên hệ hỗ trợ thanh toán</h2>
-          <div className="mt-3 rounded-2xl border bg-card p-5 text-sm text-muted-foreground">
-            Email: <a className="underline hover:no-underline" href="mailto:support@example.com">support@example.com</a> · Hotline: 0123 456 789
+          <h2 id="contact" className="text-base font-semibold">
+            Liên hệ hỗ trợ thanh toán
+          </h2>
+          <div className="mt-3 rounded-2xl border bg-card p-5 text-sm">
+            Email:{" "}
+            <a
+              className="underline hover:no-underline text-blue-500"
+              href="mailto:tttuanttvl@gmail.com"
+            >
+              tttuanttvl@gmail.com
+            </a>{" "}
+            · Hotline: 0988.678.938
           </div>
         </section>
       </div>

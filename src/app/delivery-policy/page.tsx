@@ -128,7 +128,7 @@ const sections = [
     content: (
       <ul className="mt-1 space-y-1">
         <li>Bộ phận sắp lễ (Nhung): <strong>0988.058.390</strong></li>
-        <li>Ban Quản lý nghĩa trang (Tuấn): <strong>0988.678.938</strong></li>
+        <li>Ban Quản lý Nghĩa trang Liệt sĩ Vị Xuyên (Tuấn): <strong>0988.678.938</strong></li>
       </ul>
     ),
   },
@@ -184,28 +184,12 @@ export default function DeliveryPolicyPage() {
             <span className="text-xs font-medium">Giao trực tiếp tại khu vực đã đăng ký</span>
           </div>
           <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">Chính sách giao hàng</h1>
-          <p className="text-muted-foreground max-w-2xl">
+          <p className="text-muted-foreground ">
             Quy định về phạm vi áp dụng, hình thức giao nhận, thời gian, xác nhận & theo dõi, chi phí, xử lý phát sinh
             và thông tin liên hệ hỗ trợ.
           </p>
         </header>
 
-        {/* TOC */}
-        <nav aria-label="Mục lục" className="mb-8">
-          <ul className="flex flex-wrap gap-2">
-            {sections.map((s) => (
-              <li key={s.id}>
-                <a
-                  href={`#${s.id}`}
-                  className="inline-flex items-center gap-2 rounded-full border bg-background px-3 py-1 text-sm hover:bg-accent hover:text-accent-foreground transition"
-                >
-                  {s.icon}
-                  <span>{s.title.replace(/^\d+\.\s*/, "")}</span>
-                </a>
-              </li>
-            ))}
-          </ul>
-        </nav>
 
         {/* Content */}
         <div>

@@ -180,7 +180,7 @@ export default function TeammatesClient() {
                             className="bg-[#087443] hover:bg-[#065a33] text-white px-6 py-3 rounded-lg font-medium shadow-lg hover:shadow-xl transition-all duration-300"
                             asChild
                         >
-                            <Link href="/posts/create">
+                            <Link href="/find-relatives/create">
                                 <Plus className="h-5 w-5 mr-2" />
                                 Đăng bài tìm đồng đội
                             </Link>

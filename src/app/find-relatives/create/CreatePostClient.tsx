@@ -108,7 +108,7 @@ export default function CreatePostClient() {
                             asChild
                             className="border-[#087443] text-[#087443] hover:bg-[#087443] hover:text-white"
                         >
-                            <Link href="/posts">
+                            <Link href="/find-relatives">
                                 <ArrowLeft className="h-4 w-4 mr-2" />
                                 Quay lại danh sách
                             </Link>

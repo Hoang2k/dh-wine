@@ -1,4 +1,4 @@
-import NewsClient from './NewsClient';
+import NewsClient from "@/components/News/NewsClient";
 
 // Enable ISR - revalidate every 300 seconds (5 minutes)
 export const revalidate = 300;

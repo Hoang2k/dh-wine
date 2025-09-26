@@ -1,13 +1,20 @@
-import React from "react";
-import type { Metadata } from "next";
-import Link from "next/link";
-import Script from "next/script";
-import { ShoppingCart, Info, Image as ImageIcon, CheckCircle2, ArrowRight, ListOrdered } from "lucide-react";
-import Image, { StaticImageData } from "next/image";
 import step1Image from "@/assets/image/purchase-instructions/step-1.png";
 import step2Image from "@/assets/image/purchase-instructions/step-2.png";
 import step3Image from "@/assets/image/purchase-instructions/step-3.png";
 import step4Image from "@/assets/image/purchase-instructions/step-4.png";
+import {
+  ShoppingCart,
+  Info,
+  Image as ImageIcon,
+  CheckCircle2,
+  ArrowRight,
+  ListOrdered,
+} from "lucide-react";
+import type { Metadata } from "next";
+import Image, { StaticImageData } from "next/image";
+import Link from "next/link";
+import Script from "next/script";
+import React from "react";
 
 // SERVER COMPONENT (App Router). Do NOT add "use client".
 // Place at: app/(marketing)/huong-dan-mua-hang/page.tsx
@@ -48,10 +55,10 @@ const steps = [
   },
   {
     id: "buoc-2",
-    title: "Bước 2: Thêm vào giỏ hàng hoặc \"Đặt ngay\"",
+    title: 'Bước 2: Thêm vào giỏ hàng hoặc "Đặt ngay"',
     bullets: [
-      "Nhấn \"Thêm vào giỏ hàng\" sau đó bấm vào icon giỏ hàng bên trên cùng bên phải để đến trang giỏ hàng",
-      "Hoặc nhấn \"Đặt ngay\" để đi đến trang giỏ hàng",
+      'Nhấn "Thêm vào giỏ hàng" sau đó bấm vào icon giỏ hàng bên trên cùng bên phải để đến trang giỏ hàng',
+      'Hoặc nhấn "Đặt ngay" để đi đến trang giỏ hàng',
       "Kiểm tra số lượng và tổng tiền",
       "Có thể thay đổi số lượng hoặc xóa sản phẩm",
       "Tiếp tục mua sắm hoặc tiến hành thanh toán",
@@ -71,9 +78,9 @@ const steps = [
   },
   {
     id: "buoc-4",
-    title: "Bước 4: Chọn \"Xác nhận thanh toán\"",
+    title: 'Bước 4: Chọn "Xác nhận thanh toán"',
     bullets: [
-      "Nhấn \"Xác nhận thanh toán\"",
+      'Nhấn "Xác nhận thanh toán"',
       "Hệ thống chuyển hướng đến trang thanh toán do VNPAY cung cấp (Hosted UI).",
       "Quét QR hoặc chọn ngân hàng",
     ],
@@ -81,17 +88,23 @@ const steps = [
   },
 ];
 
-function ImagePlaceholder({ step, image }: { step: number; image: StaticImageData }) {
+function ImagePlaceholder({
+  step,
+  image,
+}: {
+  step: number;
+  image: StaticImageData;
+}) {
   return (
     <div className="relative aspect-[16/9] w-full overflow-hidden rounded-xl border bg-muted/40">
       <div className="absolute inset-0 grid place-items-center text-muted-foreground">
         <div className="flex flex-col items-center">
-          <Image 
+          <Image
             fill
-            src={image} 
-            alt={`Bước ${step}`} 
-            className="h-full w-full object-cover" 
-            aria-hidden 
+            src={image}
+            alt={`Bước ${step}`}
+            className="h-full w-full object-cover"
+            aria-hidden
           />
         </div>
       </div>
@@ -99,11 +112,28 @@ function ImagePlaceholder({ step, image }: { step: number; image: StaticImageDat
   );
 }
 
-function StepCard({ index, title, bullets, id, image }: { index: number; title: string; bullets: string[]; id: string; image: StaticImageData }) {
+function StepCard({
+  index,
+  title,
+  bullets,
+  id,
+  image,
+}: {
+  index: number;
+  title: string;
+  bullets: string[];
+  id: string;
+  image: StaticImageData;
+}) {
   return (
-    <section id={id} className="scroll-mt-24 rounded-2xl border bg-card p-5 shadow-sm">
+    <section
+      id={id}
+      className="scroll-mt-24 rounded-2xl border bg-card p-5 shadow-sm"
+    >
       <div className="mb-3 flex items-center gap-3">
-        <div className="flex h-10 w-10 items-center justify-center rounded-xl border bg-background font-semibold">{index}</div>
+        <div className="flex h-10 w-10 items-center justify-center rounded-xl border bg-background font-semibold">
+          {index}
+        </div>
         <h2 className="text-lg font-semibold tracking-tight">{title}</h2>
       </div>
 
@@ -134,7 +164,12 @@ export default function HowToBuyPage() {
           "@type": "BreadcrumbList",
           itemListElement: [
             { "@type": "ListItem", position: 1, name: "Trang chủ", item: "/" },
-            { "@type": "ListItem", position: 2, name: "Hướng dẫn mua hàng", item: "/huong-dan-mua-hang" },
+            {
+              "@type": "ListItem",
+              position: 2,
+              name: "Hướng dẫn mua hàng",
+              item: "/huong-dan-mua-hang",
+            },
           ],
         })}
       </Script>
@@ -151,7 +186,10 @@ export default function HowToBuyPage() {
             "@type": "HowToStep",
             name: s.title,
             position: i + 1,
-            itemListElement: s.bullets.map((b) => ({ "@type": "HowToDirection", text: b })),
+            itemListElement: s.bullets.map((b) => ({
+              "@type": "HowToDirection",
+              text: b,
+            })),
           })),
         })}
       </Script>
@@ -161,42 +199,63 @@ export default function HowToBuyPage() {
         <header className="mb-8 sm:mb-12 space-y-4">
           <div className="inline-flex items-center gap-2 rounded-full bg-emerald-50/60 px-3 py-1 text-emerald-700 ring-1 ring-emerald-200 dark:bg-emerald-400/10 dark:text-emerald-300 dark:ring-emerald-900/40">
             <ListOrdered className="h-4 w-4" aria-hidden />
-            <span className="text-xs font-medium">Hướng dẫn từng bước • Có chỗ chèn ảnh</span>
+            <span className="text-xs font-medium">Hướng dẫn từng bước</span>
           </div>
-          <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">Hướng dẫn mua hàng</h1>
+          <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
+            Hướng dẫn mua hàng
+          </h1>
           <p className="text-muted-foreground max-w-2xl">
-            Thực hiện theo 4 bước đơn giản để đặt đồ lễ/hoa/vòng hoa trên hệ thống.
+            Thực hiện theo 4 bước đơn giản để đặt đồ lễ/hoa/vòng hoa trên hệ
+            thống.
           </p>
         </header>
 
-        {/* Steps */}
-        <ol className="grid gap-4 sm:grid-cols-2">
+        <div className="mx-auto max-w-5xl space-y-12">
           {steps.map((s, i) => (
-            <li key={s.id}>
-              <StepCard id={s.id} index={i + 1} title={s.title} bullets={s.bullets} image={s.image} />
-            </li>
+            <section key={s.id} id={s.id} className="space-y-4">
+              {/* Tiêu đề bước */}
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-600 text-white font-semibold">
+                  {i + 1}
+                </div>
+                <h2 className="text-xl font-semibold tracking-tight">
+                  {s.title}
+                </h2>
+              </div>
+
+              {/* Ảnh minh họa */}
+              <ImagePlaceholder step={i + 1} image={s.image} />
+
+              {/* Bullets */}
+              {s.bullets.length > 0 && (
+                <ul className="mt-2 list-disc space-y-1 pl-6 text-sm leading-relaxed">
+                  {s.bullets.map((b) => (
+                    <li key={b}>{b}</li>
+                  ))}
+                </ul>
+              )}
+            </section>
           ))}
-        </ol>
+        </div>
 
         {/* CTA row */}
-        <div className="mt-10 grid gap-4 sm:grid-cols-2">
-          <div className="rounded-2xl border bg-card p-5 shadow-sm">
-            <div className="mb-2 font-semibold">Bắt đầu mua ngay</div>
-            <p className="text-sm text-muted-foreground">Xem danh sách dịch vụ đồ lễ và chọn mẫu phù hợp.</p>
-            <div className="mt-3">
-              <Link href="/dat-do-le" className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-4 py-2 text-white hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-400">
-                Xem sản phẩm <ArrowRight className="h-4 w-4" aria-hidden />
-              </Link>
-            </div>
+        <div className="mx-auto max-w-5xl px-4 mt-4 space-x-3 flex justify-center items-center">
+          <div>
+            <Link
+              href="/dat-do-le"
+              className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-4 py-2 text-white hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-400"
+            >
+              Xem sản phẩm <ArrowRight className="h-4 w-4" aria-hidden />
+            </Link>
           </div>
-          <div className="rounded-2xl border bg-card p-5 shadow-sm">
-            <div className="mb-2 font-semibold">Vào giỏ hàng</div>
-            <p className="text-sm text-muted-foreground">Kiểm tra số lượng, tổng tiền và tiến hành thanh toán.</p>
-            <div className="mt-3">
-              <Link href="/gio-hang" className="inline-flex items-center gap-2 rounded-xl border bg-background px-4 py-2 hover:bg-accent hover:text-accent-foreground">
-                Tới giỏ hàng <ShoppingCart className="h-4 w-4" aria-hidden />
-              </Link>
-            </div>
+
+          <div>
+            <Link
+              href="/gio-hang"
+              className="inline-flex items-center gap-2 rounded-xl border bg-background px-4 py-2 hover:bg-accent hover:text-accent-foreground"
+            >
+              Tới giỏ hàng <ShoppingCart className="h-4 w-4" aria-hidden />
+            </Link>
           </div>
         </div>
       </div>

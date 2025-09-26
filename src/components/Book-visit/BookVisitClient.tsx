@@ -97,22 +97,14 @@ export default function BookVisitClient() {
       {/* Hero */}
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_0%,rgba(13,110,0,0.08),transparent_50%),radial-gradient(circle_at_80%_100%,rgba(0,110,189,0.08),transparent_50%)]" />
-        <div className="container mx-auto px-4 lg:px-30 py-10 md:py-8 relative">
+        <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-b from-transparent to-white" />
+        <div className="container mx-auto px-4 lg:px-30 py-4 md:py-8 relative">
           <motion.div
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
             className="flex flex-col md:flex-row md:items-end md:justify-between gap-4"
           >
-            <div>
-              <h1 className="text-2xl md:text-3xl font-semibold tracking-tight text-emerald-900">
-                Đặt lịch viếng
-              </h1>
-              <p className="text-muted-foreground mt-1 max-w-prose">
-                Sắp xếp thời gian viếng thăm một cách trang trọng và thuận tiện.
-              </p>
-              <p className="text-muted-foreground mt-1 max-w-prose">Quý khách có thể xem danh sách đã đăng ký hoặc tạo đăng ký mới ngay tại đây.</p>
-            </div>
             <div className="grid grid-cols-2 divide-x rounded-2xl bg-white/70 backdrop-blur border">
               <div className="p-4 flex items-center gap-2">
                 <Calendar className="h-5 w-5 text-emerald-700" />

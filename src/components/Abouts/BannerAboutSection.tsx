@@ -1,6 +1,3 @@
-"use client";
-
-import { useEffect, useRef, useState } from "react";
 import HeroMemorialImage from "../../assets/image/about/bg-main-about.png";
 import { Users2, MapPin, Calendar as CalendarIcon, Search, CalendarCheck } from "lucide-react";
 import Image from "next/image";
@@ -70,10 +67,4 @@ export default function BannerAboutSection({
       </section>
     </div>
   );
-  <div className="absolute inset-0 grid place-items-center p-2 pointer-events-none">
-    <h2 className="max-w-[90%] text-center text-xl md:text-2xl font-extrabold
-                       text-white leading-tight break-words">
-      BẢN HÙNG CA NƠI BIÊN CƯƠNG
-    </h2>
-  </div>
 }

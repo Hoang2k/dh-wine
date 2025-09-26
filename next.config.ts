@@ -21,8 +21,10 @@ const nextConfig: NextConfig = {
       { source: '/dat-do-le', destination: '/offering' },
       { source: '/tra-cuu', destination: '/grave-search' },
       { source: '/so-vang-tri-an', destination: '/golden-book' },
-      { source: '/nhan-tim-dong-doi', destination: '/posts' },
-      { source: '/nhan-tim-dong-doi/:slug', destination: '/posts/:slug' },
+      { source: '/nhan-tim-dong-doi', destination: '/find-relatives' },
+      { source: '/nhan-tim-dong-doi/:slug', destination: '/find-relatives/:slug' },
+      { source: '/nhan-tim-dong-doi/tao-moi', destination: '/find-relatives/create' },
+
       { source: '/lien-he', destination: '/contact' },
 
       { source: '/huong-dan-mua-hang', destination: '/purchase-instructions' },

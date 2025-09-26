@@ -7,29 +7,19 @@ export const getServiceItems = async (params?: {
     per_page?: number 
 }): Promise<{ data: TServiceItem[]; meta: { page: number; perPage: number; total: number; totalPages: number } }> => {
     try {
-        console.log("Fetching service items with params:", params);
-        const response = await axiosInstance.get({
-            url: "/service-item",
-            params
-        });
-        console.log("Service items API response:", response);
-        return response;
+        const query = new URLSearchParams(params as any).toString();
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/service-item?${query}`, {next: { revalidate: 300 },});
+        return await res.json();
     } catch (error) {
-        console.error("Error fetching service items:", error);
         throw error;
     }
 };
 
 export const getServiceItemById = async (id: string): Promise<TServiceItem> => {
     try {
-        console.log("Fetching service item by ID:", id);
-        const response = await axiosInstance.get({
-            url: `/service-item/${id}`
-        });
-        console.log("Service item API response:", response.data);
-        return response; // Changed from response to response.data
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/service-item/${id}`); 
+        return response.json(); // Changed from response to response.data
     } catch (error) {
-        console.error("Error fetching service item:", error);
         throw error;
     }
 };

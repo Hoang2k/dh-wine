@@ -1,4 +1,4 @@
-"use client";
+'use client'
 
 import { ArrowRight } from "lucide-react";
 import New1 from "../../assets/image/bg2.jpg";

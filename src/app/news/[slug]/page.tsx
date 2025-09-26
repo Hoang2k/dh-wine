@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation';
-import NewsDetailClient from './NewsDetailClient';
+import NewsDetailClient from '@/components/News/NewsDetailClient';
 
 // Enable ISR - revalidate every 300 seconds (5 minutes)
 export const revalidate = 300;

@@ -87,7 +87,7 @@ export default function TeammateDetailClient() {
                 {/* Back Button */}
                 <div className="mb-6">
                     <Link 
-                        href="/posts" 
+                        href="/find-relatives" 
                         className="inline-flex items-center gap-2 text-[#087443] hover:text-[#065a33] transition-colors"
                     >
                         <ArrowLeft className="h-4 w-4" />

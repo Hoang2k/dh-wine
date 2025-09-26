@@ -86,7 +86,7 @@ export async function generateStaticParams() {
   try {
     // Fetch all service items to generate static params
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/service-items?per_page=100`, {
-      next: { revalidate: 3600 } // Revalidate every hour
+      next: { revalidate: 300 } // Revalidate every hour
     });
     const data = await response.json();
     
@@ -100,7 +100,7 @@ export async function generateStaticParams() {
 }
 
 // Enable ISR - revalidate every 600 seconds (10 minutes)
-export const revalidate = 600;
+export const revalidate = 300;
 
 export default async function OfferingDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;

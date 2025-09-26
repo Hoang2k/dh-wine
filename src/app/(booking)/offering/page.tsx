@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 import OfferingClient from './OfferingClient';
+import { getServiceItems } from "@/services/offerings";
 
 export const metadata: Metadata = {
   title: 'Sản phẩm cúng viếng | Nghĩa trang liệt sĩ Vị Xuyên',
@@ -47,8 +48,11 @@ export const metadata: Metadata = {
 };
 
 // Enable ISR - revalidate every 600 seconds (10 minutes)
-export const revalidate = 600;
+export const revalidate = 300;
 
-export default function OfferingPage() {
-  return <OfferingClient />;
+export default async function OfferingPage() {
+  const response = await getServiceItems({ page: 1, per_page: 50 });
+  const items = response?.data || [];
+
+  return <OfferingClient items={items} />;
 }

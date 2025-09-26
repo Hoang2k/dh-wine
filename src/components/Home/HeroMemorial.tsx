@@ -1,6 +1,3 @@
-"use client";
-
-import { useEffect, useRef, useState } from "react";
 import HeroMemorialImage from "../../assets/image/bg2.jpg";
 import { Users2, MapPin, Calendar as CalendarIcon } from "lucide-react";
 import Image from "next/image";
@@ -19,96 +16,10 @@ interface HeroMemorialProps {
   alt?: string;
 }
 
-/** Count up text: 0 -> number, giữ prefix/suffix (vd: "468m") */
-function CountUpText({
-  value,
-  className = "",
-  duration = 1800, // ms
-  locale = "en-US", // "en-US" -> 2,847 ; "vi-VN" -> 2.847
-}: {
-  value: string | number;
-  className?: string;
-  duration?: number;
-  locale?: string;
-}) {
-  const parse = (v: string | number) => {
-    if (typeof v === "number") return { num: v, prefix: "", suffix: "" };
-    const m = String(v).trim().match(/^([^\d\-+]*)([\d.,]+)([^\d]*)$/);
-    if (!m) return { num: NaN, prefix: "", suffix: "" };
-    const raw = m[2].replace(/[.\s,]/g, ""); // bỏ phân cách
-    return { num: parseInt(raw, 10), prefix: m[1] ?? "", suffix: m[3] ?? "" };
-  };
-
-  const { num, prefix, suffix } = parse(value);
-
-  const [val, setVal] = useState<number | string>(() =>
-    Number.isFinite(num) ? 0 : value
-  );
-  const ref = useRef<HTMLSpanElement | null>(null);
-  const played = useRef(false);
-
-  useEffect(() => {
-    if (!Number.isFinite(num)) return;
-    const el = ref.current;
-    if (!el) return;
-
-    const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3);
-
-    const play = () => {
-      if (played.current) return;
-      played.current = true;
-
-      let startTime: number | null = null;
-      let raf = 0;
-
-      const tick = (ts: number) => {
-        if (startTime === null) startTime = ts;
-        const p = Math.min((ts - startTime) / duration, 1);
-        const eased = easeOutCubic(p);
-        setVal(Math.floor((num as number) * eased));
-        if (p < 1) raf = requestAnimationFrame(tick);
-      };
-
-      raf = requestAnimationFrame(tick);
-      return () => cancelAnimationFrame(raf);
-    };
-
-    const io = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          play();
-          io.disconnect();
-        }
-      },
-      { threshold: 0.35 }
-    );
-    io.observe(el);
-
-    return () => io.disconnect();
-  }, [num, duration]);
-
-  if (!Number.isFinite(num)) {
-    return (
-      <span ref={ref} className={className}>
-        {String(value)}
-      </span>
-    );
-  }
-
-  return (
-    <span ref={ref} className={className}>
-      {prefix}
-      {Number(val).toLocaleString(locale)}
-      {suffix}
-    </span>
-  );
-}
-
 export default function HeroMemorial({
   backgroundSrc = HeroMemorialImage.src,
   title = "Nghĩa trang Liệt sĩ Vị Xuyên",
-  description =
-    "Nằm tại Điểm cao 468, Vị Xuyên, Hà Giang. Nơi đã diễn ra những trận chiến oanh liệt bảo vệ biên giới phía Bắc. Nghĩa trang là nơi an nghỉ của hàng nghìn Anh hùng Liệt sĩ đã hy sinh vì Tổ quốc.",
+  description = "Nằm tại Điểm cao 468, Vị Xuyên, Hà Giang. Nơi đã diễn ra những trận chiến oanh liệt bảo vệ biên giới phía Bắc. Nghĩa trang là nơi an nghỉ của hàng nghìn Anh hùng Liệt sĩ đã hy sinh vì Tổ quốc.",
   alt = "Nghĩa trang Liệt sĩ Vị Xuyên",
   stats = [
     { label: "Liệt sĩ", value: "2,847", icon: Users2 },
@@ -166,11 +77,7 @@ export default function HeroMemorial({
                     </div>
 
                     {/* Count up value */}
-                    <CountUpText
-                      value={s.value}
-                      locale="en-US" /* đổi thành "vi-VN" nếu muốn 2.847 */
-                      className="text-2xl md:text-3xl font-bold tracking-tight"
-                    />
+                    <div className="text-2xl md:text-3xl font-bold tracking-tight">abcd</div>
                   </div>
                 );
               })}

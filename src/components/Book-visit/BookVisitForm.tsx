@@ -137,9 +137,9 @@ function handleDateTimePickerClose() {
 
 
     return (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
             {/* Left: Form */}
-            <div className="md:col-span-2">
+            <div className="md:col-span-3">
                 <Card className="border-emerald-100">
                     <CardContent className="space-y-4">
                         <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
@@ -218,7 +218,7 @@ function handleDateTimePickerClose() {
                                     )}
                                 </div>
                                 <div className="space-y-2">
-                                    <Label htmlFor="representative_position">Chức vụ Đảng, Chính quyền (nếu có) của trưởng đoàn/cá nhân</Label>
+                                    <Label htmlFor="representative_position">Chức vụ Đảng, Chính quyền của trưởng đoàn/cá nhân</Label>
                                     <Input id="representative_position" type="string" placeholder="Nhập Chức vụ Đảng, Chính quyền (nếu có)" {...form.register("representative_position")} />
                                     {form.formState.errors.representative_position && (
                                         <p className="text-sm text-rose-600">{form.formState.errors.representative_position.message}</p>

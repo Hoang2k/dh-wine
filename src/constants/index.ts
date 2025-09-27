@@ -148,10 +148,10 @@ export const BOOK_VISIT_LOCATIONS = [
  */
 export const BOOK_VISIT_TYPES = [
   { id: 1, name: "Cá nhân" },
-  { id: 2, name: "Cựu chiến binh" },
-  { id: 3, name: "Cơ sở giáo dục" },
-  { id: 4, name: "Khách nước ngoài" },
-  { id: 5, name: "Khách hàng" },
+  { id: 2, name: "Cơ quan Đảng, Nhà nước" },
+  { id: 3, name: "Cựu chiến binh" },
+  { id: 4, name: "Cơ sở giáo dục" },
+  { id: 5, name: "Khách nước ngoài" },
   { id: 6, name: "Khách du lịch" },
   { id: 7, name: "Thân nhân nghệ sĩ" },
   { id: 8, name: "Tập thể" },

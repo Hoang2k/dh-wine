@@ -16,6 +16,7 @@ const nextConfig: NextConfig = {
     return [
       { source: '/tin-tuc', destination: '/news' },
       { source: '/tin-tuc/:slug', destination: '/news/:slug' },
+      { source: '/tin-tuc/danh-muc/:category', destination: '/news/category/:category' },
       { source: '/gioi-thieu', destination: '/about' },
       { source: '/dat-lich-vieng', destination: '/book-visit' },
       { source: '/dat-do-le', destination: '/offering' },

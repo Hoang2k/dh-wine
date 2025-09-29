@@ -1,4 +1,5 @@
 import { MetadataRoute } from 'next'
+import { getAllNewsSlugs, getListCategories } from '@/services/news'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://ntlsvx.com'
@@ -10,6 +11,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: new Date(),
       changeFrequency: 'monthly' as const,
       priority: 1,
+    },
+    {
+      url: `${baseUrl}/news`,
+      lastModified: new Date(),
+      changeFrequency: 'daily' as const,
+      priority: 0.9,
     },
     {
       url: `${baseUrl}/offering`,
@@ -39,19 +46,25 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // Dynamic pages - fetch from API
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/service-items?per_page=100`, {
-      next: { revalidate: 3600 }
-    });
-    const data = await response.json();
-    
-    const dynamicPages = data.data?.map((item: any) => ({
-      url: `${baseUrl}/offering/${item.id}`,
-      lastModified: new Date(item.updated_at || item.created_at),
+    // Fetch news articles
+    const newsSlugs = await getAllNewsSlugs();
+    const newsPages = newsSlugs.map((slug) => ({
+      url: `${baseUrl}/news/${slug}`,
+      lastModified: new Date(),
       changeFrequency: 'weekly' as const,
-      priority: 0.7,
-    })) || [];
+      priority: 0.8,
+    }));
 
-    return [...staticPages, ...dynamicPages];
+    // Fetch categories
+    const categories = await getListCategories();
+    const categoryPages = categories.map((category) => ({
+      url: `${baseUrl}/news/category/${category.slug}`,
+      lastModified: new Date(),
+      changeFrequency: 'daily' as const,
+      priority: 0.7,
+    }));
+
+    return [...staticPages, ...newsPages, ...categoryPages];
   } catch (error) {
     console.error('Error generating sitemap:', error);
     return staticPages;

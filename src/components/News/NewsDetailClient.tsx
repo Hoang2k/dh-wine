@@ -15,14 +15,15 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import { IPost } from "@/services/news";
+import { IPost } from "@/types/post";
 
 interface NewsDetailClientProps {
     article: IPost;
     relatedArticles: IPost[];
+    featuredArticles: IPost[];
 }
 
-export default function NewsDetailClient({ article, relatedArticles }: NewsDetailClientProps) {
+export default function NewsDetailClient({ article, relatedArticles, featuredArticles }: NewsDetailClientProps) {
     const [isLiked, setIsLiked] = React.useState(false);
     const [likeCount, setLikeCount] = React.useState(0);
     const [copied, setCopied] = React.useState(false);
@@ -253,7 +254,7 @@ export default function NewsDetailClient({ article, relatedArticles }: NewsDetai
                                 <div className="p-6">
                                     <h3 className="font-bold text-lg mb-4">Bài viết nổi bật</h3>
                                     <div className="space-y-4">
-                                        {relatedArticles.map((article: IPost) => (
+                                        {featuredArticles.map((article: IPost) => (
                                         <div className="flex gap-3 border-b-2 border-gray-200 pb-6" key={article.id}>
                                             <Image src={article.thumbnailImage?.path || ''} alt={article.title} width={64} height={64} className="rounded-lg flex-shrink-0" />
                                             <div className="flex-1">

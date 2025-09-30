@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://ntlsvx.com/sitemap.xml
+Sitemap: https://nghiatranglietsivixuyen.vn/sitemap.xml

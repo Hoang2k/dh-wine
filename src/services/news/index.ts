@@ -1,58 +1,8 @@
 // News service for handling news-related API calls
 import request from '@/axios'
 import { IResponseData } from '@/types/common';
+import { ICategory, IPost, IPostHomepage, NewsResponse } from '@/types/post';
 
-
-export interface IMedia {
-  id: string;
-  kind: number;
-  path: string;
-  altText: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface IAuthor {
-  id: string;
-  name: string;
-  email: string;
-  phone: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface ICategory {
-  id: string;
-  name: string;
-  slug: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface IPost {
-  id: string;
-  title: string;
-  slug: string;
-  content: string;
-  summary: string;
-  publishAt: string;
-  views: number;
-  category: ICategory;
-  thumbnailImage?: IMedia;
-  author: IAuthor;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface NewsResponse {
-  data: IPost[];
-  meta: {
-    page: number;
-    perPage: number;
-    total: number;
-    totalPages: number;
-  };
-}
 
 // Cache configuration (these are hints you send to your API;
 // real caching depends on API/server or Next.js fetch options)
@@ -83,7 +33,7 @@ type GetNewsParams = {
   page?: number;
   per_page?: number;
   search?: string;
-  featured?: boolean;
+  isFeatured?: number;
 };
 
 export const getListPosts = async (params?: GetNewsParams): Promise<IResponseData<IPost[]> | IPost[]> => {
@@ -93,7 +43,7 @@ export const getListPosts = async (params?: GetNewsParams): Promise<IResponseDat
     if (params?.page) queryParams.page = params.page;
     if (params?.per_page) queryParams.per_page = params.per_page;
     if (params?.search) queryParams.search = params.search;
-    if (params?.featured !== undefined) queryParams.featured = params.featured;
+    if (params?.isFeatured !== undefined) queryParams.isFeatured = params.isFeatured;
 
     const response = await request.get<IResponseData<IPost[]>>({
       url: '/client/posts',
@@ -124,7 +74,7 @@ export const getPostDetail = async (slug: string): Promise<IPost | null> => {
 
 export const getFeaturedPosts = async (limit = 6): Promise<IPost[]> => {
   try {
-    const res = await getListPosts({ featured: true, per_page: limit });
+    const res = await getListPosts({ isFeatured: 1, per_page: limit });
     return Array.isArray(res) ? res : res?.data || [];
   } catch (error) {
     console.error('Error fetching featured articles:', error);
@@ -168,4 +118,30 @@ export const getRelatedPostsByCategory = async (postId: number, limit = 4): Prom
         console.error('Error fetching related posts by category:', error);
         return [];
       }
+};
+
+export const getListPostHomepage = async (limit = 20): Promise<IPostHomepage> => {
+  try {
+    const response = await request.get<IPostHomepage>({
+      url: '/client/posts/homepage',
+      params: { limit: limit },
+    });
+
+    return response;
+  } catch (error) {
+    console.error('Error fetching list post homepage:', error);
+    return {
+      hero: {} as IPost,
+      featured: [] as IPost[],
+      latest: {
+        data: [] as IPost[],
+        meta: {
+          page: 1,
+          perPage: 0,
+          total: 0,
+          totalPages: 0,
+        },
+      },
+    };
+  }
 };

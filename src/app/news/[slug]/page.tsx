@@ -1,9 +1,8 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { getAllNewsSlugs, getListPosts, getPostDetail, getRelatedPostsByCategory, getListCategories } from '@/services/news';
+import { getAllNewsSlugs, getPostDetail, getRelatedPostsByCategory, getListCategories, getFeaturedPosts } from '@/services/news';
 import NewsDetailClient from '@/components/News/NewsDetailClient';
-import NewsClient from '@/components/News/NewsClient';
-import { IPost } from '@/services/news';
+import { IPost } from '@/types/post';
 
 // ISR Configuration - revalidate every hour for individual articles
 export const revalidate = 3600;
@@ -134,25 +133,11 @@ export default async function DynamicPage({ params }: NewsDetailPageProps) {
     const { slug } = await params;
     
     try {
-        // First check if it's a category
-        const categories = await getListCategories();
-        const categoryData = categories.find(cat => cat.slug === slug);
-        
-        if (categoryData) {
-            // It's a category page
-            const articlesResponse = await getListPosts({ category: slug, per_page: 20 });
-            const articles = Array.isArray(articlesResponse) ? articlesResponse : articlesResponse?.data || [];
-            const initialData = {
-                articles,
-                featuredArticles: articles.slice(0, 6),
-                categories
-            };
-
-            return <NewsClient initialData={initialData} />;
-        }
 
         // Check if it's an article
         const post = await getPostDetail(slug);
+
+        const featuredArticles = await getFeaturedPosts(6);
         if (post) {
             // It's an article page
             const relatedArticlesResponse = await getRelatedPostsByCategory(
@@ -160,11 +145,12 @@ export default async function DynamicPage({ params }: NewsDetailPageProps) {
                 4
             );
             const relatedArticles = relatedArticlesResponse || [];
-
+            
             return (
                 <NewsDetailClient 
-                    article={post as any} 
+                    article={post as any}
                     relatedArticles={relatedArticles as any}
+                    featuredArticles={featuredArticles as any}
                 />
             );
         }

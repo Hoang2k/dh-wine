@@ -2,7 +2,7 @@ import { MetadataRoute } from 'next'
 import { getAllNewsSlugs, getListCategories } from '@/services/news'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = 'https://ntlsvx.com'
+  const baseUrl = 'https://nghiatranglietsivixuyen.vn'
   
   // Static pages
   const staticPages = [

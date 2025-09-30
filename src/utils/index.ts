@@ -241,3 +241,29 @@ export const formatPrice = (price: number) => {
     currency: 'VND'
   }).format(price);
 }
+
+/**
+ * @description: Format date to Vietnamese locale
+ * @param {string} dateString Date string to format
+ * @return {string} formatted date string
+ */
+export const formatDate = (dateString: string): string => {
+    return new Date(dateString).toLocaleDateString('vi-VN', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+    });
+};
+
+/**
+ * @description: Format date to Vietnamese locale with full month name
+ * @param {string} dateString Date string to format
+ * @return {string} formatted date string
+ */
+export const formatDateFull = (dateString: string): string => {
+    return new Date(dateString).toLocaleDateString('vi-VN', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    });
+};

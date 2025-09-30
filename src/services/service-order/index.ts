@@ -3,7 +3,6 @@ import { TServiceOrder } from "@/types/service-order";
 
 export const createServiceOrder = async (orderData: TServiceOrder) => {
     try {
-        console.log("Creating service order:", orderData);
         const response = await axiosInstance.post({
             url: "/service-order",
             data: orderData

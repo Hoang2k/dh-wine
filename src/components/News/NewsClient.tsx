@@ -18,11 +18,13 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import { getListCategories, getListPosts, ICategory, IPost } from "@/services/news";
+import { getListCategories, getListPosts, getListPostHomepage } from "@/services/news";
+import { ICategory, IPost, IPostHomepage } from "@/types/post";
 
 interface NewsClientProps {
     initialData?: {
-        articles: IPost[];
+        heroPost: IPost;
+        latest: IPost[];
         featuredArticles: IPost[];
         categories: ICategory[];
     };
@@ -30,10 +32,11 @@ interface NewsClientProps {
 
 export default function NewsClient({ initialData }: NewsClientProps) {
     const [careerTopics, setCareerTopics] = React.useState<ICategory[]>(initialData?.categories || []);
-    const [newsArticles, setNewsArticles] = React.useState<IPost[]>(initialData?.articles || []);
-    const [featuredArticles, setFeaturedArticles] = React.useState<IPost[]>(initialData?.featuredArticles || []);
+    const [heroPost, setHeroPost] = React.useState<IPost>(initialData?.heroPost || {} as IPost);
+    const [featuredArticles, setFeaturedArticles] = React.useState<IPost[]>(initialData?.featuredArticles || [] as IPost[]);
+    const [latest, setLatest] = React.useState<IPost[]>(initialData?.latest || [] as IPost[]);
     const [loading, setLoading] = React.useState(!initialData?.categories);
-    const [newsLoading, setNewsLoading] = React.useState(!initialData?.articles);
+    const [newsLoading, setNewsLoading] = React.useState(!initialData?.heroPost);
 
     // Fetch api get list category
     React.useEffect(() => {
@@ -56,19 +59,16 @@ export default function NewsClient({ initialData }: NewsClientProps) {
 
     // Fetch api get list post
     React.useEffect(() => {
-        if (initialData?.articles) return;
+        if (initialData?.heroPost) return;
         const fetchNewsArticles = async () => {
             try {
                 setNewsLoading(true);
-                const response = await getListPosts({ 
-                    page: 1, 
-                    per_page: 10,
-                });
-    
-                setNewsArticles(Array.isArray(response) ? response : response?.data || []);
+                const response = await getListPostHomepage(20);
                 
-                // Get featured articles (first 6 articles)
-                setFeaturedArticles((Array.isArray(response) ? response : response?.data || []).slice(0, 6));
+                // Set data from the structured response
+                setHeroPost(response.hero);
+                setLatest(response.latest.data);
+                setFeaturedArticles(response.featured);
             } catch (error) {
                 console.error('Error fetching news articles:', error);
             } finally {
@@ -77,7 +77,7 @@ export default function NewsClient({ initialData }: NewsClientProps) {
         };
 
         fetchNewsArticles();
-    }, [initialData?.articles]);
+    }, [initialData?.heroPost as IPost, initialData?.featuredArticles as IPost[], initialData?.latest as IPost[]]);
 
     const formatDate = (dateString: string) => {
         return new Date(dateString).toLocaleDateString('vi-VN', {
@@ -107,21 +107,21 @@ export default function NewsClient({ initialData }: NewsClientProps) {
                                     </div>
                                 </div>
                             </div>
-                        ) : newsArticles.length > 0 ? (
+                        ) : heroPost ? (
                             <motion.div
-                                key={newsArticles[0].id}
+                                key={heroPost.id}
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ duration: 0.5 }}
                                 className="mb-6 md:mb-8"
                             >
-                                <Link href={`/news/${newsArticles[0].slug}`} className="block group">
+                                    <Link href={`/news/${heroPost.slug}`} className="block group">
                                     <div className="bg-white rounded-lg overflow-hidden shadow-lg group-hover:shadow-xl transition-shadow duration-300">
                                         <div className="relative h-48 sm:h-64 md:h-80 lg:h-96 overflow-hidden">
-                                            {newsArticles[0].thumbnailImage ? (
+                                            {heroPost.thumbnailImage ? (
                                                 <Image
-                                                    src={newsArticles[0].thumbnailImage.path}
-                                                    alt={newsArticles[0].title}
+                                                    src={heroPost.thumbnailImage.path}
+                                                    alt={heroPost.title}
                                                     fill
                                                     className="object-cover group-hover:scale-105 transition-transform duration-300"
                                                     priority
@@ -134,10 +134,10 @@ export default function NewsClient({ initialData }: NewsClientProps) {
                                         </div>
                                         <div className="p-4 md:p-6">
                                             <h1 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 mb-3 md:mb-4 leading-tight group-hover:text-blue-600 transition-colors">
-                                                {newsArticles[0].title}
+                                                {heroPost.title}
                                             </h1>
                                             <p className="text-sm md:text-base text-gray-600 leading-relaxed line-clamp-3 md:line-clamp-none">
-                                                {newsArticles[0].summary}
+                                                {heroPost.summary}
                                             </p>
                                         </div>
                                     </div>
@@ -176,8 +176,8 @@ export default function NewsClient({ initialData }: NewsClientProps) {
                                         </div>
                                     ))}
                                 </div>
-                            ) : newsArticles.length > 0 ? (
-                                newsArticles.map((article) => (
+                            ) : latest ? (
+                                latest.map((article) => (
                                     <motion.div
                                         key={`latest-${article.id}`}
                                         initial={{ opacity: 0, y: 20 }}
@@ -190,9 +190,9 @@ export default function NewsClient({ initialData }: NewsClientProps) {
                                                 <div className="flex flex-col sm:flex-row gap-3 md:gap-4">
                                                     <div className="flex-1">
                                                         <Badge className="bg-blue-100 text-blue-800 text-xs mb-2">
-                                                            {typeof article.category === 'string' 
-                                                                ? article.category 
-                                                                : article.category?.name || 'Uncategorized'
+                                                            {typeof article.category === 'object' 
+                                                                ? article.category?.name || 'Uncategorized'
+                                                                : 'Uncategorized'
                                                             }
                                                         </Badge>
                                                         <h3 className="font-bold text-base md:text-lg mb-2 text-gray-900 line-clamp-2 group-hover:text-blue-600 transition-colors">
@@ -252,7 +252,7 @@ export default function NewsClient({ initialData }: NewsClientProps) {
                                     {careerTopics.map((topic) => (
                                         <Link 
                                             key={topic.id} 
-                                            href={`/tin-tuc/${topic.slug}`}
+                                            href={`/tin-tuc/danh-muc/${topic.slug}`}
                                             className="text-xs md:text-sm text-gray-700 hover:text-blue-600 cursor-pointer transition-colors"
                                         >
                                             {topic.name}

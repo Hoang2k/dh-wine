@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
-import { getListPosts, getFeaturedPosts, getListCategories } from '@/services/news';
+import { getListPosts, getFeaturedPosts, getListCategories, getListPostHomepage } from '@/services/news';
 import NewsClient from '@/components/News/NewsClient';
+import { IPost, IPostHomepage } from '@/types/post';
 
 // ISR Configuration - revalidate every 5 minutes
 export const revalidate = 300;
@@ -49,31 +50,36 @@ export async function generateMetadata(): Promise<Metadata> {
 // Server-side data fetching for better SEO
 export default async function NewsPage() {
     let initialData: {
-        articles: any[];
+        heroPost: IPost;
+        latest: IPost[];
         featuredArticles: any[];
         categories: any[];
     } = {
-        articles: [],
+        heroPost: {} as IPost,
+        latest: [],
         featuredArticles: [],
         categories: []
     };
 
     try {
         // Fetch data in parallel for better performance
-        const [listPosts, featuredPosts, listCategories] = await Promise.all([
-            getListPosts ({ per_page: 10}),
-            getFeaturedPosts(6),
+        const [listPosts, listCategories] = await Promise.all([
+            getListPostHomepage() as Promise<IPostHomepage>,
             getListCategories()
         ]);
 
-        const articles = Array.isArray(listPosts) ? listPosts : listPosts?.data || [];
-        const featured = featuredPosts || [];
+        console.log('listPosts', listPosts);
 
+        const heroPost = listPosts?.hero || [];
+        const featuredPosts = listPosts?.featured || [];
+        const latestPosts = listPosts?.latest || [];
         initialData = {
-            articles,
-            featuredArticles: featured,
+            heroPost: heroPost,
+            featuredArticles: featuredPosts,
+            latest: latestPosts.data,
             categories: listCategories || []
         };
+
 
     } catch (error) {
         console.error('Error fetching initial data:', error);

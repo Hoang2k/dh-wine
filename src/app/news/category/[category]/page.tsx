@@ -1,7 +1,9 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { getListPosts, getListCategories } from '@/services/news';
-import NewsClient from '@/components/News/NewsClient';
+import { IPost, NewsResponse } from '@/types/post'; // Use NewsResponse instead
+import CategoryClient from './CategoryClient';
+import { IResponseData } from '@/types/common';
 
 // ISR Configuration - revalidate every 5 minutes
 export const revalidate = 300;
@@ -9,6 +11,10 @@ export const revalidate = 300;
 interface CategoryPageProps {
     params: Promise<{
         category: string;
+    }>;
+    searchParams: Promise<{
+        page?: string;
+        per_page?: string;
     }>;
 }
 
@@ -74,31 +80,46 @@ export async function generateStaticParams() {
     }
 }
 
-export default async function CategoryPage({ params }: CategoryPageProps) {
+export default async function CategoryPage({ params, searchParams }: CategoryPageProps) {
     const { category } = await params;
+    const { page = '1', per_page = '20' } = await searchParams;
     
     try {
-        // Fetch category data and articles
-        const [categories, articlesResponse] = await Promise.all([
-            getListCategories(),
-            getListPosts({ category: category, per_page: 20 })
+        // Fetch both articles and categories in parallel
+        const [response, categories] = await Promise.all([
+            getListPosts({ 
+                category: category, 
+                per_page: parseInt(per_page),
+                page: parseInt(page)
+            }) as Promise<NewsResponse>,
+            getListCategories()
         ]);
 
-        const categoryData = categories.find(cat => cat.slug === category);
-        
-        if (!categoryData) {
-            notFound();
-        }
-
-        const articles = Array.isArray(articlesResponse) ? articlesResponse : articlesResponse?.data || [];
-
-        const initialData = {
-            articles,
-            featuredArticles: articles.slice(0, 6), // First 6 articles as featured
-            categories
+        // Handle both array and paginated response formats
+        const articles = Array.isArray(response) ? response : response?.data || [];
+        const meta = Array.isArray(response) ? {
+            page: 1,
+            perPage: articles.length,
+            total: articles.length,
+            totalPages: 1
+        } : response?.meta || {
+            page: 1,
+            perPage: 0,
+            total: 0,
+            totalPages: 0
         };
-
-        return <NewsClient initialData={initialData} />;
+        
+        return (
+            <CategoryClient 
+                category={category}
+                initialData={{
+                    articles,
+                    meta,
+                    categoryName: category,
+                    categories
+                }}
+            />
+        );
     } catch (error) {
         console.error('Error fetching category data:', error);
         notFound();

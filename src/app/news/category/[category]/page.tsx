@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { getListPosts, getListCategories } from '@/services/news';
-import { IPost, NewsResponse } from '@/types/post'; // Use NewsResponse instead
+import { getListPosts, getListCategories, getPostsByCategorySlug } from '@/services/news';
+import { IPost, NewsResponse, ICategory } from '@/types/post'; // Use NewsResponse instead
 import CategoryClient from './CategoryClient';
 import { IResponseData } from '@/types/common';
 
@@ -87,27 +87,21 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
     try {
         // Fetch both articles and categories in parallel
         const [response, categories] = await Promise.all([
-            getListPosts({ 
-                category: category, 
-                per_page: parseInt(per_page),
-                page: parseInt(page)
-            }) as Promise<NewsResponse>,
+            getPostsByCategorySlug(category),
             getListCategories()
         ]);
 
         // Handle both array and paginated response formats
-        const articles = Array.isArray(response) ? response : response?.data || [];
-        const meta = Array.isArray(response) ? {
-            page: 1,
-            perPage: articles.length,
-            total: articles.length,
-            totalPages: 1
-        } : response?.meta || {
+        const articles = response?.data || [];
+        const meta = response?.meta || {
             page: 1,
             perPage: 0,
             total: 0,
             totalPages: 0
         };
+        
+        // Find category name from the categories list
+        const categoryData = categories.find((cat: ICategory) => cat.slug === category);
         
         return (
             <CategoryClient 
@@ -115,7 +109,7 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
                 initialData={{
                     articles,
                     meta,
-                    categoryName: category,
+                    categoryName: categoryData?.name || category,
                     categories
                 }}
             />

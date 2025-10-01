@@ -37,12 +37,16 @@ export default function NewsDetailClient({ article, relatedArticles, featuredArt
     };
 
     const handleShare = (platform: string) => {
-        const url = window.location.href;
+        const shareUrl = `https://nghiatranglietsivixuyen.vn/tin-tuc/${article.slug}`;
+        const url = shareUrl;
         const title = article.title;
-        
         switch (platform) {
             case 'facebook':
-                window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, '_blank');
+                window.open(
+                    `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}&quote=${encodeURIComponent(title)}`,
+                    '_blank',
+                    'noopener,noreferrer'
+                  );
                 break;
             case 'zalo':
                 window.open(`https://zalo.me/share?url=${encodeURIComponent(url)}&title=${encodeURIComponent(title)}`, '_blank');

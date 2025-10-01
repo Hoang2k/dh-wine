@@ -145,3 +145,16 @@ export const getListPostHomepage = async (limit = 20): Promise<IPostHomepage> =>
     };
   }
 };
+
+export const getPostsByCategorySlug = async (slug: string): Promise<NewsResponse> => {
+  try {
+    const response = await request.get<NewsResponse>({
+      url: `/client/posts/category/${slug}`,
+    });
+    return response;
+  }
+  catch (error) {
+    console.error('Error fetching posts by category slug:', error);
+    return emptyResponse();
+  }
+}

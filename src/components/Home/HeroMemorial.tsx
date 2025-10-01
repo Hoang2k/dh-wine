@@ -22,9 +22,9 @@ export default function HeroMemorial({
   description = "Nằm tại Điểm cao 468, Vị Xuyên, Hà Giang. Nơi đã diễn ra những trận chiến oanh liệt bảo vệ biên giới phía Bắc. Nghĩa trang là nơi an nghỉ của hàng nghìn Anh hùng Liệt sĩ đã hy sinh vì Tổ quốc.",
   alt = "Nghĩa trang Liệt sĩ Vị Xuyên",
   stats = [
-    { label: "Liệt sĩ", value: "2,847", icon: Users2 },
-    { label: "Độ cao", value: "468m", icon: MapPin },
-    { label: "Thành lập", value: "1975", icon: CalendarIcon },
+    { label: "Liệt sĩ", value: "1870", icon: Users2 },
+    { label: "Diện tích", value: "10 ha", icon: MapPin },
+    { label: "Xây dựng", value: "1990", icon: CalendarIcon },
   ],
 }: HeroMemorialProps) {
   return (
@@ -77,7 +77,7 @@ export default function HeroMemorial({
                     </div>
 
                     {/* Count up value */}
-                    <div className="text-2xl md:text-3xl font-bold tracking-tight">abcd</div>
+                    <div className="text-2xl md:text-3xl font-bold tracking-tight">{s.value}</div>
                   </div>
                 );
               })}

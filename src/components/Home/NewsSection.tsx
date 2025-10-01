@@ -60,10 +60,8 @@ export default function NewsSection() {
     return (
         <section className="py-8 px-6">
             <div className="container mx-auto pb-16 pt-4 md:px-8 text-center bg-[#EBFFEF80] rounded-xl">
-                <h2 className="text-3xl md:text-5xl font-bold text-gray-900">Tin tức</h2>
-                <p className="mt-3 text-gray-600 max-w-full mx-auto text-2xl">
-                    Tổng hợp các tin tức về Nghĩa trang Liệt sĩ Anh Hùng Vị Xuyên
-                </p>
+                <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Tin tức</h2>
+               
 
                 {/* ONE Swiper, many slides */}
                 <div className="mt-10">

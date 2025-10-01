@@ -147,22 +147,22 @@ export default function NewsDetailClient({ article, relatedArticles, featuredArt
                                 {article.summary}
                             </p>
 
-                            <Card className="overflow-hidden shadow-lg mb-8">
-                                <div className="relative h-64 md:h-80 lg:h-96">
+                            <div className="overflow-hidden mb-8">
+                                {/* <div className="relative h-64 md:h-80 lg:h-96">
                                     <Image
                                         src={article.thumbnailImage?.path || ''}
                                         alt={article.title}
                                         fill
                                         className="object-cover"
                                     />
-                                </div>
-                                <CardContent className="p-8">
+                                </div> */}
+                                <div className="py-8">
                                     <div 
                                         className="prose prose-lg max-w-none prose-headings:text-emerald-900 prose-p:text-gray-700 prose-li:text-gray-700 prose-strong:text-emerald-800"
                                         dangerouslySetInnerHTML={{ __html: article.content }}
                                     />
-                                </CardContent>
-                            </Card>
+                                </div>
+                            </div>
 
                             {/* Action Buttons */}
                             <div className="flex flex-wrap items-center justify-between gap-4">

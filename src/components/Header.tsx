@@ -30,10 +30,10 @@ export default function Header() {
     { href: '/gioi-thieu', label: 'Giới thiệu' },
     { href: '/dat-lich-vieng', label: 'Đặt lịch viếng' },
     { href: '/dat-do-le', label: 'Đặt đồ lễ' },
-    { href: '/tra-cuu', label: 'Tra cứu mộ' },
+    { href: '/tra-cuu', label: 'Tra cứu' },
     { href: '/so-vang-tri-an', label: 'Sổ vàng tri ân' },
     { href: '/tin-tuc', label: 'Tin tức' },
-    { href: '/nhan-tim-dong-doi', label: 'Nhắn tìm đồng đội' },
+    { href: '/media', label: 'Thư viện' },
     { href: '/lien-he', label: 'Liên hệ' },
   ]
 

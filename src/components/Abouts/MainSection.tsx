@@ -17,7 +17,7 @@ export default function MainSection() {
                   <MapPin className="w-8 h-8 text-cyan-600"  />
                 </div>
                 <CardTitle className="text-memorial-dark">
-                  Vị trí địa lý1
+                  Vị trí địa lý
                 </CardTitle>
               </CardHeader>
               <CardContent className="text-center">

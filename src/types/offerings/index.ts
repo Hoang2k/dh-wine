@@ -34,6 +34,8 @@ export type TServiceItem = {
     description?: string;
     stockQuantity?: number;
     imageMedia?: TMedia;
+    avatarUrl?: string;
+    imagesUrl?: Array<string>;
 };
 
 export type TCartItem = {

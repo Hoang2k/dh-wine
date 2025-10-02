@@ -1,44 +1,75 @@
 "use client";
-import * as React from "react";
-import { motion } from "framer-motion";
-import { Card, CardContent } from "@/components/ui/card";
+
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Badge } from "@/components/ui/badge";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import { ArrowLeft, ShoppingCart, CreditCard, Plus, Minus, ChevronLeft, ChevronRight } from "lucide-react";
-import { TServiceItem } from "@/types/offerings";
-import Link from "next/link";
-import Image from "next/image";
+import {
+  SERVICE_ITEM_MODE_QTY,
+  SERVICE_ITEM_PRICING_TYPE,
+} from "@/constants/service-item";
 import { useCart } from "@/contexts/CartContext";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { SERVICE_ITEM_MODE_QTY, SERVICE_ITEM_PRICING_TYPE } from "@/constants/service-item";
+import { TServiceItem } from "@/types/offerings";
 import { formatPrice } from "@/utils";
+import { motion } from "framer-motion";
+import {
+  ArrowLeft,
+  ShoppingCart,
+  CreditCard,
+  Plus,
+  Minus,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import * as React from "react";
 import { toast } from "react-toastify";
 
 interface OfferingDetailClientProps {
   serviceItem: TServiceItem;
 }
 
-export default function OfferingDetailClient({ serviceItem }: OfferingDetailClientProps) {
+export default function OfferingDetailClient({
+  serviceItem,
+}: OfferingDetailClientProps) {
   const [quantity, setQuantity] = React.useState<number | string>(1);
   const [selectedPrice, setSelectedPrice] = React.useState<number | null>(null);
   const [selectedImageIndex, setSelectedImageIndex] = React.useState(0);
-  const [slideDirection, setSlideDirection] = React.useState<'left' | 'right' | null>(null);
+  const [slideDirection, setSlideDirection] = React.useState<
+    "left" | "right" | null
+  >(null);
   const { addToCart } = useCart();
 
   // Initialize selected price when serviceItem loads
   React.useEffect(() => {
     if (serviceItem) {
-      if (serviceItem.pricingType === SERVICE_ITEM_PRICING_TYPE.FIXED && serviceItem.unitPrice) {
+      if (
+        serviceItem.pricingType === SERVICE_ITEM_PRICING_TYPE.FIXED &&
+        serviceItem.unitPrice
+      ) {
         // Fixed pricing
         setSelectedPrice(serviceItem.unitPrice);
-      } else if (serviceItem.pricingType === SERVICE_ITEM_PRICING_TYPE.CHOICES && serviceItem.priceChoices && serviceItem.priceChoices.length > 0) {
+      } else if (
+        serviceItem.pricingType === SERVICE_ITEM_PRICING_TYPE.CHOICES &&
+        serviceItem.priceChoices &&
+        serviceItem.priceChoices.length > 0
+      ) {
         // Choices pricing - select first option
         setSelectedPrice(serviceItem.priceChoices[0]);
-      } else if (serviceItem.pricingType === SERVICE_ITEM_PRICING_TYPE.MIN_ONLY && serviceItem.minPrice) {
-        console.log("Min only pricing", serviceItem.minPrice);
+      } else if (
+        serviceItem.pricingType === SERVICE_ITEM_PRICING_TYPE.MIN_ONLY &&
+        serviceItem.minPrice
+      ) {
         // Min only pricing - start with min price
         setSelectedPrice(serviceItem.minPrice);
       }
@@ -48,14 +79,24 @@ export default function OfferingDetailClient({ serviceItem }: OfferingDetailClie
   const handleQuantityChange = (newQuantity: number) => {
     if (serviceItem) {
       let maxQty = 1;
-      
-      if (serviceItem.modeQty === SERVICE_ITEM_MODE_QTY.FIXED && serviceItem.fixedQty) {
+
+      if (
+        serviceItem.modeQty === SERVICE_ITEM_MODE_QTY.FIXED &&
+        serviceItem.fixedQty
+      ) {
         // Fixed quantity
         maxQty = serviceItem.fixedQty;
-      } else if (serviceItem.modeQty === SERVICE_ITEM_MODE_QTY.CHOICES && serviceItem.choicesQty && serviceItem.choicesQty.length > 0) {
+      } else if (
+        serviceItem.modeQty === SERVICE_ITEM_MODE_QTY.CHOICES &&
+        serviceItem.choicesQty &&
+        serviceItem.choicesQty.length > 0
+      ) {
         // Choices quantity - use max from choices
         maxQty = Math.max(...serviceItem.choicesQty);
-      } else if (serviceItem.modeQty === SERVICE_ITEM_MODE_QTY.RANGE && serviceItem.maxQty) {
+      } else if (
+        serviceItem.modeQty === SERVICE_ITEM_MODE_QTY.RANGE &&
+        serviceItem.maxQty
+      ) {
         // Range quantity
         maxQty = serviceItem.maxQty;
       } else if (serviceItem.stockQuantity) {
@@ -72,20 +113,24 @@ export default function OfferingDetailClient({ serviceItem }: OfferingDetailClie
   const handleAddToCart = () => {
     if (serviceItem && selectedPrice !== null) {
       // Validate min price for MIN_ONLY pricing type
-      if (serviceItem.pricingType === SERVICE_ITEM_PRICING_TYPE.MIN_ONLY && 
-          serviceItem.minPrice && selectedPrice < serviceItem.minPrice) {
+      if (
+        serviceItem.pricingType === SERVICE_ITEM_PRICING_TYPE.MIN_ONLY &&
+        serviceItem.minPrice &&
+        selectedPrice < serviceItem.minPrice
+      ) {
         alert(`Giá phải ≥ ${formatPrice(serviceItem.minPrice)}`);
         return;
       }
-      
+
       // Create a modified service item with the selected price
       const cartItem = {
         ...serviceItem,
-        unitPrice: selectedPrice
+        unitPrice: selectedPrice,
       };
-      const qty = typeof quantity === 'string' ? parseInt(quantity) || 1 : quantity;
+      const qty =
+        typeof quantity === "string" ? parseInt(quantity) || 1 : quantity;
       const result = addToCart(cartItem, qty);
-      
+
       // Show appropriate toast message
       if (result.success) {
         toast.success(result.message);
@@ -98,24 +143,27 @@ export default function OfferingDetailClient({ serviceItem }: OfferingDetailClie
   const handleBuyNow = () => {
     if (serviceItem && selectedPrice !== null) {
       // Validate min price for MIN_ONLY pricing type
-      if (serviceItem.pricingType === SERVICE_ITEM_PRICING_TYPE.MIN_ONLY && 
-          serviceItem.minPrice && selectedPrice < serviceItem.minPrice) {
+      if (
+        serviceItem.pricingType === SERVICE_ITEM_PRICING_TYPE.MIN_ONLY &&
+        serviceItem.minPrice &&
+        selectedPrice < serviceItem.minPrice
+      ) {
         alert(`Giá phải ≥ ${formatPrice(serviceItem.minPrice)}`);
         return;
       }
-      
+
       // Create a modified service item with the selected price
       const cartItem = {
         ...serviceItem,
-        unitPrice: selectedPrice
+        unitPrice: selectedPrice,
       };
-      const qty = typeof quantity === 'string' ? parseInt(quantity) || 1 : quantity;
+      const qty =
+        typeof quantity === "string" ? parseInt(quantity) || 1 : quantity;
       const result = addToCart(cartItem, qty);
-      
+
       // Show appropriate toast message
       if (result.success) {
         toast.success(result.message);
-        console.log("Added to cart, redirecting...");
         // Redirect to cart page
         window.location.href = "/cart";
       } else {
@@ -129,45 +177,48 @@ export default function OfferingDetailClient({ serviceItem }: OfferingDetailClie
     if (quantity === "" || quantity === null || quantity === undefined) {
       return false;
     }
-    
-    const qty = typeof quantity === 'string' ? parseInt(quantity) : quantity;
+
+    const qty = typeof quantity === "string" ? parseInt(quantity) : quantity;
     if (isNaN(qty) || qty < 1) {
       return false;
     }
 
     if (serviceItem) {
-      if (serviceItem.modeQty === SERVICE_ITEM_MODE_QTY.FIXED && serviceItem.fixedQty) {
+      if (
+        serviceItem.modeQty === SERVICE_ITEM_MODE_QTY.FIXED &&
+        serviceItem.fixedQty
+      ) {
         return qty === serviceItem.fixedQty;
-      } else if (serviceItem.modeQty === SERVICE_ITEM_MODE_QTY.CHOICES && serviceItem.choicesQty) {
+      } else if (
+        serviceItem.modeQty === SERVICE_ITEM_MODE_QTY.CHOICES &&
+        serviceItem.choicesQty
+      ) {
         return serviceItem.choicesQty.includes(qty);
       } else if (serviceItem.modeQty === SERVICE_ITEM_MODE_QTY.RANGE) {
-        return qty >= (serviceItem.minQty || 1) && qty <= (serviceItem.maxQty || 100);
+        return (
+          qty >= (serviceItem.minQty || 1) && qty <= (serviceItem.maxQty || 100)
+        );
       }
     }
-    
+
     return true;
   };
 
   // Get multiple images for the product
   const getProductImages = () => {
     if (!serviceItem) return [];
-    
-    const images = [];
-    
-    // Add main image
-    if (serviceItem.imageMedia?.path) {
-      images.push(serviceItem.imageMedia.path);
+
+    const images: string[] = [];
+
+    if (serviceItem.avatarUrl) {
+      images.push(serviceItem.avatarUrl);
     }
-    
-    // Add additional mock images for demonstration
-    const additionalImages = [
-      "/placeholder.jpg",
-      "/placeholder.jpg", 
-      "/placeholder.jpg",
-      "/placeholder.jpg"
-    ];
-    
-    return [...images, ...additionalImages];
+
+    if (serviceItem.imagesUrl && Array.isArray(serviceItem.imagesUrl)) {
+      images.push(...serviceItem.imagesUrl);
+    }
+
+    return images;
   };
 
   const productImages = getProductImages();
@@ -184,15 +235,15 @@ export default function OfferingDetailClient({ serviceItem }: OfferingDetailClie
 
   // Navigation functions for image slider
   const goToPreviousImage = () => {
-    setSlideDirection('left');
-    setSelectedImageIndex((prev) => 
+    setSlideDirection("left");
+    setSelectedImageIndex((prev) =>
       prev === 0 ? productImages.length - 1 : prev - 1
     );
   };
 
   const goToNextImage = () => {
-    setSlideDirection('right');
-    setSelectedImageIndex((prev) => 
+    setSlideDirection("right");
+    setSelectedImageIndex((prev) =>
       prev === productImages.length - 1 ? 0 : prev + 1
     );
   };
@@ -200,8 +251,8 @@ export default function OfferingDetailClient({ serviceItem }: OfferingDetailClie
   // Handle thumbnail click with slide direction
   const handleThumbnailClick = (index: number) => {
     if (index === selectedImageIndex) return;
-    
-    const direction = index > selectedImageIndex ? 'right' : 'left';
+
+    const direction = index > selectedImageIndex ? "right" : "left";
     setSlideDirection(direction);
     setSelectedImageIndex(index);
   };
@@ -220,17 +271,22 @@ export default function OfferingDetailClient({ serviceItem }: OfferingDetailClie
           <div className="aspect-square relative overflow-hidden rounded-lg border-2 border-gray-200 group">
             <motion.div
               key={selectedImageIndex}
-              initial={{ 
-                x: slideDirection === 'right' ? '100%' : slideDirection === 'left' ? '-100%' : 0,
-                opacity: 0
+              initial={{
+                x:
+                  slideDirection === "right"
+                    ? "100%"
+                    : slideDirection === "left"
+                    ? "-100%"
+                    : 0,
+                opacity: 0,
               }}
-              animate={{ 
-                x: 0, 
-                opacity: 1 
+              animate={{
+                x: 0,
+                opacity: 1,
               }}
-              transition={{ 
+              transition={{
                 duration: 0.4,
-                ease: "easeInOut"
+                ease: "easeInOut",
               }}
               className="absolute inset-0"
             >
@@ -238,10 +294,10 @@ export default function OfferingDetailClient({ serviceItem }: OfferingDetailClie
                 src={productImages[selectedImageIndex] || "/placeholder.jpg"}
                 alt={serviceItem.name}
                 fill
-                className="object-cover"
+                className="object-contain"
               />
             </motion.div>
-            
+
             {/* Navigation Arrows */}
             {productImages.length > 1 && (
               <>
@@ -259,7 +315,7 @@ export default function OfferingDetailClient({ serviceItem }: OfferingDetailClie
                 </button>
               </>
             )}
-            
+
             {/* Image Counter */}
             {productImages.length > 1 && (
               <div className="absolute bottom-2 right-2 bg-black/50 text-white px-2 py-1 rounded text-sm">
@@ -267,6 +323,30 @@ export default function OfferingDetailClient({ serviceItem }: OfferingDetailClie
               </div>
             )}
           </div>
+
+          {/* Thumbnails */}
+          {productImages.length > 1 && (
+            <div className="flex gap-3 overflow-x-auto pb-2">
+              {productImages.map((img, index) => (
+                <div
+                  key={index}
+                  onClick={() => handleThumbnailClick(index)}
+                  className={`relative w-20 h-20 rounded-md border-2 cursor-pointer flex-shrink-0 ${
+                    selectedImageIndex === index
+                      ? "border-emerald-500"
+                      : "border-transparent hover:border-gray-300"
+                  }`}
+                >
+                  <Image
+                    src={img}
+                    alt={`Thumbnail ${index + 1}`}
+                    fill
+                    className="object-contain rounded-md"
+                  />
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Product Info */}
@@ -275,13 +355,14 @@ export default function OfferingDetailClient({ serviceItem }: OfferingDetailClie
             <h1 className="text-3xl font-bold text-emerald-900 mb-4">
               {serviceItem.name}
             </h1>
-            
+
             {/* Pricing Type Selection */}
             <div className="mb-4 lg:flex items-center gap-8">
               <Label className="text-lg font-semibold mb-3 block">
                 Phân loại
               </Label>
-              {serviceItem.pricingType === SERVICE_ITEM_PRICING_TYPE.FIXED && serviceItem.unitPrice ? (
+              {serviceItem.pricingType === SERVICE_ITEM_PRICING_TYPE.FIXED &&
+              serviceItem.unitPrice ? (
                 // Fixed pricing
                 <div className="flex items-center gap-2">
                   <Input
@@ -290,17 +371,20 @@ export default function OfferingDetailClient({ serviceItem }: OfferingDetailClie
                     className="w-40"
                   />
                 </div>
-              ) : serviceItem.pricingType === SERVICE_ITEM_PRICING_TYPE.CHOICES && serviceItem.priceChoices ? (
+              ) : serviceItem.pricingType ===
+                  SERVICE_ITEM_PRICING_TYPE.CHOICES &&
+                serviceItem.priceChoices ? (
                 // Choices pricing - using styled checkboxes like the image
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                   {serviceItem.priceChoices.map((price, index) => (
-                    <div 
+                    <div
                       key={index}
                       className={`
                         relative border-2 rounded-lg p-3 cursor-pointer transition-all duration-200
-                        ${selectedPrice === price 
-                          ? 'border-emerald-500 bg-emerald-50' 
-                          : 'border-gray-300 hover:border-gray-400'
+                        ${
+                          selectedPrice === price
+                            ? "border-emerald-500 bg-emerald-50"
+                            : "border-gray-300 hover:border-gray-400"
                         }
                       `}
                       onClick={() => setSelectedPrice(price)}
@@ -311,15 +395,15 @@ export default function OfferingDetailClient({ serviceItem }: OfferingDetailClie
                         </span>
                         {selectedPrice === price && (
                           <div className="ml-2 w-5 h-5 bg-emerald-500 rounded-full flex items-center justify-center">
-                            <svg 
-                              className="w-3 h-3 text-white" 
-                              fill="currentColor" 
+                            <svg
+                              className="w-3 h-3 text-white"
+                              fill="currentColor"
                               viewBox="0 0 20 20"
                             >
-                              <path 
-                                fillRule="evenodd" 
-                                d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" 
-                                clipRule="evenodd" 
+                              <path
+                                fillRule="evenodd"
+                                d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                clipRule="evenodd"
                               />
                             </svg>
                           </div>
@@ -328,7 +412,8 @@ export default function OfferingDetailClient({ serviceItem }: OfferingDetailClie
                     </div>
                   ))}
                 </div>
-              ) : serviceItem.pricingType === SERVICE_ITEM_PRICING_TYPE.MIN_ONLY && serviceItem.minPrice ? (
+              ) : serviceItem.pricingType ===
+                  SERVICE_ITEM_PRICING_TYPE.MIN_ONLY && serviceItem.minPrice ? (
                 // Min only pricing
                 <div className="space-y-2">
                   <Input
@@ -343,16 +428,21 @@ export default function OfferingDetailClient({ serviceItem }: OfferingDetailClie
                       }
                     }}
                     min={serviceItem.minPrice}
-                    placeholder={`Tối thiểu ${formatPrice(serviceItem.minPrice)}`}
+                    placeholder={`Tối thiểu ${formatPrice(
+                      serviceItem.minPrice
+                    )}`}
                     className="w-40"
                   />
-                  {selectedPrice !== null && selectedPrice < serviceItem.minPrice && (
-                    <p className="text-sm text-red-500">
-                      Vui lòng nhập giá ≥ {formatPrice(serviceItem.minPrice)}
-                    </p>
-                  )}
+                  {selectedPrice !== null &&
+                    selectedPrice < serviceItem.minPrice && (
+                      <p className="text-sm text-red-500">
+                        Vui lòng nhập giá ≥ {formatPrice(serviceItem.minPrice)}
+                      </p>
+                    )}
                   <p className="text-sm text-muted-foreground">
-                    Giá tối thiểu của sản phầm là ≥ {formatPrice(serviceItem.minPrice)}, vui lòng nhập giá ≥ {formatPrice(serviceItem.minPrice)}
+                    Giá tối thiểu của sản phầm là ≥{" "}
+                    {formatPrice(serviceItem.minPrice)}, vui lòng nhập giá ≥{" "}
+                    {formatPrice(serviceItem.minPrice)}
                   </p>
                 </div>
               ) : (
@@ -381,7 +471,9 @@ export default function OfferingDetailClient({ serviceItem }: OfferingDetailClie
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {serviceItem.weight && (
                 <div className="flex items-center gap-2">
-                  <span className="text-sm font-medium text-gray-600">Cân nặng: </span>
+                  <span className="text-sm font-medium text-gray-600">
+                    Cân nặng:{" "}
+                  </span>
                   <span className="text-lg font-semibold text-emerald-700">
                     {serviceItem.weight}g
                   </span>
@@ -389,7 +481,9 @@ export default function OfferingDetailClient({ serviceItem }: OfferingDetailClie
               )}
               {serviceItem.size && (
                 <div className="flex items-center gap-2">
-                  <span className="text-sm font-medium text-gray-600">Kích thước: </span>
+                  <span className="text-sm font-medium text-gray-600">
+                    Kích thước:{" "}
+                  </span>
                   <span className="text-lg font-semibold text-emerald-700">
                     {serviceItem.size} (cm)
                   </span>
@@ -397,7 +491,9 @@ export default function OfferingDetailClient({ serviceItem }: OfferingDetailClie
               )}
               {serviceItem.quantityShow && (
                 <div className="flex items-center gap-2">
-                  <span className="text-sm font-medium text-gray-600">Số lượng đã đặt: </span>
+                  <span className="text-sm font-medium text-gray-600">
+                    Số lượng đã đặt:{" "}
+                  </span>
                   <span className="text-lg font-semibold text-emerald-700">
                     {serviceItem.quantityShow} sản phẩm
                   </span>
@@ -410,10 +506,9 @@ export default function OfferingDetailClient({ serviceItem }: OfferingDetailClie
 
           {/* Quantity Selection */}
           <div className="flex items-center gap-8">
-            <Label className="text-lg font-semibold mb-3 block">
-              Số lượng
-            </Label>
-            {serviceItem.modeQty === SERVICE_ITEM_MODE_QTY.FIXED && serviceItem.fixedQty ? (
+            <Label className="text-lg font-semibold mb-3 block">Số lượng</Label>
+            {serviceItem.modeQty === SERVICE_ITEM_MODE_QTY.FIXED &&
+            serviceItem.fixedQty ? (
               // Fixed quantity
               <div className="flex items-center gap-2">
                 <Input
@@ -422,25 +517,25 @@ export default function OfferingDetailClient({ serviceItem }: OfferingDetailClie
                   className="w-20 text-center"
                 />
               </div>
-            ) : serviceItem.modeQty === SERVICE_ITEM_MODE_QTY.CHOICES && serviceItem.choicesQty ? (
+            ) : serviceItem.modeQty === SERVICE_ITEM_MODE_QTY.CHOICES &&
+              serviceItem.choicesQty ? (
               // Choices quantity - using styled checkboxes like the image
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                 {serviceItem.choicesQty.map((qty, index) => (
-                  <div 
+                  <div
                     key={index}
                     className={`
                       relative border-2 rounded-lg py-1 px-4 box-border cursor-pointer transition-all duration-200
-                      ${quantity === qty 
-                        ? 'border-emerald-500 bg-emerald-50' 
-                        : 'border-gray-300 hover:border-gray-400'
+                      ${
+                        quantity === qty
+                          ? "border-emerald-500 bg-emerald-50"
+                          : "border-gray-300 hover:border-gray-400"
                       }
                     `}
                     onClick={() => setQuantity(qty)}
                   >
                     <div className="flex items-center justify-between">
-                      <span className="font-medium text-gray-700">
-                        {qty}
-                      </span>
+                      <span className="font-medium text-gray-700">{qty}</span>
                     </div>
                   </div>
                 ))}
@@ -452,8 +547,10 @@ export default function OfferingDetailClient({ serviceItem }: OfferingDetailClie
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => handleQuantityChange(quantity as number - 1)}
-                    disabled={quantity as number <= (serviceItem.minQty || 1)}
+                    onClick={() =>
+                      handleQuantityChange((quantity as number) - 1)
+                    }
+                    disabled={(quantity as number) <= (serviceItem.minQty || 1)}
                   >
                     <Minus className="h-4 w-4" />
                   </Button>
@@ -477,14 +574,19 @@ export default function OfferingDetailClient({ serviceItem }: OfferingDetailClie
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => handleQuantityChange(quantity as number + 1)}
-                    disabled={quantity as number >= (serviceItem.maxQty || 100)}
+                    onClick={() =>
+                      handleQuantityChange((quantity as number) + 1)
+                    }
+                    disabled={
+                      (quantity as number) >= (serviceItem.maxQty || 100)
+                    }
                   >
                     <Plus className="h-4 w-4" />
                   </Button>
                 </div>
                 <p className="text-sm text-muted-foreground">
-                  Nhập số lượng từ {serviceItem.minQty || 1} đến {serviceItem.maxQty || 100}
+                  Nhập số lượng từ {serviceItem.minQty || 1} đến{" "}
+                  {serviceItem.maxQty || 100}
                 </p>
               </div>
             ) : (
@@ -493,15 +595,17 @@ export default function OfferingDetailClient({ serviceItem }: OfferingDetailClie
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => handleQuantityChange(quantity as number - 1)}
-                  disabled={quantity as number <= 1}
+                  onClick={() => handleQuantityChange((quantity as number) - 1)}
+                  disabled={(quantity as number) <= 1}
                 >
                   <Minus className="h-4 w-4" />
                 </Button>
                 <Input
                   type="number"
                   value={quantity}
-                  onChange={(e) => handleQuantityChange(parseInt(e.target.value) || 1)}
+                  onChange={(e) =>
+                    handleQuantityChange(parseInt(e.target.value) || 1)
+                  }
                   min={1}
                   max={serviceItem.stockQuantity || 1}
                   className="w-20 text-center"
@@ -509,8 +613,10 @@ export default function OfferingDetailClient({ serviceItem }: OfferingDetailClie
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => handleQuantityChange(quantity as number + 1)}
-                  disabled={quantity as number >= (serviceItem.stockQuantity || 1)}
+                  onClick={() => handleQuantityChange((quantity as number) + 1)}
+                  disabled={
+                    (quantity as number) >= (serviceItem.stockQuantity || 1)
+                  }
                 >
                   <Plus className="h-4 w-4" />
                 </Button>
@@ -523,7 +629,12 @@ export default function OfferingDetailClient({ serviceItem }: OfferingDetailClie
             <div className="flex justify-between items-center">
               <span className="text-lg font-semibold">Tổng cộng:</span>
               <span className="text-2xl font-bold text-emerald-600">
-                {formatPrice((selectedPrice || serviceItem.unitPrice || 0) * (typeof quantity === 'string' ? parseInt(quantity) || 1 : quantity))}
+                {formatPrice(
+                  (selectedPrice || serviceItem.unitPrice || 0) *
+                    (typeof quantity === "string"
+                      ? parseInt(quantity) || 1
+                      : quantity)
+                )}
               </span>
             </div>
           </div>
@@ -532,7 +643,16 @@ export default function OfferingDetailClient({ serviceItem }: OfferingDetailClie
           <div className="flex gap-3">
             <Button
               onClick={handleAddToCart}
-              disabled={selectedPrice === null || !isQuantityValid() || (serviceItem.pricingType === SERVICE_ITEM_PRICING_TYPE.MIN_ONLY && serviceItem.minPrice && selectedPrice !== null && selectedPrice < serviceItem.minPrice) || false}
+              disabled={
+                selectedPrice === null ||
+                !isQuantityValid() ||
+                (serviceItem.pricingType ===
+                  SERVICE_ITEM_PRICING_TYPE.MIN_ONLY &&
+                  serviceItem.minPrice &&
+                  selectedPrice !== null &&
+                  selectedPrice < serviceItem.minPrice) ||
+                false
+              }
               className="hover:cursor-pointer bg-emerald-700 hover:bg-emerald-800 disabled:opacity-50 disabled:cursor-not-allowed"
               size="lg"
             >
@@ -541,7 +661,16 @@ export default function OfferingDetailClient({ serviceItem }: OfferingDetailClie
             </Button>
             <Button
               onClick={handleBuyNow}
-              disabled={selectedPrice === null || !isQuantityValid() || (serviceItem.pricingType === SERVICE_ITEM_PRICING_TYPE.MIN_ONLY && serviceItem.minPrice && selectedPrice !== null && selectedPrice < serviceItem.minPrice) || false}
+              disabled={
+                selectedPrice === null ||
+                !isQuantityValid() ||
+                (serviceItem.pricingType ===
+                  SERVICE_ITEM_PRICING_TYPE.MIN_ONLY &&
+                  serviceItem.minPrice &&
+                  selectedPrice !== null &&
+                  selectedPrice < serviceItem.minPrice) ||
+                false
+              }
               variant="outline"
               className="hover:cursor-pointer border-emerald-700 text-emerald-700 hover:bg-emerald-50 disabled:opacity-50 disabled:cursor-not-allowed"
               size="lg"

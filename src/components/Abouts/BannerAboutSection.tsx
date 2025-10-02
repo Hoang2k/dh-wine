@@ -1,6 +1,13 @@
 import HeroMemorialImage from "../../assets/image/about/bg-main-about.png";
-import { Users2, MapPin, Calendar as CalendarIcon, Search, CalendarCheck } from "lucide-react";
+import {
+  Users2,
+  MapPin,
+  Calendar as CalendarIcon,
+  Search,
+  CalendarCheck,
+} from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 
 type StatItem = {
   label: string;
@@ -16,11 +23,10 @@ interface HeroMemorialProps {
   alt?: string;
 }
 
-
 export default function BannerAboutSection({
   backgroundSrc = HeroMemorialImage.src,
   title = "Nghĩa trang Liệt sĩ Vị Xuyên",
-  description = "Tri ân các anh hùng liệt sĩ"
+  description = "Tri ân các anh hùng liệt sĩ",
 }: HeroMemorialProps) {
   return (
     <div className="lg:px-10">
@@ -54,13 +60,17 @@ export default function BannerAboutSection({
                 {description}
               </p>
               <button className="bg-[#EBFFEF80] text-white flex items-center px-4 py-2 hover:cursor-pointer rounded-md mt-20">
-                <Search className="w-4 h-4 mr-2" />
-                 Tra cứu mộ liệt sĩ
-                </button>
+                <Link href="/tra-cuu" className="flex items-center">
+                  <Search className="w-4 h-4 mr-2" />
+                  Tra cứu mộ liệt sĩ
+                </Link>
+              </button>
               <button className="bg-[#EBFFEF80] text-white flex items-center px-4 py-2 hover:cursor-pointer rounded-md mt-4">
-                <CalendarCheck className="w-4 h-4 mr-2" />
-                 Đăng ký viếng lễ trực tuyến
-                </button>
+                <Link href="/dat-lich-vieng" className="flex items-center">
+                  <CalendarCheck className="w-4 h-4 mr-2" />
+                  Đăng ký viếng lễ trực tuyến
+                </Link>
+              </button>
             </div>
           </div>
         </div>

@@ -4,10 +4,10 @@ import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { 
-    Calendar, 
-    User, 
-    ArrowLeft, 
+import {
+    Calendar,
+    User,
+    ArrowLeft,
     Eye,
     BookOpen,
     Copy,
@@ -46,7 +46,7 @@ export default function NewsDetailClient({ article, relatedArticles, featuredArt
                     `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}&quote=${encodeURIComponent(title)}`,
                     '_blank',
                     'noopener,noreferrer'
-                  );
+                );
                 break;
             case 'zalo':
                 window.open(`https://zalo.me/share?url=${encodeURIComponent(url)}&title=${encodeURIComponent(title)}`, '_blank');
@@ -86,7 +86,7 @@ export default function NewsDetailClient({ article, relatedArticles, featuredArt
                                         title="Chia sẻ trên Facebook"
                                     >
                                         <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                                            <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                                            <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
                                         </svg>
                                     </button>
 
@@ -97,7 +97,7 @@ export default function NewsDetailClient({ article, relatedArticles, featuredArt
                                         title="Chia sẻ trên Zalo"
                                     >
                                         <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                                            <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm2.5 8.5h-5c-.276 0-.5.224-.5.5s.224.5.5.5h3.293l-3.646 3.646c-.195.195-.195.512 0 .707.098.098.226.147.354.147s.256-.049.354-.147L12.5 10.207V13.5c0 .276.224.5.5.5s.5-.224.5-.5v-4.5c0-.276-.224-.5-.5-.5z"/>
+                                            <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm2.5 8.5h-5c-.276 0-.5.224-.5.5s.224.5.5.5h3.293l-3.646 3.646c-.195.195-.195.512 0 .707.098.098.226.147.354.147s.256-.049.354-.147L12.5 10.207V13.5c0 .276.224.5.5.5s.5-.224.5-.5v-4.5c0-.276-.224-.5-.5-.5z" />
                                         </svg>
                                     </button>
 
@@ -157,7 +157,7 @@ export default function NewsDetailClient({ article, relatedArticles, featuredArt
                                     />
                                 </div> */}
                                 <div className="py-8">
-                                    <div 
+                                    <div
                                         className="prose prose-lg max-w-none prose-headings:text-emerald-900 prose-p:text-gray-700 prose-li:text-gray-700 prose-strong:text-emerald-800"
                                         dangerouslySetInnerHTML={{ __html: article.content }}
                                     />
@@ -243,7 +243,7 @@ export default function NewsDetailClient({ article, relatedArticles, featuredArt
                                         </motion.div>
                                     ))}
                                 </div>
-                                
+
                                 {relatedArticles.length === 0 && (
                                     <div className="bg-white rounded-lg p-8 text-center shadow-md">
                                         <p className="text-gray-500">Không có tin liên quan</p>
@@ -259,15 +259,19 @@ export default function NewsDetailClient({ article, relatedArticles, featuredArt
                                     <h3 className="font-bold text-lg mb-4">Bài viết nổi bật</h3>
                                     <div className="space-y-4">
                                         {featuredArticles.map((article: IPost) => (
-                                        <div className="flex gap-3 border-b-2 border-gray-200 pb-6" key={article.id}>
-                                            <Image src={article.thumbnailImage?.path || ''} alt={article.title} width={64} height={64} className="rounded-lg flex-shrink-0" />
-                                            <div className="flex-1">
-                                                <h4 className="font-semibold text-sm line-clamp-2 mb-1">
-                                                    {article.title}
-                                                </h4>
-                                                <p className="text-xs text-muted-foreground">{formatDate(article.publishAt)}</p>
+                                            <div className="flex gap-3 border-b-2 border-gray-200 pb-6" key={article.id}>
+                                                <Link href={`/tin-tuc/${article.slug}`}>
+                                                    <Image src={article.thumbnailImage?.path || ''} alt={article.title} width={64} height={64} className="rounded-lg flex-shrink-0" />
+                                                </Link>
+
+
+                                                <div className="flex-1">
+                                                    <Link href={`/tin-tuc/${article.slug}`} className="font-semibold text-sm line-clamp-2 mb-1">
+                                                        {article.title}
+                                                    </Link>
+                                                    <p className="text-xs text-muted-foreground">{formatDate(article.publishAt)}</p>
+                                                </div>
                                             </div>
-                                        </div>
                                         ))}
 
                                     </div>

@@ -1,6 +1,5 @@
 "use client";
 
-import New1 from "../../assets/image/bg2.jpg";
 import { ArrowRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -9,53 +8,12 @@ import { Swiper, SwiperSlide } from "swiper/react";
 // Swiper styles
 import "swiper/css";
 import "swiper/css/pagination";
+import { IPost } from "@/types/post";
 
-type TNews = {
-  title: string;
-  summary: string;
-  image_url: string;
-};
 
-const news: TNews[] = [
-  {
-    title: "Tin tức",
-    image_url: New1.src,
-    summary:
-      "How do you create compelling presentations that wow your colleagues and impress your managers?",
-  },
-  {
-    title: "Tin tức",
-    image_url: New1.src,
-    summary:
-      "How do you create compelling presentations that wow your colleagues and impress your managers?",
-  },
-  {
-    title: "Tin tức",
-    image_url: New1.src,
-    summary:
-      "How do you create compelling presentations that wow your colleagues and impress your managers your managers your managers your managers?",
-  },
-  {
-    title: "Tin tức",
-    image_url: New1.src,
-    summary:
-      "How do you create compelling presentations that wow your colleagues and impress your managers?",
-  },
-  {
-    title: "Tin tức",
-    image_url: New1.src,
-    summary:
-      "How do you create compelling presentations that wow your colleagues and impress your managers?",
-  },
-  {
-    title: "Tin tức",
-    image_url: New1.src,
-    summary:
-      "How do you create compelling presentations that wow your colleagues and impress your managers? How do you create compelling presentations that wow your colleagues and impress your managers?",
-  },
-];
 
-export default function NewsSection() {
+
+export default function NewsSection({ listPosts }: { listPosts: IPost[] }) {
   return (
     <section className="py-8 px-6">
       <div className="container mx-auto pb-16 pt-4 md:px-8 text-center rounded-xl">
@@ -80,7 +38,7 @@ export default function NewsSection() {
               disableOnInteraction: false,
               pauseOnMouseEnter: true,
             }}
-            loop={news.length > 1}
+            loop={listPosts.length > 1}
             speed={600}
             className="
                         !pb-8
@@ -90,31 +48,33 @@ export default function NewsSection() {
                         [&_.swiper-pagination-bullet-active]:!bg-[#087443]
                       "
           >
-            {news.map((item, index) => (
+            {listPosts.map((item, index) => (
               <SwiperSlide key={`${item.title}-${index}`}>
                 <article className="transition rounded-lg overflow-hidden bg-white text-left shadow hover:shadow-md h-full">
                   <div className="relative w-full h-48">
-                    <Image
-                      src={item.image_url}
-                      alt={item.title}
-                      fill
-                      sizes="(max-width: 768px) 100vw, 33vw"
-                      className="object-cover"
-                      priority={index < 3}
-                    />
+                    <Link href={`/tin-tuc/${item.slug}`}>
+                      <Image
+                        src={item.thumbnailImage?.path || ''}
+                        alt={item.title}
+                        fill
+                        sizes="(max-width: 768px) 100vw, 33vw"
+                        className="object-cover"
+                        priority={index < 3}
+                      />
+                    </Link>
                   </div>
 
                   <div className="p-4">
-                    <h3 className="text-xl font-semibold text-[#101828] hover:text-blue-600 line-clamp-2">
+                    <Link href={`/tin-tuc/${item.slug}`} className="text-xl font-semibold text-[#101828] hover:text-blue-600 line-clamp-2">
                       {item.title}
-                    </h3>
+                    </Link>
                     <p className="mt-2 text-base text-gray-600 line-clamp-3 md:!line-clamp-2">
                       {item.summary}
                     </p>
 
                     <div className="mt-4">
                       <Link
-                        href="#"
+                        href={`/tin-tuc/${item.slug}`}
                         className="inline-flex items-center gap-2 text-[#087443] hover:underline"
                       >
                         Xem chi tiết <ArrowRight size={18} />
@@ -129,7 +89,7 @@ export default function NewsSection() {
 
         <div className="pt-10 flex justify-center">
           <Link
-            href="/news"
+            href="/tin-tuc"
             className="px-6 py-2 rounded-lg bg-blue-100 text-blue-600 
                font-semibold hover:bg-blue-200 transition"
           >

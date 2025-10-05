@@ -268,7 +268,7 @@ export default function OfferingDetailClient({
         {/* Product Image */}
         <div className="space-y-4">
           {/* Main Image */}
-          <div className="aspect-square relative overflow-hidden rounded-lg border-2 border-gray-200 group">
+          <div className="aspect-square relative overflow-hidden rounded-lg border-gray-200 group">
             <motion.div
               key={selectedImageIndex}
               initial={{
@@ -294,7 +294,7 @@ export default function OfferingDetailClient({
                 src={productImages[selectedImageIndex] || "/placeholder.jpg"}
                 alt={serviceItem.name}
                 fill
-                className="object-contain"
+                className="object-contain "
               />
             </motion.div>
 
@@ -358,7 +358,7 @@ export default function OfferingDetailClient({
 
             {/* Pricing Type Selection */}
             <div className="mb-4 lg:flex items-center gap-8">
-              <Label className="text-lg font-semibold mb-3 block">
+              <Label className="text-lg font-semibold block">
                 Phân loại
               </Label>
               {serviceItem.pricingType === SERVICE_ITEM_PRICING_TYPE.FIXED &&
@@ -470,9 +470,9 @@ export default function OfferingDetailClient({
             <h3 className="text-lg font-semibold mb-3">Thông số sản phẩm</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {serviceItem.weight && (
-                <div className="flex items-center gap-2">
+                <div className="flex gap-2 items-baseline">
                   <span className="text-sm font-medium text-gray-600">
-                    Cân nặng:{" "}
+                    Trọng lượng:{" "}
                   </span>
                   <span className="text-lg font-semibold text-emerald-700">
                     {serviceItem.weight}g
@@ -480,7 +480,7 @@ export default function OfferingDetailClient({
                 </div>
               )}
               {serviceItem.size && (
-                <div className="flex items-center gap-2">
+                <div className="flex gap-2 items-baseline">
                   <span className="text-sm font-medium text-gray-600">
                     Kích thước:{" "}
                   </span>
@@ -490,12 +490,12 @@ export default function OfferingDetailClient({
                 </div>
               )}
               {serviceItem.quantityShow && (
-                <div className="flex items-center gap-2">
+                <div className="flex gap-2 items-baseline">
                   <span className="text-sm font-medium text-gray-600">
-                    Số lượng đã đặt:{" "}
+                    Đã đặt:{" "}
                   </span>
                   <span className="text-lg font-semibold text-emerald-700">
-                    {serviceItem.quantityShow} sản phẩm
+                    {serviceItem.quantityShow}
                   </span>
                 </div>
               )}
@@ -506,7 +506,7 @@ export default function OfferingDetailClient({
 
           {/* Quantity Selection */}
           <div className="flex items-center gap-8">
-            <Label className="text-lg font-semibold mb-3 block">Số lượng</Label>
+            <Label className="text-lg font-semibold block">Số lượng</Label>
             {serviceItem.modeQty === SERVICE_ITEM_MODE_QTY.FIXED &&
             serviceItem.fixedQty ? (
               // Fixed quantity

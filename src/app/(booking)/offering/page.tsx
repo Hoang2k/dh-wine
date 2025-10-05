@@ -48,7 +48,7 @@ export const metadata: Metadata = {
 };
 
 // Enable ISR - revalidate every 300 seconds (5 minutes)
-export const revalidate = 300;
+export const revalidate = 10;
 
 export default async function OfferingPage() {
   const response = await getServiceItems({ page: 1, per_page: 50 });

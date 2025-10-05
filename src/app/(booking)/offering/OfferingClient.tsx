@@ -116,12 +116,12 @@ export default function OfferingClient({ items }: { items: TServiceItem[] }) {
               >
                 <Link href={`/offering/${item.id}`} className="block">
                   <Card className="group pt-0 hover:shadow-lg transition-shadow duration-300 cursor-pointer">
-                    <div className="aspect-square relative overflow-hidden rounded-t-lg">
+                    <div className="aspect-square relative overflow-hidden rounded-t-lg w-full">
                       <Image
                         src={item.avatarUrl || "/placeholder.jpg"}
                         alt={item.name}
                         fill
-                        className="object-contain group-hover:scale-105 transition-transform duration-300"
+                        className="object-cover group-hover:scale-105 transition-transform duration-300"
                       />
                     </div>
                     <CardContent className="p-4">

@@ -12,14 +12,34 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { createFeedback } from "@/services/feedback";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { toast } from "react-toastify";
 import { z } from "zod";
 
 const formSchema = z.object({
-  username: z
+  name: z
     .string()
-    .min(2, { message: "Username must be at least 2 characters." }),
+    .min(2, { message: "Họ và tên phải có ít nhất 2 ký tự." })
+    .max(256, { message: "Họ và tên không được vượt quá 256 ký tự." }),
+  phone: z
+    .string()
+    .regex(/^[0-9]*$/, "Số điện thoại chỉ được chứa các chữ số.")
+    .max(20, { message: "Số điện thoại không được vượt quá 20 ký tự." }),
+  email: z
+    .string()
+    .email({ message: "Email không hợp lệ." })
+    .max(256, { message: "Email không được vượt quá 256 ký tự." })
+    .optional()
+    .or(z.literal("")),
+  subject: z
+    .string()
+    .max(256, { message: "Chủ đề không được vượt quá 256 ký tự." }),
+  content: z
+    .string()
+    .min(1, { message: "Vui lòng nhập nội dung." })
+    .max(2000, { message: "Nội dung không được vượt quá 2000 ký tự." }),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -27,10 +47,23 @@ type FormValues = z.infer<typeof formSchema>;
 export default function ContactSection() {
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: { username: "" },
+    defaultValues: {
+      name: "",
+      phone: "",
+      email: "",
+      subject: "",
+      content: "",
+    },
   });
 
-  function onSubmit(values: FormValues) {
+  async function onSubmit(values: FormValues) {
+    try {
+      await createFeedback(values);
+      toast.success("Cảm ơn bạn đã đóng góp ý kiến!");
+    } catch (error) {
+      toast.error("Thất bại");
+      return;
+    }
   }
 
   return (
@@ -48,10 +81,10 @@ export default function ContactSection() {
                 <div className="grid gap-y-8 md:gap-y-0 md:grid-cols-2 md:gap-x-8">
                   <FormField
                     control={form.control}
-                    name="username"
+                    name="name"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Họ và tên</FormLabel>
+                        <FormLabel>Họ và tên *</FormLabel>
                         <FormControl>
                           <Input
                             className="h-11"
@@ -66,10 +99,10 @@ export default function ContactSection() {
                   />
                   <FormField
                     control={form.control}
-                    name="username"
+                    name="phone"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Số điện thoại</FormLabel>
+                        <FormLabel>Số điện thoại *</FormLabel>
                         <FormControl>
                           <Input
                             className="h-11"
@@ -83,30 +116,50 @@ export default function ContactSection() {
                     )}
                   />
                 </div>
-                <FormField
-                  control={form.control}
-                  name="username"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Email</FormLabel>
-                      <FormControl>
-                        <Input
-                          className="h-11"
-                          placeholder="Vd: abc@gmail.com"
-                          {...field}
-                        />
-                      </FormControl>
+                <div className="grid gap-y-8 md:gap-y-0 md:grid-cols-2 md:gap-x-8">
+                  <FormField
+                    control={form.control}
+                    name="email"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Email</FormLabel>
+                        <FormControl>
+                          <Input
+                            className="h-11"
+                            placeholder="Vd: abc@gmail.com"
+                            {...field}
+                          />
+                        </FormControl>
 
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="subject"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Chủ đề *</FormLabel>
+                        <FormControl>
+                          <Input
+                            className="h-11"
+                            placeholder="Nhập chủ đề"
+                            {...field}
+                          />
+                        </FormControl>
+
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
                 <FormField
                   control={form.control}
-                  name="username"
+                  name="content"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Nội dung</FormLabel>
+                      <FormLabel>Nội dung *</FormLabel>
                       <FormControl>
                         <Textarea
                           className="h-[134px]"
@@ -119,7 +172,7 @@ export default function ContactSection() {
                   )}
                 />
                 <Button
-                  className="bg-[#087443] text-[20px] w-full h-[62px] font-bold "
+                  className="bg-[#087443] text-[20px] w-full h-[62px] font-bold cursor-pointer"
                   type="submit"
                 >
                   Gửi

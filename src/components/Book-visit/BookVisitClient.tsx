@@ -44,13 +44,15 @@ export default function BookVisitClient() {
 
   async function onSubmit(values: TBookVisitCreate) {
     try {
-      await createBookVisit({
+      const response = await createBookVisit({
         ...values,
         time: moment(values.time, 'DD/MM/YYYY HH:mm', true).format('YYYY-MM-DD HH:mm'),
       });
+      console.log('response', response);
       
       // Invalidate and refetch the book visit query after successful creation
       await queryClient.invalidateQueries({ queryKey: ["book-visit"] });
+
     } catch (error) {
       console.error("Error creating book visit:", error);
       throw error;

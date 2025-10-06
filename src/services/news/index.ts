@@ -158,3 +158,17 @@ export const getPostsByCategorySlug = async (slug: string): Promise<NewsResponse
     return emptyResponse();
   }
 }
+
+// React to a post (like/dislike)
+export const reactToPost = async (postId: number, reaction: boolean): Promise<{totalLike: number}> => {
+  try {
+    const response = await request.post({
+      url: '/client/posts/react',
+      data: { postId, reaction },
+    });
+    return response;
+  } catch (error) {
+    console.error('Error reacting to post:', error);
+    return {totalLike: 0};
+  }
+}

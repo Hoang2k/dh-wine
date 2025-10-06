@@ -1,13 +1,11 @@
 "use client";
 import * as React from "react";
 import { motion } from "framer-motion";
-import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
     Calendar,
     User,
-    ArrowLeft,
     Eye,
     BookOpen,
     Copy,
@@ -16,6 +14,7 @@ import {
 import Link from "next/link";
 import Image from "next/image";
 import { IPost } from "@/types/post";
+import { reactToPost } from "@/services/news";
 
 interface NewsDetailClientProps {
     article: IPost;
@@ -27,6 +26,7 @@ export default function NewsDetailClient({ article, relatedArticles, featuredArt
     const [isLiked, setIsLiked] = React.useState(false);
     const [likeCount, setLikeCount] = React.useState(0);
     const [copied, setCopied] = React.useState(false);
+    const [loading, setLoading] = React.useState(false);
 
     const formatDate = (dateString: string) => {
         return new Date(dateString).toLocaleDateString('vi-VN', {
@@ -59,10 +59,51 @@ export default function NewsDetailClient({ article, relatedArticles, featuredArt
         }
     };
 
-    const handleLike = () => {
-        setIsLiked(!isLiked);
-        setLikeCount(prev => isLiked ? prev - 1 : prev + 1);
-    };
+    // đọc hint lúc vào
+React.useEffect(() => {
+    try {
+      const bag = JSON.parse(localStorage.getItem('likes:v1') || '{}');
+      if (bag[String(article.id)] === true && !(article as any).hasReacted) {
+        setIsLiked(true);
+      }
+    } catch {}
+  }, [article.id]);
+  
+  React.useEffect(() => {
+    if (typeof window === "undefined") return; // tránh SSR lỗi
+    try {
+      const bag = JSON.parse(localStorage.getItem("likes:v1") || "{}");
+      if (bag[String(article.id)] === true && !(article as any).hasReacted) {
+        setIsLiked(true);
+      }
+    } catch {}
+  }, [article.id]);
+
+
+    const handleLike = async () => {
+        if (loading) return;
+        setLoading(true);
+      
+        const prevLiked = isLiked;
+        const prevCount = likeCount;
+      
+        const nextIsLiked = !prevLiked;
+        setIsLiked(nextIsLiked);
+        setLikeCount((p) => (nextIsLiked ? p + 1 : Math.max(0, p - 1)));
+      
+        const res = await reactToPost(Number(article.id), nextIsLiked);
+      
+        if (!res || typeof res.totalLike !== 'number') {
+          // rollback
+          setIsLiked(prevLiked);
+          setLikeCount(prevCount);
+          setLoading(false);
+          return;
+        }
+        setLikeCount(res.totalLike);
+        setLoading(false);
+
+    }
 
     return (
         <div className="min-h-[100dvh] bg-white">

@@ -51,12 +51,11 @@ interface BookVisitFormProps {
 export default function BookVisitForm({ onSubmit, onCancel, onNavigateToList, onNavigateToHome, onRefetchData }: BookVisitFormProps) {
     const [isLoading, setIsLoading] = React.useState(false);
     const [showSuccessPopup, setShowSuccessPopup] = React.useState(false);
-    const [successOrgName, setSuccessOrgName] = React.useState("");
-    const [successPhone, setSuccessPhone] = React.useState("");
     const [displayDateTime, setDisplayDateTime] = React.useState(moment().format('DD/MM/YYYY HH:mm'));
     const [showDateTimePicker, setShowDateTimePicker] = React.useState(false);
     const [selectedDate, setSelectedDate] = React.useState(moment());
     const [selectedTime, setSelectedTime] = React.useState(moment().format('HH:mm'));
+    const [idBookVisit, setIdBookVisit] = React.useState<number>(0);
     const form = useForm<BookingForm>({
         resolver: zodResolver(BookingSchema),
         defaultValues: {
@@ -76,9 +75,8 @@ export default function BookVisitForm({ onSubmit, onCancel, onNavigateToList, on
     async function handleSubmit(values: BookingForm) {
         try {
             setIsLoading(true);
-            await onSubmit(values);
-            setSuccessOrgName(values.org_name);
-            setSuccessPhone(values.phone);
+            const response = await onSubmit(values);
+
             setShowSuccessPopup(true);
             form.reset({ ...form.getValues(), agree: false });
         } catch (error) {
@@ -389,6 +387,7 @@ function handleDateTimePickerClose() {
                 isOpen={showSuccessPopup}
                 orgName={form.getValues("org_name")}
                 phone={form.getValues("phone")}
+                idBookVisit={idBookVisit}
                 bookVisitData={form.getValues()} // Pass the form data
                 onClose={() => setShowSuccessPopup(false)}
                 onNo={() => {

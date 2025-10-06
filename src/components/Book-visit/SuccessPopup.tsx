@@ -9,17 +9,18 @@ interface SuccessPopupProps {
   isOpen: boolean;
   orgName: string;
   phone: string;
+  idBookVisit: number;
   onClose: () => void;
   onNo: () => void;
   onYes: (bookVisitData: any) => void;
   bookVisitData?: any; // Add bookVisitData prop
 }
 
-export default function SuccessPopup({ isOpen, orgName, phone, onClose, onNo, onYes, bookVisitData }: SuccessPopupProps) {
+export default function SuccessPopup({ isOpen, orgName, phone, idBookVisit, onClose, onNo, onYes, bookVisitData }: SuccessPopupProps) {
   const handleYes = () => {
     // Save book visit data to localStorage
     if (bookVisitData) {
-      localStorage.setItem('bookVisitData', JSON.stringify(bookVisitData));
+      localStorage.setItem('bookVisitData', JSON.stringify({...bookVisitData, id: idBookVisit}));
       localStorage.setItem('fromBookVisit', 'true');
       localStorage.setItem('directFromBookVisit', 'true'); // Add this flag
     }

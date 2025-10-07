@@ -61,16 +61,12 @@ export default function BookVisitPaymentModal({
                 contact_phone: contactPhone,
                 email: email,
                 address: address,
-                note: note,
-                totalAmount,
-                totalQuantity
+                note: note
             });
         } else {
             // Submit with book visit data
             onConfirm({
-                bookVisitData,
-                totalAmount,
-                totalQuantity
+                bookVisitData
             });
         }
     };

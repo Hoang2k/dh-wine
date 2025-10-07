@@ -157,7 +157,7 @@ export default function CategoryClient({ category, initialData }: CategoryClient
                                                             {article.summary}
                                                         </p>
                                                         <div className="text-xs text-gray-500">
-                                                            {formatDate(article.publishAt)} - {(article.views ?? 0).toLocaleString()} lượt xem
+                                                            {formatDate(article.publishAt)} - {(article.view ?? 0).toLocaleString()} lượt xem
                                                         </div>
                                                     </div>
                                                     <div className="md:ml-4 w-full md:w-48 lg:w-56 flex-shrink-0">

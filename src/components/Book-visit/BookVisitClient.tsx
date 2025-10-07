@@ -53,6 +53,7 @@ export default function BookVisitClient() {
       // Invalidate and refetch the book visit query after successful creation
       await queryClient.invalidateQueries({ queryKey: ["book-visit"] });
 
+      return response; 
     } catch (error) {
       console.error("Error creating book visit:", error);
       throw error;

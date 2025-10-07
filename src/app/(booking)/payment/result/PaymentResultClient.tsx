@@ -1,69 +1,116 @@
 "use client";
+
 import * as React from "react";
 import { motion } from "framer-motion";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { CheckCircle, XCircle, Clock, ArrowLeft, Home } from "lucide-react";
 import Link from "next/link";
+import { getVNPayResult } from "@/services/payment";
+import { useCart } from "@/contexts/CartContext";
+import { toast } from "react-toastify";
 
-interface PaymentResult {
+
+
+type ResultDTO = {
   success: boolean;
-  orderCode?: string;
-  amount?: number;
-  message?: string;
-  transactionId?: string;
-}
+  orderCode?: string | null;
+  amount?: number | null;
+  transactionId?: string | null;
+  payDate?: string | null;
+};
+
+const RESULT_ENDPOINT = `/api/v1/payments/vnpay/result`;
+
 
 export default function PaymentResultClient() {
   const searchParams = useSearchParams();
-  const [paymentResult, setPaymentResult] = React.useState<PaymentResult | null>(null);
-  const [isLoading, setIsLoading] = React.useState(true);
+  const router = useRouter();
+  const { deselectAllItems } = useCart();
+  const [isBootLoading, setIsBootLoading] = React.useState(true);
+  const [isDetailLoading, setIsDetailLoading] = React.useState(false);
+  const [result, setResult] = React.useState<ResultDTO | null>(null);
+
 
   React.useEffect(() => {
-    // Parse URL parameters from VNPay return
-    const vnp_ResponseCode = searchParams.get('vnp_ResponseCode');
-    const vnp_TransactionStatus = searchParams.get('vnp_TransactionStatus');
-    const vnp_TxnRef = searchParams.get('vnp_TxnRef');
-    const vnp_Amount = searchParams.get('vnp_Amount');
-    const vnp_TransactionNo = searchParams.get('vnp_TransactionNo');
-    const vnp_OrderInfo = searchParams.get('vnp_OrderInfo');
+    const successParam = searchParams.get("success");
+    const orderId = searchParams.get("orderId");
+    const successFromQuery = successParam === "1";
 
-    // Determine payment status
-    const isSuccess = vnp_ResponseCode === '00' && vnp_TransactionStatus === '00';
-    
-    const result: PaymentResult = {
-      success: isSuccess,
-      orderCode: vnp_TxnRef || undefined,
-      amount: vnp_Amount ? parseInt(vnp_Amount) / 100 : undefined, // VNPay returns amount in cents
-      transactionId: vnp_TransactionNo || undefined,
-      message: isSuccess 
-        ? 'Thanh toán thành công!' 
-        : 'Thanh toán thất bại. Vui lòng thử lại.'
-    };
+    setResult({
+      success: successFromQuery,
+      orderCode: orderId ?? undefined,
+      amount: undefined,
+      transactionId: undefined,
+      payDate: undefined,
+    });
+    setIsBootLoading(false);
 
-    setPaymentResult(result);
-    setIsLoading(false);
-
-    // Clear cart and localStorage on successful payment
-    if (isSuccess) {
-      localStorage.removeItem('cart-items');
-      localStorage.removeItem('selected-items');
-      localStorage.removeItem('fromBookVisit');
-      localStorage.removeItem('bookVisitData');
-      localStorage.removeItem('directFromBookVisit');
+    if (orderId) {
+      const url = RESULT_ENDPOINT;
+      (async () => {
+        setIsDetailLoading(true);
+        try {
+             const data = await getVNPayResult(orderId);
+                
+  
+          setResult((prev) => ({
+            ...(prev || {}),
+            success: !!data?.success,
+            orderCode: data?.orderCode ?? prev?.orderCode ?? orderId,
+            amount: typeof data?.amount === "number" ? data?.amount : prev?.amount,
+            transactionId: data?.transactionId ?? prev?.transactionId,
+            payDate: data?.payDate ?? prev?.payDate,
+          }));
+  
+          if (data?.success) {
+            try {
+              localStorage.removeItem("selected-items");
+              localStorage.removeItem("fromBookVisit");
+              localStorage.removeItem("bookVisitData");
+              localStorage.removeItem("directFromBookVisit");
+              
+            } catch {}
+          }
+        } catch (error) {
+          // Axios interceptor already shows error toast from backend
+          // Just redirect to home page
+          setTimeout(() => {
+            router.push("/");
+          }, 2000);
+        } finally {
+          setIsDetailLoading(false);
+        }
+      })();
     }
-  }, [searchParams]);
+  }, [searchParams, router]);
 
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('vi-VN', {
-      style: 'currency',
-      currency: 'VND'
-    }).format(price);
+  // Uncheck selected items in cart on successful payment
+  React.useEffect(() => {
+    if (result?.success) {
+      try {
+        deselectAllItems();
+        localStorage.removeItem("selected-items");
+      } catch {}
+    }
+  }, [result?.success, deselectAllItems]);
+
+  const formatPrice = (price: number) =>
+    new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(price);
+
+  const renderTime = () => {
+    if (result?.payDate) {
+      try {
+        const d = new Date(result.payDate);
+        if (!isNaN(d.getTime())) return d.toLocaleString("vi-VN");
+      } catch {}
+    }
+    return new Date().toLocaleString("vi-VN");
   };
 
-  if (isLoading) {
+  if (isBootLoading || !result) {
     return (
       <div className="min-h-[100dvh] flex items-center justify-center">
         <div className="text-center">
@@ -74,9 +121,43 @@ export default function PaymentResultClient() {
     );
   }
 
+  // When user visits /payment/result without query params
+  const missingParams =
+    !searchParams.get("success") && !searchParams.get("orderId");
+  if (missingParams) {
+    return (
+      <div className="min-h-[100dvh] flex items-center justify-center">
+        <div className="text-center space-y-6 px-4">
+          <div className="mx-auto mb-2 w-16 h-16 rounded-full flex items-center justify-center bg-gray-200 text-gray-600">
+            <Clock className="h-8 w-8" />
+          </div>
+          <h2 className="text-xl font-semibold">Không có thông tin giao dịch</h2>
+          <p className="text-muted-foreground">
+            Vui lòng bắt đầu thanh toán từ giỏ hàng hoặc quay lại trang chủ.
+          </p>
+          <div className="flex gap-3 justify-center">
+            <Button asChild>
+              <Link href="/">
+                <Home className="h-4 w-4 mr-2" />
+                Về trang chủ
+              </Link>
+            </Button>
+            <Button asChild variant="outline">
+              <Link href="/gio-hang">
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                Về giỏ hàng
+              </Link>
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const isSuccess = !!result.success;
+
   return (
     <div className="min-h-[100dvh]">
-      {/* Content */}
       <div className="container mx-auto px-4 pb-20">
         <div className="max-w-2xl mx-auto">
           <Card className="border-none shadow-lg">
@@ -86,54 +167,54 @@ export default function PaymentResultClient() {
                 animate={{ scale: 1 }}
                 transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
                 className="mx-auto mb-4 w-16 h-16 rounded-full flex items-center justify-center"
-                style={{
-                  backgroundColor: paymentResult?.success ? '#10b981' : '#ef4444',
-                  color: 'white'
-                }}
+                style={{ backgroundColor: isSuccess ? "#10b981" : "#ef4444", color: "white" }}
               >
-                {paymentResult?.success ? (
-                  <CheckCircle className="h-8 w-8" />
-                ) : (
-                  <XCircle className="h-8 w-8" />
-                )}
+                {isSuccess ? <CheckCircle className="h-8 w-8" /> : <XCircle className="h-8 w-8" />}
               </motion.div>
-              
+
               <CardTitle className="text-xl">
-                {paymentResult?.message}
+                {isSuccess ? "Thanh toán thành công!" : "Thanh toán thất bại. Vui lòng thử lại."}
               </CardTitle>
             </CardHeader>
 
             <CardContent className="space-y-6">
               {/* Payment Details */}
-              {paymentResult?.success && (
+              {isSuccess && (
                 <div className="bg-emerald-50 p-4 rounded-lg">
-                  <h3 className="font-semibold mb-3 text-emerald-900">Chi tiết giao dịch</h3>
+                  <div className="flex items-center justify-between mb-3">
+                    <h3 className="font-semibold text-emerald-900">Chi tiết giao dịch</h3>
+                    {isDetailLoading && (
+                      <span className="text-xs text-emerald-700">Đang tải chi tiết…</span>
+                    )}
+                  </div>
+
                   <div className="space-y-2 text-sm">
-                    {paymentResult.orderCode && (
+                    {result.orderCode && (
                       <div className="flex justify-between">
                         <span className="text-muted-foreground">Mã đơn hàng:</span>
-                        <span className="font-medium">{paymentResult.orderCode}</span>
+                        <span className="font-medium">{result.orderCode}</span>
                       </div>
                     )}
-                    {paymentResult.amount && (
+
+                    {typeof result.amount === "number" && (
                       <div className="flex justify-between">
                         <span className="text-muted-foreground">Số tiền:</span>
                         <span className="font-medium text-emerald-600">
-                          {formatPrice(paymentResult.amount)}
+                          {formatPrice(result.amount)}
                         </span>
                       </div>
                     )}
-                    {paymentResult.transactionId && (
+
+                    {result.transactionId && (
                       <div className="flex justify-between">
                         <span className="text-muted-foreground">Mã giao dịch:</span>
-                        <span className="font-medium">{paymentResult.transactionId}</span>
+                        <span className="font-medium">{result.transactionId}</span>
                       </div>
                     )}
+
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Thời gian:</span>
-                      <span className="font-medium">
-                        {new Date().toLocaleString('vi-VN')}
-                      </span>
+                      <span className="font-medium">{renderTime()}</span>
                     </div>
                   </div>
                 </div>
@@ -141,24 +222,23 @@ export default function PaymentResultClient() {
 
               {/* Status Badge */}
               <div className="text-center">
-                <Badge 
-                  variant={paymentResult?.success ? "default" : "destructive"}
-                  className="text-lg px-4 py-2"
-                >
-                  {paymentResult?.success ? 'Thành công' : 'Thất bại'}
+                <Badge variant={isSuccess ? "default" : "destructive"} className="text-lg px-4 py-2">
+                  {isSuccess ? "Thành công" : "Thất bại"}
                 </Badge>
               </div>
 
               {/* Next Steps */}
               <div className="text-center space-y-4">
-                {paymentResult?.success ? (
+                {isSuccess ? (
                   <div className="space-y-2">
                     <p className="text-muted-foreground">
                       Đơn hàng của bạn đã được xác nhận. Chúng tôi sẽ liên hệ với bạn trong thời gian sớm nhất.
                     </p>
-                    <p className="text-sm text-muted-foreground">
-                      Mã đơn hàng: <span className="font-medium">{paymentResult.orderCode}</span>
-                    </p>
+                    {result.orderCode && (
+                      <p className="text-sm text-muted-foreground">
+                        Mã đơn hàng: <span className="font-medium">{result.orderCode}</span>
+                      </p>
+                    )}
                   </div>
                 ) : (
                   <div className="space-y-2">
@@ -180,12 +260,10 @@ export default function PaymentResultClient() {
                     Về trang chủ
                   </Link>
                 </Button>
-                
-                {paymentResult?.success ? (
+
+                {isSuccess ? (
                   <Button asChild variant="outline" className="flex-1">
-                    <Link href="/offering">
-                      Tiếp tục mua sắm
-                    </Link>
+                    <Link href="/offering">Tiếp tục mua sắm</Link>
                   </Button>
                 ) : (
                   <Button asChild variant="outline" className="flex-1">

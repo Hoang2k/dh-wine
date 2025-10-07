@@ -10,8 +10,6 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { X, CreditCard, User, Phone, Mail, MapPin } from "lucide-react";
-import { createServiceOrder } from "@/services/service-order";
-import { TServiceOrder } from "@/types/service-order";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { BOOK_VISIT_LOCATIONS } from "@/constants";
 

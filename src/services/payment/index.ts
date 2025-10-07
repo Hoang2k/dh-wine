@@ -24,3 +24,26 @@ export const createVNPayPayment = async (paymentData: TVNPayCreateRequest): Prom
         throw error;
     }
 };
+
+
+export interface TVNPayResultResponse {
+    success: boolean;
+    orderCode: string;
+    amount: number;
+    transactionId: string;
+    payDate: string;
+}
+
+export const getVNPayResult = async (orderId: string): Promise<TVNPayResultResponse> => {
+    try {
+        const response = await axiosInstance.get({
+            url: `/payments/vnpay/result`,
+            params: { orderId }
+        });
+        return response;
+    }
+    catch (error) {
+        console.error("Error getting VNPay result:", error);
+        throw error;
+    }
+};      

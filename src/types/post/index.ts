@@ -85,7 +85,8 @@ export interface PostReactions {
     content: string;
     summary: string;
     publishAt: string;
-    views: number;
+    view: number;
+    totalLike: number;
     category: ICategory;
     thumbnailImage?: IMedia;
     author: IAuthor;

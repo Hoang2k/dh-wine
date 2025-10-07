@@ -64,7 +64,7 @@ export default function NewsClient({ initialData }: NewsClientProps) {
             try {
                 setNewsLoading(true);
                 const response = await getListPostHomepage(20);
-                
+                console.log('res', response)
                 // Set data from the structured response
                 setHeroPost(response.hero);
                 setLatest(response.latest.data);
@@ -202,7 +202,7 @@ export default function NewsClient({ initialData }: NewsClientProps) {
                                                             {article.summary}
                                                         </p>
                                                         <div className="text-xs text-gray-500">
-                                                            {formatDate(article.publishAt)} - {(article.views ?? 0).toLocaleString()} lượt xem
+                                                            {formatDate(article.publishAt)} - {(article.view ?? 0).toLocaleString()} lượt xem
                                                         </div>
                                                     </div>
                                                     <div className="sm:ml-4 w-32 sm:w-36 md:w-40 sm:flex-shrink-0">
@@ -311,7 +311,7 @@ export default function NewsClient({ initialData }: NewsClientProps) {
                                                             {article.title}
                                                         </h4>
                                                         <div className="text-xs text-gray-500">
-                                                            {formatDate(article.publishAt)} - {(article.views ?? 0).toLocaleString()} lượt xem
+                                                            {formatDate(article.publishAt)} - {(article.view ?? 0).toLocaleString()} lượt xem
                                                         </div>
                                                     </div>
                                                 </div>

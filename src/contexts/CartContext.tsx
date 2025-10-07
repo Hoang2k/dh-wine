@@ -1,6 +1,7 @@
 "use client";
 import * as React from "react";
 import { TServiceItem, TCartItem } from "@/types/offerings";
+import { SERVICE_ITEM_MODE_QTY } from "@/constants/service-item";
 
 interface CartContextType {
     cartItems: TCartItem[];
@@ -51,11 +52,11 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         }
     }, [selectedItems]);
 
-    const addToCart = (serviceItem: TServiceItem, quantity: number) => {
+    const addToCart = React.useCallback((serviceItem: TServiceItem, quantity: number) => {
         const existingItem = cartItems.find(item => item.service_item.id === serviceItem.id);
         
         // Handle different modeQty behaviors
-        if (serviceItem.modeQty === 1) { // FIXED
+        if (serviceItem.modeQty === SERVICE_ITEM_MODE_QTY.FIXED) { // FIXED
             if (existingItem) {
                 return { success: false, message: "Sản phẩm đã tồn tại trong giỏ hàng" };
             } else {
@@ -63,7 +64,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
                 setSelectedItems([serviceItem.id.toString()]);
                 return { success: true, message: "Thêm vào giỏ hàng thành công" };
             }
-        } else if (serviceItem.modeQty === 2) { // CHOICES
+        } else if (serviceItem.modeQty === SERVICE_ITEM_MODE_QTY.CHOICES) { // CHOICES
             if (existingItem) {
                 // Update existing product without increasing quantity
                 setCartItems(prev => {
@@ -79,6 +80,11 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
                 return { success: true, message: "Thêm vào giỏ hàng thành công" };
             }
         } else { // RANGE (modeQty === 3) or default behavior
+            const currentQty = existingItem ? existingItem.quantity : 0;
+            if (serviceItem.maxQty && currentQty + quantity > serviceItem.maxQty) {
+                return { success: false, message: `Sản phầm đã có trong giỏ hàng và số lượng không được vượt quá ${serviceItem.maxQty}` };
+            }
+
             setCartItems(prev => {
                 if (existingItem) {
                     // If item exists, update quantity and move to top
@@ -95,14 +101,14 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
             setSelectedItems([serviceItem.id.toString()]);
             return { success: true, message: "Thêm vào giỏ hàng thành công" };
         }
-    };
+    }, [cartItems]);
 
-    const removeFromCart = (serviceItemId: string) => {
+    const removeFromCart = React.useCallback((serviceItemId: string) => {
         setCartItems(prev => prev.filter(item => item.service_item.id.toString() !== serviceItemId));
         setSelectedItems(prev => prev.filter(id => id !== serviceItemId));
-    };
+    }, []);
 
-    const updateQuantity = (serviceItemId: string, quantity: number) => {
+    const updateQuantity = React.useCallback((serviceItemId: string, quantity: number) => {
         if (quantity <= 0) {
             removeFromCart(serviceItemId);
             return;
@@ -114,42 +120,42 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
                     : item
             )
         );
-    };
+    }, [removeFromCart]);
 
-    const clearCart = () => {
+    const clearCart = React.useCallback(() => {
         setCartItems([]);
         setSelectedItems([]);
-    };
+    }, []);
 
-    const toggleItemSelection = (serviceItemId: string) => {
+    const toggleItemSelection = React.useCallback((serviceItemId: string) => {
         setSelectedItems(prev =>
             prev.includes(serviceItemId)
                 ? prev.filter(id => id !== serviceItemId)
                 : [...prev, serviceItemId]
         );
-    };
+    }, []);
 
-    const selectAllItems = () => {
+    const selectAllItems = React.useCallback(() => {
         setSelectedItems(cartItems.map(item => item.service_item.id.toString()));
-    };
+    }, [cartItems]);
 
-    const deselectAllItems = () => {
+    const deselectAllItems = React.useCallback(() => {
         setSelectedItems([]);
-    };
+    }, []);
 
-    const getSelectedItems = () => {
+    const getSelectedItems = React.useCallback(() => {
         return cartItems.filter(item => selectedItems.includes(item.service_item.id.toString()));
-    };
+    }, [cartItems, selectedItems]);
 
-    const getTotalQuantity = () => {
+    const getTotalQuantity = React.useCallback(() => {
         return getSelectedItems().reduce((total, item) => total + item.quantity, 0);
-    };
+    }, [getSelectedItems]);
 
-    const getTotalAmount = () => {
+    const getTotalAmount = React.useCallback(() => {
         return getSelectedItems().reduce((total, item) => total + (item.service_item.unitPrice ? item.service_item.unitPrice * item.quantity : 0), 0);
-    };
+    }, [getSelectedItems]);
 
-    const value: CartContextType = {
+    const value = React.useMemo<CartContextType>(() => ({
         cartItems,
         addToCart,
         removeFromCart,
@@ -162,7 +168,20 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         getSelectedItems,
         getTotalQuantity,
         getTotalAmount,
-    };
+    }), [
+        cartItems,
+        addToCart,
+        removeFromCart,
+        updateQuantity,
+        clearCart,
+        selectedItems,
+        toggleItemSelection,
+        selectAllItems,
+        deselectAllItems,
+        getSelectedItems,
+        getTotalQuantity,
+        getTotalAmount,
+    ]);
 
     return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 }

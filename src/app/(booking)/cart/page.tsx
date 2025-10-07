@@ -189,9 +189,7 @@ export default function CartPage() {
       const orderItems: TServiceOrderItem[] = selectedItems.map((item) => ({
         serviceId: Number(item.service_item.id),
         quantity: item.quantity,
-        unit: item.service_item.unit,
         unitPrice: Number(item.service_item.unitPrice) || 0,
-        totalAmount: (Number(item.service_item.unitPrice) || 0) * item.quantity,
       }));
 
       // Prepare order data
@@ -207,7 +205,6 @@ export default function CartPage() {
           paymentData.contactPhone || paymentData.bookVisitData?.phone || "",
         note: paymentData.note || "",
         orderItems: orderItems,
-        totalAmount: getTotalAmount(),
         visitRequestId: paymentData.bookVisitData?.id || null,
         siteId: paymentData.siteId || 1,
         scheduledAt: paymentData.bookVisitData

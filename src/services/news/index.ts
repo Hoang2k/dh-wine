@@ -172,3 +172,16 @@ export const reactToPost = async (postId: number, reaction: boolean): Promise<{t
     return {totalLike: 0};
   }
 }
+
+export const postView = async (postId: number) => {
+  try {
+    const response = await request.post({
+      url: `client/posts/${postId}/view`,
+      data: {id: postId},
+    },)
+
+    return response;
+  } catch(error) {
+    console.log(error)
+  }
+}

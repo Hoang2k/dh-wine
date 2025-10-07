@@ -2,7 +2,6 @@ export interface TServiceOrderItem {
     quantity: number;
     unitPrice: number;
     serviceId: number;
-    totalAmount: number;
     minPrice?: number;
 }
 
@@ -17,5 +16,4 @@ export interface TServiceOrder {
     contactPhone: string;
     note?: string;
     orderItems: TServiceOrderItem[];
-    totalAmount: number;
 }

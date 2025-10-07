@@ -41,7 +41,7 @@ const BookingSchema = z.object({
 type BookingForm = z.infer<typeof BookingSchema>;
 
 interface BookVisitFormProps {
-    onSubmit: (values: BookingForm) => Promise<void>;
+    onSubmit: (values: BookingForm) => Promise<any>;
     onCancel: () => void;
     onNavigateToList: () => void;
     onNavigateToHome: () => void;
@@ -76,6 +76,11 @@ export default function BookVisitForm({ onSubmit, onCancel, onNavigateToList, on
         try {
             setIsLoading(true);
             const response = await onSubmit(values);
+console.log('response', response);
+            if(response.id) {
+                setIdBookVisit(response.id);
+            }
+
 
             setShowSuccessPopup(true);
             form.reset({ ...form.getValues(), agree: false });

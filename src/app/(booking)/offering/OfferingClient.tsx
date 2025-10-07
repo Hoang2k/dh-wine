@@ -8,6 +8,7 @@ import { SERVICE_ITEM_PRICING_TYPE } from "@/constants/service-item";
 import { useCart } from "@/contexts/CartContext";
 import { getServiceItems } from "@/services/offerings";
 import { TServiceItem } from "@/types/offerings";
+import { formatPrice } from "@/utils";
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { Search, ShoppingCart, Eye } from "lucide-react";
@@ -41,6 +42,16 @@ export default function OfferingClient({ items }: { items: TServiceItem[] }) {
       setFilteredItems([]);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const getPrice = (item: TServiceItem) => {
+    if (item.pricingType === SERVICE_ITEM_PRICING_TYPE.FIXED) {
+      return item.unitPrice;
+    } else if (item.pricingType === SERVICE_ITEM_PRICING_TYPE.CHOICES) {
+      return item.priceChoices?.[0];
+    } else if (item.pricingType === SERVICE_ITEM_PRICING_TYPE.MIN_ONLY) {
+      return item.minPrice;
     }
   };
 
@@ -129,12 +140,9 @@ export default function OfferingClient({ items }: { items: TServiceItem[] }) {
                         {item.name}
                       </h3>
                       <p className="text-emerald-600 font-semibold text-xl">
-                        {new Intl.NumberFormat("vi-VN", {
-                          style: "currency",
-                          currency: "VND",
-                        }).format(item.unitPrice || 0)}
+                        {formatPrice(getPrice(item) || 0)}
                       </p>
-                    </CardContent>
+                    </CardContent>  
                   </Card>
                 </Link>
               </motion.div>

@@ -2,7 +2,7 @@ import { MetadataRoute } from 'next'
 import { getAllNewsSlugs, getListCategories } from '@/services/news'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = 'https://nghiatranglietsivixuyen.vn'
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://nghiatranglietsivixuyen.vn'
   
   // Static pages
   const staticPages = [
@@ -13,31 +13,31 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 1,
     },
     {
-      url: `${baseUrl}/news`,
+      url: `${baseUrl}/tin-tuc`,
       lastModified: new Date(),
       changeFrequency: 'daily' as const,
       priority: 0.9,
     },
     {
-      url: `${baseUrl}/offering`,
+      url: `${baseUrl}/dat-do-le`,
       lastModified: new Date(),
       changeFrequency: 'weekly' as const,
       priority: 0.8,
     },
     {
-      url: `${baseUrl}/about`,
+      url: `${baseUrl}/gioi-thieu`,
       lastModified: new Date(),
       changeFrequency: 'monthly' as const,
       priority: 0.6,
     },
     {
-      url: `${baseUrl}/contact`,
+      url: `${baseUrl}/lien-he`,
       lastModified: new Date(),
       changeFrequency: 'monthly' as const,
       priority: 0.6,
     },
     {
-      url: `${baseUrl}/book-visit`,
+      url: `${baseUrl}/dat-lich-vieng`,
       lastModified: new Date(),
       changeFrequency: 'weekly' as const,
       priority: 0.7,
@@ -49,7 +49,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // Fetch news articles
     const newsSlugs = await getAllNewsSlugs();
     const newsPages = newsSlugs.map((slug) => ({
-      url: `${baseUrl}/news/${slug}`,
+      url: `${baseUrl}/tin-tuc/${slug}`,
       lastModified: new Date(),
       changeFrequency: 'weekly' as const,
       priority: 0.8,
@@ -58,7 +58,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // Fetch categories
     const categories = await getListCategories();
     const categoryPages = categories.map((category) => ({
-      url: `${baseUrl}/news/category/${category.slug}`,
+      url: `${baseUrl}/tin-tuc/danh-muc/${category.slug}`,
       lastModified: new Date(),
       changeFrequency: 'daily' as const,
       priority: 0.7,

@@ -54,20 +54,15 @@ export default function CategoryClient({ category, initialData }: CategoryClient
                 category: category, 
                 per_page: perPage,
                 page: page
-            }) as any;
+            });
 
-            // Handle both array and paginated response formats
-            const newArticles = Array.isArray(response) ? response : response?.data || [];
-            const newMeta = Array.isArray(response) ? {
-                page: 1,
-                perPage: newArticles.length,
+            // getListPosts now always returns an array
+            const newArticles = response;
+            const newMeta = {
+                page: page,
+                perPage: perPage,
                 total: newArticles.length,
-                totalPages: 1
-            } : response?.meta || {
-                page: 1,
-                perPage: 0,
-                total: 0,
-                totalPages: 0
+                totalPages: Math.ceil(newArticles.length / perPage)
             };
 
             setArticles(newArticles);

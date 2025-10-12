@@ -59,7 +59,10 @@ axiosInstance.interceptors.response.use(
     return res
   },
   (error: AxiosError) => {
-    console.log('err： ' + error) // for debug
+    // Only log errors in browser environment to avoid cluttering build logs
+    if (typeof window !== 'undefined') {
+      console.log('err： ' + error) // for debug
+    }
     // ElMessage.error(error.message)
     return Promise.reject(error)
   }
@@ -104,9 +107,13 @@ const service = {
             // await logoutUser();
           }
 
-          const errorMessage =
-          err?.response?.data?.message || err?.message || "Có lỗi xảy ra";
-          showToast(errorMessage, "error");
+          // Only show toast and log errors in browser environment
+          // Skip during build/SSR to avoid cluttering build logs
+          if (typeof window !== 'undefined') {
+            const errorMessage =
+              err?.response?.data?.message || err?.message || "Có lỗi xảy ra";
+            showToast(errorMessage, "error");
+          }
 
           reject(err);
         })

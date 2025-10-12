@@ -17,9 +17,9 @@ export default async function HomePage() {
 
   let listPosts: IPost[] = [];
   try {
-    listPosts = await getListPosts() as IPost[];
+    listPosts = await getListPosts();
   } catch (error) {
-    console.error('Error fetching list post homepage:', error);
+    // Error already logged in service layer, no need to log again
   }
 
   return (

@@ -2,7 +2,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
-  output: 'standalone', // Comment out for ISR to work
+  // output: 'standalone',
   distDir: 'build',
   images: {
     unoptimized: true,

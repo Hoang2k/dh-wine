@@ -17,7 +17,7 @@ build:
         paths:
          - node_modules/
     tags:
-        - ntls-runner 
+        - ntlsvx-runner 
     only:
         - tags
 
@@ -26,11 +26,11 @@ deploy:
     variables:
         GIT_STRATEGY: none
     script:
-        - sudo rsync -av --delete --exclude node_modules --exclude .git --exclude .env ./ /var/www/ntls/ntlsvx-frontend/
-        - sudo chown -R ntls:ntls /var/www/ntls/ntlsvx-frontend
-        - sudo -u ntls bash -c "cd /var/www/ntls/ntlsvx-frontend && yarn install --frozen-lockfile && pm2 restart ntlsvx-frontend || pm2 start npm --name "ntlsvx-frontend" -- run start"
+        - sudo rsync -av --delete --exclude node_modules --exclude .git --exclude .env ./ /var/www/ntlsvx-frontend/
+        - sudo chown -R ntls:ntls /var/www/ntlsvx-frontend
+        - sudo -u ntls bash -c "cd /var/www/ntlsvx-frontend && yarn install --frozen-lockfile && pm2 restart ntlsvx-frontend || pm2 start npm --name "ntlsvx-frontend" -- run start"
     tags:
-        - ntls-runner
+        - ntlsvx-runner
     only:
         - tags
 
@@ -42,7 +42,7 @@ checklog:
     script:
         - sudo -u ntls pm2 logs ntlsvx-frontend --lines 200 --nostream
     tags:
-        - ntls-runner
+        - ntlsvx-runner
     only:
         - tags
 

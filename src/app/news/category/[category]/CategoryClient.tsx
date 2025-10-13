@@ -36,7 +36,7 @@ export default function CategoryClient({ category, initialData }: CategoryClient
     const [pageSize, setPageSize] = React.useState(initialData.meta.perPage);
     
     const categories = initialData.categories || [];
-    const otherCategories = categories.filter(cat => cat.slug !== category);
+    // const otherCategories = categories.filter(cat => cat.slug !== category);
 
     // Update URL when pagination changes
     const updateURL = React.useCallback((page: number, perPage: number) => {
@@ -208,13 +208,13 @@ export default function CategoryClient({ category, initialData }: CategoryClient
                             <h3 className="text-base md:text-lg font-bold text-gray-900 mb-3 md:mb-4">
                                 DANH MỤC KHÁC
                             </h3>
-                            {otherCategories.length > 0 ? (
+                            {categories.length > 0 ? (
                                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-2">
-                                    {otherCategories.map((cat) => (
+                                    {categories.map((cat) => (
                                         <Link 
                                             key={cat.id} 
                                             href={`/tin-tuc/danh-muc/${cat.slug}`}
-                                            className="text-xs md:text-sm text-gray-700 hover:text-blue-600 cursor-pointer transition-colors p-2 rounded hover:bg-gray-50"
+                                            className={`text-xs md:text-sm text-gray-700 hover:text-blue-600 cursor-pointer transition-colors p-2 rounded hover:bg-gray-50 ${cat.slug === category ? 'bg-blue-50 text-blue-700' : ''}`}
                                         >
                                             {cat.name}
                                         </Link>

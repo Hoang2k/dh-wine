@@ -8,7 +8,7 @@ export const getServiceItems = async (params?: {
 }): Promise<{ data: TServiceItem[]; meta: { page: number; perPage: number; total: number; totalPages: number } }> => {
     try {
         const query = new URLSearchParams(params as any).toString();
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/service-item?${query}`, {next: { revalidate: 300 },});
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/service-item?${query}`, {cache: 'no-store'});
         return await res.json();
     } catch (error) {
         throw error;
@@ -17,7 +17,7 @@ export const getServiceItems = async (params?: {
 
 export const getServiceItemById = async (id: string): Promise<TServiceItem> => {
     try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/service-item/${id}`); 
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/service-item/${id}`, {cache: 'no-store'}); 
         return response.json(); // Changed from response to response.data
     } catch (error) {
         throw error;

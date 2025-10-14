@@ -138,9 +138,8 @@ export default async function NewsDetailPage({ params }: NewsDetailPageProps) {
 
     // Breadcrumb data
     const breadcrumbItems = [
-      { label: 'Trang chủ', href: '/' },
       { label: 'Tin tức', href: '/tin-tuc' },
-      { label: post.category.name, href: `/tin-tuc/category/${post.category.slug}` },
+      { label: post.category.name, href: `/tin-tuc/danh-muc/${post.category.slug}` },
       { label: post.title },
     ];
 

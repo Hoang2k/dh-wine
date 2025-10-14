@@ -76,7 +76,6 @@ export default function BookVisitForm({ onSubmit, onCancel, onNavigateToList, on
         try {
             setIsLoading(true);
             const response = await onSubmit(values);
-console.log('response', response);
             if(response.id) {
                 setIdBookVisit(response.id);
             }

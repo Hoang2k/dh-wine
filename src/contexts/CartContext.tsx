@@ -9,6 +9,7 @@ interface CartContextType {
     removeFromCart: (serviceItemId: string) => void;
     updateQuantity: (serviceItemId: string, quantity: number) => void;
     clearCart: () => void;
+    removeSelectedItems: () => void; 
     selectedItems: string[];
     toggleItemSelection: (serviceItemId: string) => void;
     selectAllItems: () => void;
@@ -155,12 +156,19 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         return getSelectedItems().reduce((total, item) => total + (item.service_item.unitPrice ? item.service_item.unitPrice * item.quantity : 0), 0);
     }, [getSelectedItems]);
 
+
+    const removeSelectedItems = React.useCallback(() => {
+        setCartItems(prev => prev.filter(item => !selectedItems.includes(item.service_item.id.toString())));
+        setSelectedItems([]);
+    }, [selectedItems]);
+
     const value = React.useMemo<CartContextType>(() => ({
         cartItems,
         addToCart,
         removeFromCart,
         updateQuantity,
         clearCart,
+        removeSelectedItems,
         selectedItems,
         toggleItemSelection,
         selectAllItems,
@@ -174,6 +182,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         removeFromCart,
         updateQuantity,
         clearCart,
+        removeSelectedItems,
         selectedItems,
         toggleItemSelection,
         selectAllItems,

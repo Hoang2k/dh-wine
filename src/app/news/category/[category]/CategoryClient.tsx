@@ -25,7 +25,7 @@ interface CategoryClientProps {
     };
 }
 
-export default function CategoryClient({ category, initialData }: CategoryClientProps) {
+function CategoryWithSearchParams({ category, initialData }: CategoryClientProps) {
     const router = useRouter();
     const searchParams = useSearchParams();
     
@@ -34,6 +34,7 @@ export default function CategoryClient({ category, initialData }: CategoryClient
     const [loading, setLoading] = React.useState(false);
     const [currentPage, setCurrentPage] = React.useState(initialData.meta.page);
     const [pageSize, setPageSize] = React.useState(initialData.meta.perPage);
+    const [isInitialized, setIsInitialized] = React.useState(false);
     
     const categories = initialData.categories || [];
     // const otherCategories = categories.filter(cat => cat.slug !== category);
@@ -87,6 +88,24 @@ export default function CategoryClient({ category, initialData }: CategoryClient
         updateURL(1, newPageSize);
         fetchArticles(1, newPageSize);
     }, [updateURL, fetchArticles]);
+
+    React.useEffect(() => {
+        const pageParam = searchParams.get('page');
+        const perPageParam = searchParams.get('per_page');
+        
+        const urlPage = pageParam ? parseInt(pageParam) : 1;
+        const urlPerPage = perPageParam ? parseInt(perPageParam) : 20;
+        
+    
+        if (isInitialized && (urlPage !== currentPage || urlPerPage !== pageSize)) {
+            fetchArticles(urlPage, urlPerPage);
+        } else if (!isInitialized) {
+            if (urlPage !== 1 || urlPerPage !== 20) {
+                fetchArticles(urlPage, urlPerPage);
+            }
+            setIsInitialized(true);
+        }
+    }, [searchParams, isInitialized, currentPage, pageSize, fetchArticles]);
 
     return (
         <div className="min-h-screen bg-gray-50">
@@ -230,6 +249,32 @@ export default function CategoryClient({ category, initialData }: CategoryClient
                 </div>
             </div>
         </div>
+    );
+}
+
+// Wrapper component với Suspense
+export default function CategoryClient({ category, initialData }: CategoryClientProps) {
+    return (
+        <React.Suspense fallback={
+            <div className="min-h-screen bg-gray-50">
+                <div className="container mx-auto px-4 lg:px-30 py-6 md:py-10">
+                    <div className="mb-6 md:mb-8">
+                        <div className="h-8 bg-gray-200 rounded w-64 mb-2 animate-pulse"></div>
+                        <div className="h-4 bg-gray-200 rounded w-48 animate-pulse"></div>
+                    </div>
+                    <div className="space-y-4">
+                        {[...Array(3)].map((_, i) => (
+                            <div key={i} className="bg-white rounded-lg p-6 shadow-md animate-pulse">
+                                <div className="h-4 bg-gray-200 rounded w-full mb-2"></div>
+                                <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
+        }>
+            <CategoryWithSearchParams category={category} initialData={initialData} />
+        </React.Suspense>
     );
 }
 

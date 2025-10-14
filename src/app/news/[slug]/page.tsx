@@ -7,6 +7,9 @@ import { IPost } from '@/types/post';
 // ISR Configuration - revalidate every hour for individual articles
 export const revalidate = 3600;
 
+// Cho phép render các slug không có trong generateStaticParams
+export const dynamicParams = true;
+
 interface NewsDetailPageProps {
     params: Promise<{
         slug: string;
@@ -110,8 +113,8 @@ export async function generateMetadata({ params }: NewsDetailPageProps): Promise
 export async function generateStaticParams() {
     try {
         const [categories, articleSlugs] = await Promise.all([
-            getListCategories(),
-            getAllNewsSlugs()
+            getListCategories().catch(() => []),
+            getAllNewsSlugs().catch(() => [])
         ]);
         
         const categoryParams = categories.map((category) => ({

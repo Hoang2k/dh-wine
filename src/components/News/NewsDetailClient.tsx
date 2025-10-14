@@ -18,7 +18,7 @@ interface NewsDetailClientProps {
 const USER_ID_KEY = "user:v1:id";
 const LIKES_PREFIX = "likes:v1:";
 const VIEWS_PREFIX = "views:v1:";
-const VIEW_EXPIRY_HOURS = 24; // có thể chuyển sang NEXT_PUBLIC_VIEW_EXPIRY_HOURS nếu muốn
+const VIEW_EXPIRY_HOURS = 24;
 
 function getOrCreateUserId(): string | null {
   if (typeof window === "undefined") return null;
@@ -212,7 +212,7 @@ export default function NewsDetailClient({
     try {
       const res = await reactToPost(Number(article.id), nextIsLiked);
       if (typeof res?.totalLike === "number") {
-        setLikeCount(res.totalLike);
+        // setLikeCount(res.totalLike);
       } else {
         throw new Error("Invalid response");
       }

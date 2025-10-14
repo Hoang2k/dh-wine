@@ -28,10 +28,11 @@ const RESULT_ENDPOINT = `/api/v1/payments/vnpay/result`;
 export default function PaymentResultClient() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const { deselectAllItems } = useCart();
+  const { deselectAllItems, removeSelectedItems } = useCart();
   const [isBootLoading, setIsBootLoading] = React.useState(true);
   const [isDetailLoading, setIsDetailLoading] = React.useState(false);
   const [result, setResult] = React.useState<ResultDTO | null>(null);
+  const hasCleanedUp = React.useRef(false);
 
 
   React.useEffect(() => {
@@ -87,15 +88,16 @@ export default function PaymentResultClient() {
     }
   }, [searchParams, router]);
 
-  // Uncheck selected items in cart on successful payment
+  // remove selected items from cart
   React.useEffect(() => {
-    if (result?.success) {
+    if (result?.success && !hasCleanedUp.current) {
+      hasCleanedUp.current = true;
       try {
-        deselectAllItems();
+        removeSelectedItems(); // remove selected items from cart
         localStorage.removeItem("selected-items");
       } catch {}
     }
-  }, [result?.success, deselectAllItems]);
+  }, [result?.success, removeSelectedItems]);
 
   const formatPrice = (price: number) =>
     new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(price);

@@ -5,16 +5,14 @@ import { IPost, NewsResponse, ICategory } from '@/types/post'; // Use NewsRespon
 import CategoryClient from './CategoryClient';
 import { IResponseData } from '@/types/common';
 
-// ISR Configuration - revalidate every 5 minutes
 export const revalidate = 300;
+
+
+export const dynamicParams = true;
 
 interface CategoryPageProps {
     params: Promise<{
         category: string;
-    }>;
-    searchParams: Promise<{
-        page?: string;
-        per_page?: string;
     }>;
 }
 
@@ -80,12 +78,11 @@ export async function generateStaticParams() {
     }
 }
 
-export default async function CategoryPage({ params, searchParams }: CategoryPageProps) {
+export default async function CategoryPage({ params }: CategoryPageProps) {
     const { category } = await params;
-    const { page = '1', per_page = '20' } = await searchParams;
     
     try {
-        // Fetch both articles and categories in parallel
+        // Fetch initial data (trang đầu tiên) - sẽ được cache với ISR
         const [response, categories] = await Promise.all([
             getPostsByCategorySlug(category),
             getListCategories()
@@ -95,9 +92,9 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
         const articles = response?.data || [];
         const meta = response?.meta || {
             page: 1,
-            perPage: 0,
-            total: 0,
-            totalPages: 0
+            perPage: 20,
+            total: articles.length,
+            totalPages: Math.ceil(articles.length / 20)
         };
         
         // Find category name from the categories list

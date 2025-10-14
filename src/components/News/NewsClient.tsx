@@ -64,7 +64,6 @@ export default function NewsClient({ initialData }: NewsClientProps) {
             try {
                 setNewsLoading(true);
                 const response = await getListPostHomepage(20);
-                console.log('res', response)
                 // Set data from the structured response
                 setHeroPost(response.hero);
                 setLatest(response.latest.data);

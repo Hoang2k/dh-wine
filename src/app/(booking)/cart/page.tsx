@@ -445,7 +445,7 @@ export default function CartPage() {
                       <div className="relative w-16 h-16 flex-shrink-0">
                         <Image
                           src={
-                            item.service_item.imageMedia?.path ||
+                            item.service_item.avatarUrl ||
                             "/placeholder.jpg"
                           }
                           alt={item.service_item.name}

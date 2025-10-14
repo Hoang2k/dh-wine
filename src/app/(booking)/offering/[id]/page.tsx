@@ -85,7 +85,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 export async function generateStaticParams() {
   try {
     // Fetch all service items to generate static params
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/service-items?per_page=100`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/service-item?per_page=100`, {
       next: { revalidate: 300 } // Revalidate every hour
     });
     const data = await response.json();

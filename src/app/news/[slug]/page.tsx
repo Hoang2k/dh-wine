@@ -1,167 +1,222 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { getAllNewsSlugs, getPostDetail, getRelatedPostsByCategory, getListCategories, getFeaturedPosts } from '@/services/news';
-import NewsDetailClient from '@/components/News/NewsDetailClient';
+import { 
+  getAllNewsSlugs, 
+  getPostDetail, 
+  getRelatedPostsByCategory, 
+  getFeaturedPosts 
+} from '@/services/news';
 import { IPost } from '@/types/post';
+import StructuredData from '@/components/StructuredData';
+import Breadcrumbs from '@/components/Breadcrumbs';
+import ArticleContent from '@/components/News/ArticleContent';
+import RelatedArticlesList from '@/components/News/RelatedArticlesList';
+import FeaturedArticlesSidebar from '@/components/News/FeaturedArticlesSidebar';
+import ShareButtons from '@/components/News/ShareButtons';
+import ArticleInteractions from '@/components/News/ArticleInteractions';
 
-// ISR Configuration - revalidate every hour for individual articles
-export const revalidate = 3600;
+// ISR Configuration - Revalidate every hour for fresh content
+export const revalidate = 3600; // 1 hour
 
-// Cho phép render các slug không có trong generateStaticParams
+// Allow dynamic params for new articles
 export const dynamicParams = true;
 
 interface NewsDetailPageProps {
-    params: Promise<{
-        slug: string;
-    }>;
+  params: Promise<{
+    slug: string;
+  }>;
 }
 
-// Generate metadata for each article or category
+// Generate metadata for SEO
 export async function generateMetadata({ params }: NewsDetailPageProps): Promise<Metadata> {
-    const { slug } = await params;
-    
-    try {
-        // First check if it's a category
-        const categories = await getListCategories();
-        const categoryData = categories.find(cat => cat.slug === slug);
-        
-        if (categoryData) {
-            return {
-                title: `${categoryData.name} - Tin tức`,
-                description: `Tin tức mới nhất về ${categoryData.name}. Cập nhật thông tin nhanh chóng và chính xác.`,
-                keywords: [
-                    categoryData.name,
-                    'tin tức',
-                    'thông tin',
-                    'sự kiện',
-                    'cập nhật'
-                ],
-                openGraph: {
-                    title: `${categoryData.name} - Tin tức`,
-                    description: `Tin tức mới nhất về ${categoryData.name}. Cập nhật thông tin nhanh chóng và chính xác.`,
-                    type: 'website',
-                    locale: 'vi_VN',
-                },
-                twitter: {
-                    card: 'summary_large_image',
-                    title: `${categoryData.name} - Tin tức`,
-                    description: `Tin tức mới nhất về ${categoryData.name}. Cập nhật thông tin nhanh chóng và chính xác.`,
-                },
-                alternates: {
-                    canonical: `/news/${slug}`,
-                },
-            };
-        }
-
-        // If not a category, check if it's an article
-        const post = await getPostDetail(slug);
-        if (post) {
-            return {
-                title: `${post.title} - Tin tức`,
-                description: post.summary,
-                keywords: [
-                    post.category.name,
-                    post.title,
-                    'tin tức',
-                    'thông tin'
-                ],
-                authors: [{ name: post.author.name }],
-                openGraph: {
-                    title: post.title,
-                    description: post.summary,
-                    type: 'article',
-                    publishedTime: post.publishAt,
-                    modifiedTime: post.updatedAt || post.publishAt,
-                    authors: [post.author.name],
-                    tags: [post.category.name],
-                    images: [
-                        {
-                            url: post.thumbnailImage?.path || '',
-                            width: 800,
-                            height: 400,
-                            alt: post.title,
-                        }
-                    ],
-                    locale: 'vi_VN',
-                },
-                twitter: {
-                    card: 'summary_large_image',
-                    title: post.title,
-                    description: post.summary,
-                    images: [post.thumbnailImage?.path || ''],
-                },
-                alternates: {
-                    canonical: `/news/${slug}`,
-                },
-            };
-        }
-
-        return {
-            title: 'Trang không tìm thấy',
-            description: 'Trang bạn đang tìm kiếm không tồn tại.',
-        };
-    } catch (error) {
-        console.error('Error generating metadata:', error);
-        return {
-            title: 'Trang không tìm thấy',
-            description: 'Trang bạn đang tìm kiếm không tồn tại.',
-        };
+  const { slug } = await params;
+  
+  try {
+    const post = await getPostDetail(slug);
+    if (!post) {
+      return {
+        title: 'Trang không tìm thấy',
+        description: 'Trang bạn đang tìm kiếm không tồn tại.',
+      };
     }
+
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://nghiatranglietsivixuyen.vn';
+    const articleUrl = `${siteUrl}/tin-tuc/${slug}`;
+
+    return {
+      title: `${post.title} - Nghĩa trang liệt sĩ Vị Xuyên`,
+      description: post.summary,
+      keywords: [
+        post.category.name,
+        post.title,
+        'tin tức',
+        'thông tin',
+        'nghĩa trang liệt sĩ',
+        'Vị Xuyên'
+      ],
+      authors: [{ name: post.author.name }],
+      openGraph: {
+        title: post.title,
+        description: post.summary,
+        type: 'article',
+        publishedTime: post.publishAt,
+        modifiedTime: post.updatedAt || post.publishAt,
+        authors: [post.author.name],
+        tags: [post.category.name],
+        images: [
+          {
+            url: post.thumbnailImage?.path || `${siteUrl}/logo-la-co-03.jpg`,
+            width: 1200,
+            height: 630,
+            alt: post.title,
+          }
+        ],
+        locale: 'vi_VN',
+        url: articleUrl,
+      },
+      twitter: {
+        card: 'summary_large_image',
+        title: post.title,
+        description: post.summary,
+        images: [post.thumbnailImage?.path || `${siteUrl}/logo-la-co-03.jpg`],
+      },
+      alternates: {
+        canonical: articleUrl,
+      },
+      robots: {
+        index: true,
+        follow: true,
+        googleBot: {
+          index: true,
+          follow: true,
+          'max-video-preview': -1,
+          'max-image-preview': 'large',
+          'max-snippet': -1,
+        },
+      },
+    };
+  } catch (error) {
+    console.error('Error generating metadata:', error);
+    return {
+      title: 'Trang không tìm thấy',
+      description: 'Trang bạn đang tìm kiếm không tồn tại.',
+    };
+  }
 }
 
-// Generate static params for all categories and articles
+// Generate static params for all articles at build time
 export async function generateStaticParams() {
-    try {
-        const [categories, articleSlugs] = await Promise.all([
-            getListCategories().catch(() => []),
-            getAllNewsSlugs().catch(() => [])
-        ]);
-        
-        const categoryParams = categories.map((category) => ({
-            slug: category.slug,
-        }));
-        
-        const articleParams = articleSlugs.map((slug) => ({
-            slug: slug,
-        }));
-        
-        return [...categoryParams, ...articleParams];
-    } catch (error) {
-        console.error('Error generating static params:', error);
-        return [];
-    }
+  try {
+    const articleSlugs = await getAllNewsSlugs().catch(() => []);
+    return articleSlugs.map((slug) => ({
+      slug: slug,
+    }));
+  } catch (error) {
+    console.error('Error generating static params:', error);
+    return [];
+  }
 }
 
-export default async function DynamicPage({ params }: NewsDetailPageProps) {
-    const { slug } = await params;
-    
-    try {
-
-        // Check if it's an article
-        const post = await getPostDetail(slug);
-
-        const featuredArticles = await getFeaturedPosts(6);
-        if (post) {
-            // It's an article page
-            const relatedArticlesResponse = await getRelatedPostsByCategory(
-                Number(post.id),
-                4
-            );
-            const relatedArticles = relatedArticlesResponse || [];
-            
-            return (
-                <NewsDetailClient 
-                    article={post as any}
-                    relatedArticles={relatedArticles as any}
-                    featuredArticles={featuredArticles as any}
-                />
-            );
-        }
-
-        // Neither category nor article found
-        notFound();
-    } catch (error) {
-        console.error('Error fetching data:', error);
-        notFound();
+export default async function NewsDetailPage({ params }: NewsDetailPageProps) {
+  const { slug } = await params;
+  
+  try {
+    // Fetch article data
+    const post = await getPostDetail(slug);
+    if (!post) {
+      notFound();
     }
+
+    // Fetch related data in parallel for better performance
+    const [relatedArticles, featuredArticles] = await Promise.all([
+      getRelatedPostsByCategory(Number(post.id), 4).catch(() => []),
+      getFeaturedPosts(6).catch(() => []),
+    ]);
+
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://nghiatranglietsivixuyen.vn';
+    const articleUrl = `${siteUrl}/tin-tuc/${slug}`;
+
+    // Breadcrumb data
+    const breadcrumbItems = [
+      { label: 'Trang chủ', href: '/' },
+      { label: 'Tin tức', href: '/tin-tuc' },
+      { label: post.category.name, href: `/tin-tuc/category/${post.category.slug}` },
+      { label: post.title },
+    ];
+
+    return (
+      <>
+        {/* Structured Data for SEO */}
+        <StructuredData
+          type="article"
+          data={{
+            ...post,
+            url: articleUrl,
+          }}
+        />
+        <StructuredData
+          type="breadcrumb"
+          data={{ items: breadcrumbItems }}
+        />
+
+        <div className="min-h-[100dvh] bg-white">
+          {/* Breadcrumbs */}
+          <div className="px-4 pt-4 max-w-6xl mx-auto">
+            <Breadcrumbs items={breadcrumbItems} />
+          </div>
+
+          {/* Article Content */}
+          <div className="px-4 py-8">
+            <div className="max-w-6xl mx-auto">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                {/* Social Sharing - Left Side (Desktop) */}
+                <div className="hidden lg:block lg:col-span-1 order-1">
+                  <div className="sticky top-8">
+                    <ShareButtons
+                      url={articleUrl}
+                      title={post.title}
+                      layout="vertical"
+                    />
+                  </div>
+                </div>
+
+                {/* Main Content */}
+                <ArticleContent article={post} viewCount={Number(post.view) || 0} />
+
+                {/* Sidebar - Featured Articles */}
+                <FeaturedArticlesSidebar articles={featuredArticles} />
+              </div>
+
+              {/* Action Buttons - Like & View Tracking */}
+              <div className="max-w-6xl mx-auto lg:pl-[calc((100%/12)*1)] lg:pr-[calc((100%/12)*3)] mt-8">
+                <ArticleInteractions
+                  articleId={String(post.id)}
+                  initialViewCount={Number(post.view) || 0}
+                  initialLikeCount={Number(post.totalLike) || 0}
+                  initialHasReacted={(post as any)?.hasReacted}
+                />
+              </div>
+
+              {/* Related Articles */}
+              <div className="max-w-6xl mx-auto lg:pl-[calc((100%/12)*1)] lg:pr-[calc((100%/12)*3)] mt-8">
+                <RelatedArticlesList articles={relatedArticles} />
+              </div>
+
+              {/* Mobile Share Buttons */}
+              <div className="lg:hidden max-w-6xl mx-auto mt-8 flex justify-center">
+                <ShareButtons
+                  url={articleUrl}
+                  title={post.title}
+                  layout="horizontal"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </>
+    );
+  } catch (error) {
+    console.error('Error fetching article data:', error);
+    notFound();
+  }
 }

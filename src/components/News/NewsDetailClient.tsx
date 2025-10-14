@@ -212,7 +212,6 @@ export default function NewsDetailClient({
     try {
       const res = await reactToPost(Number(article.id), nextIsLiked);
       if (typeof res?.totalLike === "number") {
-        // setLikeCount(res.totalLike);
       } else {
         throw new Error("Invalid response");
       }

@@ -9,6 +9,7 @@ interface ArticleInteractionsProps {
   initialViewCount: number;
   initialLikeCount: number;
   initialHasReacted?: boolean;
+  onViewUpdate?: (count: number) => void;
 }
 
 export default function ArticleInteractions({
@@ -16,15 +17,14 @@ export default function ArticleInteractions({
   initialViewCount,
   initialLikeCount,
   initialHasReacted,
+  onViewUpdate,
 }: ArticleInteractionsProps) {
-  const [viewCount, setViewCount] = React.useState(initialViewCount);
-
   return (
     <>
       <ViewTracker
         articleId={articleId}
         initialViewCount={initialViewCount}
-        onViewUpdate={setViewCount}
+        onViewUpdate={onViewUpdate}
       />
       <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
         <div className="flex items-center gap-4">

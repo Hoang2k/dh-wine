@@ -1,20 +1,10 @@
-// News service for handling news-related API calls
 import request from '@/axios'
 import { IResponseData } from '@/types/common';
-import { ICategory, IPost, IPostHomepage, NewsResponse } from '@/types/post';
+import { ICategory, IPost, IPostHomepage, NewsResponse, ReactToPostResponse } from '@/types/post';
 
 
-// Cache configuration (these are hints you send to your API;
-// real caching depends on API/server or Next.js fetch options)
 const CACHE_DURATION = 300;     // 5 minutes
 const STATIC_CACHE_DURATION = 3600; // 1 hour for static content
-
-// Helper to log errors only in browser environment (not during build)
-const logError = (message: string, error?: any) => {
-  if (typeof window !== 'undefined') {
-    console.error(message, error);
-  }
-};
 
 const emptyResponse = (overrides?: Partial<NewsResponse>): NewsResponse => ({
   data: [],
@@ -30,7 +20,7 @@ export const getListCategories = async (): Promise<ICategory[]> => {
     });
     return response?.data ?? [];
   } catch (error) {
-    logError('Error fetching news categories:', error);
+    console.error('Error fetching news categories:', error);
     return [];
   }
 };
@@ -61,7 +51,7 @@ export const getListPosts = async (params?: GetNewsParams): Promise<IPost[]> => 
     // Ensure a stable shape even if API misbehaves
     return response.data || [];
   } catch (error) {
-    logError('Error fetching news articles:', error);
+    console.error('Error fetching news articles:', error);
     return [];
   }
 };
@@ -74,7 +64,7 @@ export const getPostDetail = async (slug: string): Promise<IPost | null> => {
     });
     return response ?? null;
   } catch (error) {
-    logError('Error fetching news article:', error);
+    console.error('Error fetching news article:', error);
     return null;
   }
 };
@@ -84,7 +74,7 @@ export const getFeaturedPosts = async (limit = 6): Promise<IPost[]> => {
     const res = await getListPosts({ isFeatured: 1, per_page: limit });
     return res;
   } catch (error) {
-    logError('Error fetching featured articles:', error);
+    console.error('Error fetching featured articles:', error);
     return [];
   }
 };
@@ -92,14 +82,13 @@ export const getFeaturedPosts = async (limit = 6): Promise<IPost[]> => {
 
 /**
  * For static generation (ISR/SSG)
- * NOTE: If your API paginates, consider looping pages until totalPages.
  */
 export const getAllNewsSlugs = async (): Promise<string[]> => {
   try {
     const res = await getListPosts({ per_page: 1000 });
     return res.map((a: IPost) => a.slug);
   } catch (error) {
-    logError('Error fetching all news slugs:', error);
+    console.error('Error fetching all news slugs:', error);
     return [];
   }
 };
@@ -122,7 +111,7 @@ export const getRelatedPostsByCategory = async (postId: number, limit = 4): Prom
 
         return response;
       } catch (error) {
-        logError('Error fetching related posts by category:', error);
+        console.error('Error fetching related posts by category:', error);
         return [];
       }
 };
@@ -136,7 +125,7 @@ export const getListPostHomepage = async (limit = 20): Promise<IPostHomepage> =>
 
     return response;
   } catch (error) {
-    logError('Error fetching list post homepage:', error);
+    console.error('Error fetching list post homepage:', error);
     return {
       hero: {} as IPost,
       featured: [] as IPost[],
@@ -161,22 +150,22 @@ export const getPostsByCategorySlug = async (slug: string): Promise<NewsResponse
     return response;
   }
   catch (error) {
-    logError('Error fetching posts by category slug:', error);
+    console.error('Error fetching posts by category slug:', error);
     return emptyResponse();
   }
 }
 
 // React to a post (like/dislike)
-export const reactToPost = async (postId: number, reaction: boolean): Promise<{totalLike: number}> => {
+export const reactToPost = async (postId: number, reaction: boolean): Promise<ReactToPostResponse> => {
   try {
-    const response = await request.post({
+    const response = await request.post<ReactToPostResponse>({
       url: '/client/posts/react',
       data: { postId, reaction },
     });
     return response;
   } catch (error) {
-    logError('Error reacting to post:', error);
-    return {totalLike: 0};
+    console.error('Error reacting to post:', error);
+    throw error;
   }
 }
 

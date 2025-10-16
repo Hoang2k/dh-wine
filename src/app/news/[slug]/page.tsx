@@ -6,17 +6,14 @@ import {
   getRelatedPostsByCategory, 
   getFeaturedPosts 
 } from '@/services/news';
-import { IPost } from '@/types/post';
 import StructuredData from '@/components/StructuredData';
 import Breadcrumbs from '@/components/Breadcrumbs';
-import ArticleContent from '@/components/News/ArticleContent';
 import RelatedArticlesList from '@/components/News/RelatedArticlesList';
 import FeaturedArticlesSidebar from '@/components/News/FeaturedArticlesSidebar';
 import ShareButtons from '@/components/News/ShareButtons';
-import ArticleInteractions from '@/components/News/ArticleInteractions';
+import NewsDetailClient from './NewsDetailClient';
 
-// ISR Configuration - Revalidate every hour for fresh content
-export const revalidate = 3600; // 1 hour
+export const revalidate = 300; // 5 minutes
 
 // Allow dynamic params for new articles
 export const dynamicParams = true;
@@ -179,21 +176,18 @@ export default async function NewsDetailPage({ params }: NewsDetailPageProps) {
                   </div>
                 </div>
 
-                {/* Main Content */}
-                <ArticleContent article={post} viewCount={Number(post.view) || 0} />
+                {/* Main Content + Interactions */}
+                <div className="lg:col-span-8 order-2">
+                  <NewsDetailClient
+                    post={post}
+                    initialViewCount={Number(post.view) || 0}
+                    initialLikeCount={Number(post.totalLike) || 0}
+                    initialHasReacted={(post as any)?.hasReacted}
+                  />
+                </div>
 
                 {/* Sidebar - Featured Articles */}
                 <FeaturedArticlesSidebar articles={featuredArticles} />
-              </div>
-
-              {/* Action Buttons - Like & View Tracking */}
-              <div className="max-w-6xl mx-auto lg:pl-[calc((100%/12)*1)] lg:pr-[calc((100%/12)*3)] mt-8">
-                <ArticleInteractions
-                  articleId={String(post.id)}
-                  initialViewCount={Number(post.view) || 0}
-                  initialLikeCount={Number(post.totalLike) || 0}
-                  initialHasReacted={(post as any)?.hasReacted}
-                />
               </div>
 
               {/* Related Articles */}

@@ -3,6 +3,7 @@ import { BookOpen } from "lucide-react";
 import Image from "next/image";
 import { IPost } from "@/types/post";
 import ArticleMeta from "./ArticleMeta";
+import LikeButton from "./LikeButton";
 
 interface ArticleContentProps {
   article: IPost;
@@ -28,7 +29,7 @@ export default function ArticleContent({
       </h1>
 
       {/* Article Meta */}
-      <ArticleMeta article={article} viewCount={viewCount} />
+      <ArticleMeta article={article} initialViewCount={viewCount} />
 
       {/* Article Summary */}
       <p className="text-lg text-muted-foreground mb-8 max-w-3xl italic" itemProp="description">
@@ -58,6 +59,17 @@ export default function ArticleContent({
           className="prose prose-lg max-w-none prose-headings:text-emerald-900 prose-p:text-gray-700 prose-li:text-gray-700 prose-strong:text-emerald-800 prose-img:rounded-lg prose-a:text-emerald-600 hover:prose-a:text-emerald-700"
           dangerouslySetInnerHTML={{ __html: article.content }}
         />
+      </div>
+
+      {/* Like Button */}
+      <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
+        <div className="flex items-center gap-4">
+          <LikeButton
+            articleId={String(article.id)}
+            initialLikeCount={article.totalLike || 0}
+            initialHasReacted={false}
+          />
+        </div>
       </div>
 
       {/* Hidden metadata for search engines */}

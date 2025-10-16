@@ -1,6 +1,8 @@
 "use client";
 import { Calendar, User, Eye } from "lucide-react";
 import { IPost } from "@/types/post";
+import { useState, useEffect, useRef } from "react";
+import { postView } from "@/services/news";
 
 const formatDate = (dateString?: string | null) => {
   if (!dateString) return "";
@@ -15,10 +17,35 @@ const formatDate = (dateString?: string | null) => {
 
 interface ArticleMetaProps {
   article: IPost;
-  viewCount: number;
+  initialViewCount: number;
 }
 
-export default function ArticleMeta({ article, viewCount }: ArticleMetaProps) {
+export default function ArticleMeta({ article, initialViewCount }: ArticleMetaProps) {
+  const [viewCount, setViewCount] = useState(initialViewCount);
+  const hasTrackedRef = useRef(false);
+
+  useEffect(() => {
+    if (!article.id || hasTrackedRef.current) return;
+
+    hasTrackedRef.current = true;
+
+    (async () => {
+      try {
+        const response = await postView(Number(article.id));
+
+        if (response?.view !== undefined) {
+          setViewCount(response.view);
+        } else if (response?.data?.view !== undefined) {
+          setViewCount(response.data.view);
+        } else {
+          setViewCount(prev => prev + 1);
+        }
+      } catch (error) {
+        console.error("Error tracking view:", error);
+      }
+    })();
+  }, [article.id]);
+
   return (
     <div className="flex flex-wrap items-center gap-6 text-sm text-muted-foreground mb-8">
       <div className="flex items-center gap-2" itemProp="author" itemScope itemType="https://schema.org/Person">

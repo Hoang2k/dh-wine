@@ -11,8 +11,7 @@ import Breadcrumbs from '@/components/Breadcrumbs';
 import RelatedArticlesList from '@/components/News/RelatedArticlesList';
 import FeaturedArticlesSidebar from '@/components/News/FeaturedArticlesSidebar';
 import ShareButtons from '@/components/News/ShareButtons';
-import NewsDetailClient from './NewsDetailClient';
-import ArticleInteractions from '@/components/News/ArticleInteractions';
+import ArticleContent from '@/components/News/ArticleContent';
 
 export const revalidate = 300; // 5 minutes
 
@@ -179,20 +178,7 @@ export default async function NewsDetailPage({ params }: NewsDetailPageProps) {
 
                                 {/* Main Content + Interactions */}
                                 <div className="lg:col-span-8 order-2">
-                                    <NewsDetailClient
-                                        post={post}
-                                        initialViewCount={Number(post.view) || 0}
-                                        initialLikeCount={Number(post.totalLike) || 0}
-                                        initialHasReacted={(post as any)?.hasReacted}
-                                    />
-                                    <div className="mt-8">
-                                        <ArticleInteractions
-                                            articleId={String(post.id)}
-                                            initialViewCount={Number(post.view) || 0}
-                                            initialLikeCount={Number(post.totalLike) || 0}
-                                            initialHasReacted={(post as any)?.hasReacted}
-                                        />
-                                    </div>
+                                    <ArticleContent article={post} viewCount={Number(post.view) || 0} />
                                 </div>
 
                                 {/* Sidebar - Featured Articles */}

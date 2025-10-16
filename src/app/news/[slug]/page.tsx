@@ -12,6 +12,7 @@ import RelatedArticlesList from '@/components/News/RelatedArticlesList';
 import FeaturedArticlesSidebar from '@/components/News/FeaturedArticlesSidebar';
 import ShareButtons from '@/components/News/ShareButtons';
 import NewsDetailClient from './NewsDetailClient';
+import ArticleInteractions from '@/components/News/ArticleInteractions';
 
 export const revalidate = 300; // 5 minutes
 
@@ -184,6 +185,14 @@ export default async function NewsDetailPage({ params }: NewsDetailPageProps) {
                     initialLikeCount={Number(post.totalLike) || 0}
                     initialHasReacted={(post as any)?.hasReacted}
                   />
+                        <div className="mt-8">
+        <ArticleInteractions
+          articleId={String(post.id)}
+          initialViewCount={Number(post.view) || 0}
+          initialLikeCount={Number(post.totalLike) || 0}
+          initialHasReacted={(post as any)?.hasReacted}
+        />
+      </div>
                 </div>
 
                 {/* Sidebar - Featured Articles */}

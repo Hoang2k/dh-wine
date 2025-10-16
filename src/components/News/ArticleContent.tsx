@@ -1,18 +1,8 @@
 import { Badge } from "@/components/ui/badge";
-import { Calendar, User, Eye, BookOpen } from "lucide-react";
+import { BookOpen } from "lucide-react";
 import Image from "next/image";
 import { IPost } from "@/types/post";
-
-const formatDate = (dateString?: string | null) => {
-  if (!dateString) return "";
-  const d = new Date(dateString);
-  if (isNaN(d.getTime())) return "";
-  return d.toLocaleDateString("vi-VN", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
-};
+import ArticleMeta from "./ArticleMeta";
 
 interface ArticleContentProps {
   article: IPost;
@@ -38,25 +28,7 @@ export default function ArticleContent({
       </h1>
 
       {/* Article Meta */}
-      <div className="flex flex-wrap items-center gap-6 text-sm text-muted-foreground mb-8">
-        <div className="flex items-center gap-2" itemProp="author" itemScope itemType="https://schema.org/Person">
-          <User className="h-4 w-4" />
-          <span itemProp="name">{article?.author?.name ?? "—"}</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <Calendar className="h-4 w-4" />
-          <time itemProp="datePublished" dateTime={article?.publishAt || ""}>
-            {formatDate(article?.publishAt)}
-          </time>
-          {article?.updatedAt && (
-            <meta itemProp="dateModified" content={article.updatedAt} />
-          )}
-        </div>
-        <div className="flex items-center gap-2">
-          <Eye className="h-4 w-4" />
-          <span>{viewCount} lượt xem</span>
-        </div>
-      </div>
+      <ArticleMeta article={article} viewCount={viewCount} />
 
       {/* Article Summary */}
       <p className="text-lg text-muted-foreground mb-8 max-w-3xl italic" itemProp="description">

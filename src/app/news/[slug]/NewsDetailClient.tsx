@@ -22,15 +22,6 @@ export default function NewsDetailClient({
   return (
     <>
       <ArticleContent article={post} viewCount={viewCount} />
-      <div className="mt-8">
-        <ArticleInteractions
-          articleId={String(post.id)}
-          initialViewCount={initialViewCount}
-          initialLikeCount={initialLikeCount}
-          initialHasReacted={initialHasReacted}
-          onViewUpdate={setViewCount}
-        />
-      </div>
     </>
   );
 }

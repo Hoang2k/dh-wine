@@ -2,7 +2,6 @@
 import * as React from "react";
 import LikeButton from "./LikeButton";
 import ViewTracker from "./ViewTracker";
-import { Eye } from "lucide-react";
 
 interface ArticleInteractionsProps {
   articleId: string;

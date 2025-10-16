@@ -59,7 +59,6 @@ export default function LikeButton({
   const [likeCount, setLikeCount] = React.useState<number>(initialLikeCount);
   const [loading, setLoading] = React.useState<boolean>(false);
   
-  // Ref để track pending request và tránh race condition
   const abortControllerRef = React.useRef<AbortController | null>(null);
   const isMountedRef = React.useRef(true);
 
@@ -69,7 +68,6 @@ export default function LikeButton({
     try {
       const userId = getOrCreateUserId();
       
-      // Ưu tiên server state nếu có, fallback to localStorage
       if (initialHasReacted !== undefined) {
         setIsLiked(initialHasReacted === true);
       } else {
@@ -81,7 +79,6 @@ export default function LikeButton({
     } catch {}
   }, [articleId, initialLikeCount, initialHasReacted]);
 
-  // Sync state giữa các tabs
   React.useEffect(() => {
     if (typeof window === "undefined") return;
 
@@ -111,10 +108,8 @@ export default function LikeButton({
   }, []);
 
   const handleLike = async () => {
-    // Ngăn multiple clicks
     if (loading) return;
 
-    // Cancel pending request nếu có
     abortControllerRef.current?.abort();
     abortControllerRef.current = new AbortController();
 
@@ -125,11 +120,9 @@ export default function LikeButton({
     const userId = getOrCreateUserId();
     const nextIsLiked = !prevLiked;
     
-    // Optimistic update UI
     setIsLiked(nextIsLiked);
     setLikeCount((p) => (nextIsLiked ? p + 1 : Math.max(0, p - 1)));
 
-    // Update localStorage ngay lập tức
     if (userId) {
       const bag = loadUserLikes(userId);
       if (nextIsLiked) {
@@ -143,13 +136,11 @@ export default function LikeButton({
     try {
       const res = await reactToPost(Number(articleId), nextIsLiked);
       
-      // Sync count từ server để đảm bảo accuracy
       if (!isMountedRef.current) return;
       
       if (typeof res?.totalLike === "number") {
         setLikeCount(res.totalLike);
       } else {
-        // Nếu server không trả về totalLike, throw error để rollback
         throw new Error("Invalid response from server");
       }
     } catch (e) {

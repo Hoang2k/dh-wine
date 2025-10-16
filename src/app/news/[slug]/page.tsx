@@ -13,8 +13,6 @@ import FeaturedArticlesSidebar from '@/components/News/FeaturedArticlesSidebar';
 import ShareButtons from '@/components/News/ShareButtons';
 import NewsDetailClient from './NewsDetailClient';
 
-// ISR Configuration - Revalidate every 5 minutes for fresher content
-// Balances between performance and data freshness
 export const revalidate = 300; // 5 minutes
 
 // Allow dynamic params for new articles

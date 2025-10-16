@@ -35,11 +35,8 @@ export default function ArticleMeta({ article, initialViewCount }: ArticleMetaPr
 
         if (response?.view !== undefined) {
           setViewCount(response.view);
-        } else if (response?.data?.view !== undefined) {
-          setViewCount(response.data.view);
-        } else {
-          setViewCount(prev => prev + 1);
         }
+        
       } catch (error) {
         console.error("Error tracking view:", error);
       }

@@ -138,13 +138,12 @@ export default function LikeButton({
       
       if (!isMountedRef.current) return;
       
-      if (typeof res?.totalLike === "number") {
+      if (res?.totalLike !== undefined) {
         setLikeCount(res.totalLike);
       } else {
         throw new Error("Invalid response from server");
       }
     } catch (e) {
-      // Chỉ rollback nếu component vẫn mounted và không phải abort
       if (!isMountedRef.current) return;
       if ((e as Error).name === 'AbortError') return;
 

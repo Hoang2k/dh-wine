@@ -42,7 +42,7 @@ export interface PostReactions {
     body: string;
     tags: string[];
     reactions: PostReactions;
-    views: number;
+    view: number;
     userId: number;
   }
   
@@ -50,6 +50,11 @@ export interface PostReactions {
     data: Post;
     message: string;
     status: string;
+  }
+
+  export interface ReactToPostResponse {
+    totalLike: number;
+    hasReacted: boolean;
   } 
 
   export interface IMedia {

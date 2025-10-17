@@ -201,7 +201,7 @@ export default function NewsClient({ initialData }: NewsClientProps) {
                                                             {article.summary}
                                                         </p>
                                                         <div className="text-xs text-gray-500">
-                                                            {formatDate(article.publishAt)} - {(article.view ?? 0).toLocaleString()} lượt xem
+                                                            {formatDate(article.publishAt)}
                                                         </div>
                                                     </div>
                                                     <div className="sm:ml-4 w-32 sm:w-36 md:w-40 sm:flex-shrink-0">
@@ -310,7 +310,7 @@ export default function NewsClient({ initialData }: NewsClientProps) {
                                                             {article.title}
                                                         </h4>
                                                         <div className="text-xs text-gray-500">
-                                                            {formatDate(article.publishAt)} - {(article.view ?? 0).toLocaleString()} lượt xem
+                                                            {formatDate(article.publishAt)}
                                                         </div>
                                                     </div>
                                                 </div>

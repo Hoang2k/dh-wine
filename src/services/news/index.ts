@@ -169,6 +169,19 @@ export const reactToPost = async (postId: number, reaction: boolean): Promise<{t
   }
 }
 
+// Get total like count for a post (hasReacted handled by frontend localStorage)
+export const getPostLikeStatus = async (postId: number): Promise<{totalLike: number}> => {
+  try {
+    const response = await request.get<{totalLike: number}>({
+      url: `/client/posts/${postId}/total-like`,
+    });
+    return { totalLike: response.totalLike };
+  } catch (error) {
+    console.error('Error fetching post like count:', error);
+    return { totalLike: 0 };
+  }
+}
+
 export const postView = async (postId: number): Promise<{view: number}> => {
   try {
     const response = await request.post({

@@ -92,6 +92,7 @@ export interface PostReactions {
     publishAt: string;
     view: number;
     totalLike: number;
+    hasReacted?: boolean;
     category: ICategory;
     thumbnailImage?: IMedia;
     author: IAuthor;

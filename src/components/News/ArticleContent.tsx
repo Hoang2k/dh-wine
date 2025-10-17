@@ -67,7 +67,7 @@ export default function ArticleContent({
           <LikeButton
             articleId={String(article.id)}
             initialLikeCount={article.totalLike || 0}
-            initialHasReacted={false}
+            initialHasReacted={article.hasReacted}
           />
         </div>
       </div>

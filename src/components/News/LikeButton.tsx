@@ -1,7 +1,7 @@
 "use client";
 import * as React from "react";
 import { Button } from "@/components/ui/button";
-import { reactToPost } from "@/services/news";
+import { reactToPost, getPostLikeStatus } from "@/services/news";
 
 const USER_ID_KEY = "user:v1:id";
 const LIKES_PREFIX = "likes:v1:";
@@ -39,7 +39,6 @@ function loadUserLikes(userId: string): Record<string, boolean> {
 function saveUserLikes(userId: string, bag: Record<string, boolean>) {
   try {
     localStorage.setItem(LIKES_PREFIX + userId, JSON.stringify(bag));
-    // Broadcast event cho các tabs khác
     window.dispatchEvent(new CustomEvent(STORAGE_EVENT, { detail: { userId, bag } }));
   } catch {}
 }
@@ -78,6 +77,37 @@ export default function LikeButton({
       setLikeCount(initialLikeCount);
     } catch {}
   }, [articleId, initialLikeCount, initialHasReacted]);
+
+  // Fetch fresh like count from API on mount (hasReacted from localStorage)
+  React.useEffect(() => {
+    if (typeof window === "undefined") return;
+    
+    const fetchLikeStatus = async () => {
+      try {
+        // Fetch total like count from API
+        const response = await getPostLikeStatus(Number(articleId));
+        if (!isMountedRef.current) return;
+        
+        setLikeCount(response.totalLike);
+        
+        // Get hasReacted from localStorage
+        const userId = getOrCreateUserId();
+        if (userId) {
+          const localLiked = loadUserLikes(userId)[articleId] === true;
+          setIsLiked(localLiked);
+        }
+      } catch (error) {
+        console.error("Error fetching like count:", error);
+        const userId = getOrCreateUserId();
+        if (userId) {
+          const localLiked = loadUserLikes(userId)[articleId] === true;
+          setIsLiked(localLiked);
+        }
+      }
+    };
+
+    fetchLikeStatus();
+  }, [articleId]);
 
   React.useEffect(() => {
     if (typeof window === "undefined") return;

@@ -171,8 +171,8 @@ function CategoryWithSearchParams({ category, initialData }: CategoryClientProps
                                                             {article.summary}
                                                         </p>
                                                         <div className="text-xs text-gray-500">
-                                                            {formatDate(article.publishAt)} - {(article.view ?? 0).toLocaleString()} lượt xem
-                                                        </div>
+                                                            {formatDate(article.publishAt)}
+                                                        </div>  
                                                     </div>
                                                     <div className="md:ml-4 w-full md:w-48 lg:w-56 flex-shrink-0">
                                                         <div className="relative w-full h-32 md:h-40 overflow-hidden rounded">

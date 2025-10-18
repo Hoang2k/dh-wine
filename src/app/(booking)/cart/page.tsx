@@ -289,7 +289,7 @@ export default function CartPage() {
       <div className="min-h-[100dvh]">
         <div className="container mx-auto lg:px-30 px-4 py-8">
           <Button variant="ghost" asChild className="mb-6">
-            <Link href="/offering">
+            <Link href="/dat-do-le">
               <ArrowLeft className="h-4 w-4 mr-2" />
               Quay lại danh sách sản phẩm
             </Link>
@@ -302,7 +302,7 @@ export default function CartPage() {
               Bạn chưa có sản phẩm nào trong giỏ hàng
             </p>
             <Button asChild>
-              <Link href="/offering">Tiếp tục mua sắm</Link>
+              <Link href="/dat-do-le">Tiếp tục mua sắm</Link>
             </Button>
           </div>
         </div>
@@ -315,7 +315,7 @@ export default function CartPage() {
       {/* Header */}
       <div className="container mx-auto lg:px-30 px-4 py-6">
         <Button variant="ghost" asChild className="mb-6">
-          <Link href="/offering">
+          <Link href="/dat-do-le">
             <ArrowLeft className="h-4 w-4 mr-2" />
             Quay lại danh sách sản phẩm
           </Link>
@@ -833,7 +833,7 @@ export default function CartPage() {
                   </Button>
 
                   <Button variant="outline" asChild className="w-full">
-                    <Link href="/offering">Tiếp tục mua sắm</Link>
+                    <Link href="/dat-do-le">Tiếp tục mua sắm</Link>
                   </Button>
                 </div>
 

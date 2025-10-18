@@ -34,11 +34,11 @@ export interface TVNPayResultResponse {
     payDate: string;
 }
 
-export const getVNPayResult = async (orderId: string): Promise<TVNPayResultResponse> => {
+export const getVNPayResult = async (token: string): Promise<TVNPayResultResponse> => {
     try {
         const response = await axiosInstance.get({
             url: `/payments/vnpay/result`,
-            params: { orderId }
+            params: { token },
         });
         return response;
     }

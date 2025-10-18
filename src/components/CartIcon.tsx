@@ -9,7 +9,7 @@ export default function CartIcon() {
 
     return (
         <Link
-            href="/cart"
+            href="/gio-hang"
             className="relative flex items-center justify-center text-gray-700 hover:text-[#087443] transition-colors duration-200"
             aria-label="Giỏ hàng"
         >

@@ -404,7 +404,7 @@ function handleDateTimePickerClose() {
                 onYes={(bookVisitData) => {
                     setShowSuccessPopup(false);
                     // Navigate to cart page
-                    window.location.href = "/cart";
+                    window.location.href = "/gio-hang";
                 }}
             />
         </div>

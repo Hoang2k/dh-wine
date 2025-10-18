@@ -6,13 +6,11 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle, XCircle, Clock, ArrowLeft, Home } from "lucide-react";
+import { CheckCircle, XCircle, Clock, ArrowLeft, Home, X } from "lucide-react";
 import Link from "next/link";
-import { getVNPayResult } from "@/services/payment";
+import { getVNPayResult, TVNPayResultResponse } from "@/services/payment";
 import { useCart } from "@/contexts/CartContext";
 import { toast } from "react-toastify";
-
-
 
 type ResultDTO = {
   success: boolean;
@@ -20,80 +18,154 @@ type ResultDTO = {
   amount?: number | null;
   transactionId?: string | null;
   payDate?: string | null;
+  paymentStatus?: string | null;
 };
-
-const RESULT_ENDPOINT = `/api/v1/payments/vnpay/result`;
-
 
 export default function PaymentResultClient() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const { deselectAllItems, removeSelectedItems } = useCart();
+  const { removeSelectedItems } = useCart();
+
   const [isBootLoading, setIsBootLoading] = React.useState(true);
   const [isDetailLoading, setIsDetailLoading] = React.useState(false);
   const [result, setResult] = React.useState<ResultDTO | null>(null);
-  const hasCleanedUp = React.useRef(false);
 
+  const hasCleanedUp = React.useRef(false);
+  const pollingRef = React.useRef<{ attempts: number }>({ attempts: 0 });
+  const isMountedRef = React.useRef(true);
 
   React.useEffect(() => {
-    const successParam = searchParams.get("success");
-    const orderId = searchParams.get("orderId");
-    const successFromQuery = successParam === "1";
+    isMountedRef.current = true;
+    return () => { isMountedRef.current = false; };
+  }, []);
 
+  React.useEffect(() => {
+    // read params
+    const successParam = searchParams.get("success");
+    const cancelledParam = searchParams.get("cancelled");
+    const tokenParam = searchParams.get("token");
+    const orderIdForDisplay = searchParams.get("orderId") ?? undefined;
+    const successFromQuery = successParam === "1";
+    const isCancelled = cancelledParam === "1";
+
+    // initial lightweight UI state (but keep boot loading until fetch finishes)
     setResult({
-      success: successFromQuery,
-      orderCode: orderId ?? undefined,
+      success: false, // default false while loading
+      orderCode: orderIdForDisplay ?? undefined,
       amount: undefined,
       transactionId: undefined,
       payDate: undefined,
+      paymentStatus: isCancelled ? "CANCELLED" : undefined,
     });
-    setIsBootLoading(false);
 
-    if (orderId) {
-      const url = RESULT_ENDPOINT;
-      (async () => {
-        setIsDetailLoading(true);
-        try {
-             const data = await getVNPayResult(orderId);
-                
-  
-          setResult((prev) => ({
-            ...(prev || {}),
-            success: !!data?.success,
-            orderCode: data?.orderCode ?? prev?.orderCode ?? orderId,
-            amount: typeof data?.amount === "number" ? data?.amount : prev?.amount,
-            transactionId: data?.transactionId ?? prev?.transactionId,
-            payDate: data?.payDate ?? prev?.payDate,
-          }));
-  
-          if (data?.success) {
-            try {
-              localStorage.removeItem("selected-items");
-              localStorage.removeItem("fromBookVisit");
-              localStorage.removeItem("bookVisitData");
-              localStorage.removeItem("directFromBookVisit");
-              
-            } catch {}
-          }
-        } catch (error) {
-          // Axios interceptor already shows error toast from backend
-          // Just redirect to home page
-          setTimeout(() => {
-            router.push("/");
-          }, 2000);
-        } finally {
-          setIsDetailLoading(false);
-        }
-      })();
+    // keep boot loading true until fetch completes
+    setIsBootLoading(true);
+    setIsDetailLoading(false);
+
+    if (isCancelled) {
+      // show cancelled immediately
+      setIsBootLoading(false);
+      return;
     }
+
+    if (!tokenParam) {
+      setIsBootLoading(false);
+      toast.warn("Không tìm thấy token xác thực. Vui lòng kiểm tra lại luồng thanh toán hoặc quay lại giỏ hàng.");
+      return;
+    }
+
+    (async () => {
+      setIsDetailLoading(true);
+      pollingRef.current.attempts = 0;
+      try {
+        const data = await fetchResultWithPolling(tokenParam);
+        if (!isMountedRef.current) return;
+
+        if (!data) {
+          toast.error("Không tìm thấy thông tin đơn hàng. Vui lòng liên hệ hỗ trợ.");
+          router.replace("/");
+          return;
+        }
+        
+        setResult({
+          success: data.success,
+          orderCode: data.orderCode ?? orderIdForDisplay ?? undefined,
+          amount: typeof data.amount === 'number' ? data.amount : (data.amount ? Number(data.amount) : undefined),
+          transactionId: data.transactionId ?? undefined,
+          payDate: data.payDate ?? undefined,
+        });
+
+        // clear cart only when confirmed success
+        if (data.success) {
+          try {
+            removeSelectedItems();
+            localStorage.removeItem("selected-items");
+            localStorage.removeItem("fromBookVisit");
+            localStorage.removeItem("bookVisitData");
+            localStorage.removeItem("directFromBookVisit");
+          } catch {}
+        }
+      } catch (error) {
+        console.error("Error fetching payment result:", error);
+        toast.error("Lấy kết quả thanh toán thất bại. Vui lòng thử lại sau.");
+      } finally {
+        if (isMountedRef.current) {
+          setIsDetailLoading(false);
+          setIsBootLoading(false);
+        }
+      }
+    })();
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams, router]);
 
-  // remove selected items from cart
+  // helper: fetch + polling behavior
+  async function fetchResultWithPolling(token: string): Promise<TVNPayResultResponse | null> {
+    const maxAttempts = 5;
+    const intervalMs = 3000;
+
+    while (pollingRef.current.attempts < maxAttempts) {
+      pollingRef.current.attempts += 1;
+      try {
+        const data = await getVNPayResult(token);
+        if (!data) return null;
+
+        if (data.success) {
+          return data;
+        }
+      } catch (err) {
+        console.error("fetchResultWithPolling attempt error:", err);
+        if (isClientError(err)) {
+          return null;
+        }
+      }
+
+      await new Promise((res) => setTimeout(res, intervalMs));
+      if (!isMountedRef.current) return null;
+    }
+
+    try {
+      const last = await getVNPayResult(token);
+      return last ?? null;
+    } catch (err) {
+      console.error("Final fetch attempt failed:", err);
+      throw err;
+    }
+  }
+
+  function isClientError(e: unknown) {
+    const anyE = e as any;
+    if (anyE && anyE.response && typeof anyE.response.status === 'number') {
+      return anyE.response.status >= 400 && anyE.response.status < 500;
+    }
+    return false;
+  }
+
   React.useEffect(() => {
     if (result?.success && !hasCleanedUp.current) {
       hasCleanedUp.current = true;
       try {
-        removeSelectedItems(); // remove selected items from cart
+        removeSelectedItems();
         localStorage.removeItem("selected-items");
       } catch {}
     }
@@ -123,9 +195,9 @@ export default function PaymentResultClient() {
     );
   }
 
-  // When user visits /payment/result without query params
-  const missingParams =
-    !searchParams.get("success") && !searchParams.get("orderId");
+  const isCancelled = searchParams.get("cancelled") === "1";
+  const tokenParam = searchParams.get("token");
+  const missingParams = !searchParams.get("success") && !tokenParam && !isCancelled;
   if (missingParams) {
     return (
       <div className="min-h-[100dvh] flex items-center justify-center">
@@ -157,7 +229,91 @@ export default function PaymentResultClient() {
   }
 
   const isSuccess = !!result.success;
+  const status = String(result.paymentStatus ?? "").toUpperCase();
+  const isPending = status === "PENDING" || status === "0" || status === "";
 
+  if (isCancelled) {
+    return (
+      <div className="min-h-[100dvh]">
+        <div className="container mx-auto px-4 pb-20">
+          <div className="max-w-2xl mx-auto">
+            <Card className="border-none shadow-lg">
+              <CardHeader className="text-center pb-4">
+                <motion.div
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
+                  className="mx-auto mb-4 w-16 h-16 rounded-full flex items-center justify-center bg-orange-500 text-white"
+                >
+                  <X className="h-8 w-8" />
+                </motion.div>
+
+                <CardTitle className="text-xl text-orange-700">
+                  Thanh toán đã bị hủy
+                </CardTitle>
+              </CardHeader>
+
+              <CardContent className="space-y-6">
+                {result.orderCode && (
+                  <div className="bg-orange-50 p-4 rounded-lg">
+                    <div className="flex items-center justify-between mb-3">
+                      <h3 className="font-semibold text-orange-900">Thông tin đơn hàng</h3>
+                    </div>
+
+                    <div className="space-y-2 text-sm">
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Mã đơn hàng:</span>
+                        <span className="font-medium">{result.orderCode}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Trạng thái:</span>
+                        <span className="font-medium text-orange-600">Đã hủy</span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                <div className="text-center">
+                  <Badge variant="secondary" className="text-lg px-4 py-2 bg-orange-100 text-orange-800 border-orange-200">
+                    Đã hủy
+                  </Badge>
+                </div>
+
+                <div className="text-center space-y-4">
+                  <div className="space-y-2">
+                    <p className="text-muted-foreground">
+                      Bạn đã hủy quá trình thanh toán. Đơn hàng của bạn vẫn được lưu trong giỏ hàng.
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      Bạn có thể tiếp tục thanh toán bất cứ lúc nào hoặc thay đổi sản phẩm trong giỏ hàng.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex flex-col sm:flex-row gap-3 pt-4">
+                  <Button asChild className="flex-1">
+                    <Link href="/gio-hang">
+                      <ArrowLeft className="h-4 w-4 mr-2" />
+                      Về giỏ hàng
+                    </Link>
+                  </Button>
+
+                  <Button asChild variant="outline" className="flex-1">
+                    <Link href="/">
+                      <Home className="h-4 w-4 mr-2" />
+                      Về trang chủ
+                    </Link>
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Final result view (success or fail)
   return (
     <div className="min-h-[100dvh]">
       <div className="container mx-auto px-4 pb-20">
@@ -180,7 +336,6 @@ export default function PaymentResultClient() {
             </CardHeader>
 
             <CardContent className="space-y-6">
-              {/* Payment Details */}
               {isSuccess && (
                 <div className="bg-emerald-50 p-4 rounded-lg">
                   <div className="flex items-center justify-between mb-3">
@@ -222,14 +377,12 @@ export default function PaymentResultClient() {
                 </div>
               )}
 
-              {/* Status Badge */}
               <div className="text-center">
                 <Badge variant={isSuccess ? "default" : "destructive"} className="text-lg px-4 py-2">
                   {isSuccess ? "Thành công" : "Thất bại"}
                 </Badge>
               </div>
 
-              {/* Next Steps */}
               <div className="text-center space-y-4">
                 {isSuccess ? (
                   <div className="space-y-2">
@@ -254,7 +407,6 @@ export default function PaymentResultClient() {
                 )}
               </div>
 
-              {/* Action Buttons */}
               <div className="flex flex-col sm:flex-row gap-3 pt-4">
                 <Button asChild className="flex-1">
                   <Link href="/">
@@ -265,11 +417,11 @@ export default function PaymentResultClient() {
 
                 {isSuccess ? (
                   <Button asChild variant="outline" className="flex-1">
-                    <Link href="/offering">Tiếp tục mua sắm</Link>
+                    <Link href="/dat-do-le">Tiếp tục mua sắm</Link>
                   </Button>
                 ) : (
                   <Button asChild variant="outline" className="flex-1">
-                    <Link href="/cart">
+                    <Link href="/gio-hang">
                       <ArrowLeft className="h-4 w-4 mr-2" />
                       Thử lại thanh toán
                     </Link>

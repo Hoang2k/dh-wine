@@ -165,7 +165,7 @@ export default function OfferingDetailClient({
       if (result.success) {
         toast.success(result.message);
         // Redirect to cart page
-        window.location.href = "/cart";
+        window.location.href = "/gio-hang";
       } else {
         toast.error(result.message);
       }

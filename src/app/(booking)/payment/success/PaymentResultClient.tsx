@@ -206,13 +206,13 @@ export default function PaymentResultClient() {
                 
                 {paymentResult?.success ? (
                   <Button asChild variant="outline" className="flex-1">
-                    <Link href="/offering">
+                    <Link href="/dat-do-le">
                       Tiếp tục mua sắm
                     </Link>
                   </Button>
                 ) : (
                   <Button asChild variant="outline" className="flex-1">
-                    <Link href="/cart">
+                    <Link href="/gio-hang">
                       <ArrowLeft className="h-4 w-4 mr-2" />
                       Thử lại thanh toán
                     </Link>

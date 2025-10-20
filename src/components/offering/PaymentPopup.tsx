@@ -130,7 +130,7 @@ export default function PaymentPopup({ isOpen, onClose, onConfirm, totalAmount, 
                             <div className="space-y-2">
                                     <Label htmlFor="location">Địa điểm</Label>
                                     <Select
-                                        value={form.getValues("siteId")?.toString() || ""}
+                                        value={form.watch("siteId")?.toString() || ""}
                                         onValueChange={(v) => form.setValue("siteId", Number(v))}
                                     >
                                         <SelectTrigger id="location" className="w-full">

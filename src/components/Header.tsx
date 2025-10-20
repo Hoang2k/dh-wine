@@ -31,7 +31,7 @@ export default function Header() {
     { href: '/dat-lich-vieng', label: 'Đặt lịch viếng' },
     { href: '/dat-do-le', label: 'Đặt đồ lễ' },
     { href: '/tra-cuu', label: 'Tra cứu' },
-    { href: '/so-vang-tri-an', label: 'Sổ vàng tri ân' },
+    // { href: '/so-vang-tri-an', label: 'Sổ vàng tri ân' },
     { href: '/tin-tuc', label: 'Tin tức' },
     { href: '/media', label: 'Thư viện' },
     { href: '/lien-he', label: 'Liên hệ' },

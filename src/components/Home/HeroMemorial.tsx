@@ -32,7 +32,6 @@ export default function HeroMemorial({
       <section
         className="relative h-fit lg:h-[85vh] isolate w-full overflow-hidden bg-[#fbfbfb]"
         aria-label="Giới thiệu Nghĩa trang Liệt sĩ Vị Xuyên"
-        style={{ backgroundImage: `url(${backgroundSrc})` }}
       >
         {/* Ảnh nền */}
         <div className="absolute inset-0 -z-10">
@@ -42,7 +41,7 @@ export default function HeroMemorial({
             fill
             priority
             sizes="100vw"
-            className="object-contain lg:object-cover object-top"
+            className="object-cover object-center"
           />
           <div className="absolute inset-0 bg-black/50" />
           <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/50 to-black/70" />

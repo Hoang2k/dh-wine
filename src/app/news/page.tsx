@@ -4,7 +4,7 @@ import NewsClient from '@/components/News/NewsClient';
 import { IPost, IPostHomepage } from '@/types/post';
 
 // ISR Configuration - revalidate every 5 minutes
-export const revalidate = 300;
+export const revalidate = 60;
 
 // Generate metadata for SEO
 export async function generateMetadata(): Promise<Metadata> {

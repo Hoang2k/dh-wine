@@ -36,6 +36,7 @@ import {
   Mail,
   MapPin,
   Loader2,
+  CheckCircle,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -53,6 +54,7 @@ export default function CartPage() {
     getSelectedItems,
     getTotalQuantity,
     getTotalAmount,
+    removeSelectedItems,
   } = useCart();
 
   const [showPaymentPopup, setShowPaymentPopup] = React.useState(false);
@@ -71,6 +73,8 @@ export default function CartPage() {
     null
   );
   const [isProcessingPayment, setIsProcessingPayment] = React.useState(false);
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = React.useState<'vnpay' | 'cod'>('vnpay');
+  const [showSuccessModal, setShowSuccessModal] = React.useState(false);
 
   // Check BookVisit flags whenever the component becomes visible
   const checkBookVisitFlags = React.useCallback(() => {
@@ -210,36 +214,60 @@ export default function CartPage() {
         scheduledAt: paymentData.bookVisitData
           ? new Date().toISOString()
           : null,
+        paymentMethod: selectedPaymentMethod === 'vnpay' ? 1 : 2,
       };
 
       // Call API to create service order
       const orderResponse = await createServiceOrder(orderData);
-      console.log("Service order created: 111", orderResponse);
+      console.log("Service order created:", orderResponse);
 
-      // Create VNPay payment after successful order creation
-      const paymentRequest: TVNPayCreateRequest = {
-        orderId: Number(orderResponse.id),
-        returnUrl: `${window.location.origin}/payment/result`,
-      };
+      // Handle different payment methods
+      if (selectedPaymentMethod === 'vnpay') {
+        // Create VNPay payment after successful order creation
+        const paymentRequest: TVNPayCreateRequest = {
+          orderId: Number(orderResponse.id),
+          returnUrl: `${window.location.origin}/payment/result`,
+        };
 
-      const paymentResponse = await createVNPayPayment(paymentRequest);
-      console.log("VNPay payment created:", paymentResponse);
-      window.location.assign(paymentResponse.paymentUrl);
+        const paymentResponse = await createVNPayPayment(paymentRequest);
+        console.log("VNPay payment created:", paymentResponse);
+        
+        // Close modals
+        setShowPaymentPopup(false);
+        setShowBookVisitPaymentModal(false);
 
-      // Close modals
-      setShowPaymentPopup(false);
-      setShowBookVisitPaymentModal(false);
+        // Remove selected items from cart after successful order creation
+        removeSelectedItems();
 
-      // Clear the flags after successful payment
-      localStorage.removeItem("fromBookVisit");
-      localStorage.removeItem("bookVisitData");
-      localStorage.removeItem("directFromBookVisit");
-      setFromBookVisit(false);
-      setBookVisitData(null);
-      setHasNavigatedAway(false);
+        // Clear the flags after successful payment
+        localStorage.removeItem("fromBookVisit");
+        localStorage.removeItem("bookVisitData");
+        localStorage.removeItem("directFromBookVisit");
+        setFromBookVisit(false);
+        setBookVisitData(null);
+        setHasNavigatedAway(false);
 
-      // Redirect to VNPay payment page
-      window.location.href = paymentResponse.paymentUrl;
+        // Redirect to VNPay payment page
+        window.location.href = paymentResponse.paymentUrl;
+      } else if (selectedPaymentMethod === 'cod') {
+        // For COD, show success modal
+        setShowSuccessModal(true);
+        
+        // Close payment modals
+        setShowPaymentPopup(false);
+        setShowBookVisitPaymentModal(false);
+
+        // Remove selected items from cart after successful order creation
+        removeSelectedItems();
+
+        // Clear the flags after successful order
+        localStorage.removeItem("fromBookVisit");
+        localStorage.removeItem("bookVisitData");
+        localStorage.removeItem("directFromBookVisit");
+        setFromBookVisit(false);
+        setBookVisitData(null);
+        setHasNavigatedAway(false);
+      }
     } catch (error) {
       console.error("Error creating service order or payment:", error);
       alert("Có lỗi xảy ra khi đặt hàng. Vui lòng thử lại.");
@@ -284,7 +312,7 @@ export default function CartPage() {
     );
   }
 
-  if (cartItems.length === 0) {
+  if (cartItems.length === 0 && !showSuccessModal) {
     return (
       <div className="min-h-[100dvh]">
         <div className="container mx-auto lg:px-30 px-4 py-8">
@@ -806,18 +834,66 @@ export default function CartPage() {
 
                 {/* Phương thức thanh toán */}
                 <div className="mb-6">
-                  <p className="font-medium mb-2">Phương thức thanh toán</p>
-                  <div className="flex items-center space-x-3">
-                    {/* Checkbox tròn mặc định check */}
-                    <Checkbox
-                      id="vnpay-option"
-                      checked
-                      className="rounded-full data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600"
-                    />
-                    <Image src={LogoVNP} alt="VNPay" width={80} />
-                    <span className="text-sm font-medium text-gray-700">
-                      Cổng thanh toán VNPAY
-                    </span>
+                  <p className="font-medium mb-3">Phương thức thanh toán</p>
+                  
+                  {/* VNPay Option */}
+                  <div 
+                    className={`flex items-center space-x-3 p-3 rounded-lg border-2 cursor-pointer transition-all ${
+                      selectedPaymentMethod === 'vnpay' 
+                        ? 'border-blue-500 bg-blue-50' 
+                        : 'border-gray-200 hover:border-gray-300'
+                    }`}
+                    onClick={() => setSelectedPaymentMethod('vnpay')}
+                  >
+                    <div className="flex items-center space-x-3">
+                      <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
+                        selectedPaymentMethod === 'vnpay'
+                          ? 'border-blue-500 bg-blue-500'
+                          : 'border-gray-300'
+                      }`}>
+                        {selectedPaymentMethod === 'vnpay' && (
+                          <div className="w-2 h-2 rounded-full bg-white"></div>
+                        )}
+                      </div>
+                      <Image src={LogoVNP} alt="VNPay" width={80} />
+                      <div>
+                        <span className="text-sm font-medium text-gray-700">
+                          Cổng thanh toán VNPAY
+                        </span>
+                        <p className="text-xs text-gray-500">Thanh toán online</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* COD Option */}
+                  <div 
+                    className={`flex items-center space-x-3 p-3 rounded-lg border-2 cursor-pointer transition-all mt-2 ${
+                      selectedPaymentMethod === 'cod' 
+                        ? 'border-green-500 bg-green-50' 
+                        : 'border-gray-200 hover:border-gray-300'
+                    }`}
+                    onClick={() => setSelectedPaymentMethod('cod')}
+                  >
+                    <div className="flex items-center space-x-3">
+                      <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
+                        selectedPaymentMethod === 'cod'
+                          ? 'border-green-500 bg-green-500'
+                          : 'border-gray-300'
+                      }`}>
+                        {selectedPaymentMethod === 'cod' && (
+                          <div className="w-2 h-2 rounded-full bg-white"></div>
+                        )}
+                      </div>
+                      <div className="w-20 h-8 bg-green-100 rounded flex items-center justify-center">
+                        <span className="text-green-700 font-semibold text-sm">COD</span>
+                      </div>
+                      <div>
+                        <span className="text-sm font-medium text-gray-700">
+                          Thanh toán khi nhận hàng
+                        </span>
+                        <p className="text-xs text-gray-500">Thanh toán bằng tiền mặt</p>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
@@ -829,7 +905,7 @@ export default function CartPage() {
                     size="lg"
                   >
                     <CreditCard className="h-5 w-5 mr-2" />
-                    Thanh toán
+                    {selectedPaymentMethod === 'vnpay' ? 'Thanh toán VNPay' : 'Đặt hàng COD'}
                   </Button>
 
                   <Button variant="outline" asChild className="w-full">
@@ -855,6 +931,7 @@ export default function CartPage() {
         onConfirm={handlePayment}
         totalAmount={getTotalAmount()}
         totalQuantity={getTotalQuantity()}
+        paymentMethod={selectedPaymentMethod}
       />
 
       {/* Book Visit Payment Modal */}
@@ -865,7 +942,59 @@ export default function CartPage() {
         bookVisitData={bookVisitData}
         totalAmount={getTotalAmount()}
         totalQuantity={getTotalQuantity()}
+        paymentMethod={selectedPaymentMethod}
       />
+
+      {/* Success Modal for COD */}
+      {showSuccessModal && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
+          onClick={() => setShowSuccessModal(false)}
+        >
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95, y: 20 }}
+            className="bg-white rounded-lg shadow-xl max-w-md w-full"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <Card className="border-none shadow-none">
+              <CardContent className="p-6 text-center">
+                <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-green-100 mb-4">
+                  <CheckCircle className="h-8 w-8 text-green-600" />
+                </div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                  Đặt hàng thành công!
+                </h3>
+                <p className="text-gray-600 mb-6">
+                  Đơn hàng của bạn đã được xác nhận. Bạn sẽ thanh toán khi nhận hàng.
+                </p>
+                <div className="flex space-x-3">
+                  <Button
+                    variant="outline"
+                    onClick={() => setShowSuccessModal(false)}
+                    className="flex-1"
+                  >
+                    Đóng
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      setShowSuccessModal(false);
+                      window.location.href = "/";
+                    }}
+                    className="flex-1 bg-emerald-600 hover:bg-emerald-700"
+                  >
+                    Về trang chủ
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+        </motion.div>
+      )}
     </div>
   );
 }

@@ -190,7 +190,7 @@ function handleDateTimePickerClose() {
                                 </div>
                                 <div className="space-y-2">
                                     <Label htmlFor="location">Địa điểm</Label>
-                                    <Select defaultValue={form.getValues("location").toString()} onValueChange={(v) => form.setValue("location", Number(v))}>
+                                    <Select disabled={true} defaultValue={form.getValues("location").toString()} onValueChange={(v) => form.setValue("location", Number(v))}>
                                         <SelectTrigger id="location" className="w-full">
                                             <SelectValue placeholder="Chọn địa điểm" />
                                         </SelectTrigger>

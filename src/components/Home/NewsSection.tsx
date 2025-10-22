@@ -46,12 +46,14 @@ export default function NewsSection({ listPosts }: { listPosts: IPost[] }) {
                         [&_.swiper-pagination]:translate-y-4
                         [&_.swiper-pagination-bullet]:!bg-[#087443]/40
                         [&_.swiper-pagination-bullet-active]:!bg-[#087443]
+                        [&_.swiper-slide]:!h-auto
+                        [&_.swiper-wrapper]:!items-stretch
                       "
           >
             {listPosts.map((item, index) => (
               <SwiperSlide key={`${item.title}-${index}`}>
-                <article className="transition rounded-lg overflow-hidden bg-white text-left shadow hover:shadow-md h-full">
-                  <div className="relative w-full h-48">
+                <article className="transition rounded-lg overflow-hidden bg-white text-left shadow hover:shadow-md h-full flex flex-col">
+                  <div className="relative w-full h-48 flex-shrink-0">
                     <Link href={`/tin-tuc/${item.slug}`}>
                       <Image
                         src={item.thumbnailImage?.path || ''}
@@ -64,15 +66,15 @@ export default function NewsSection({ listPosts }: { listPosts: IPost[] }) {
                     </Link>
                   </div>
 
-                  <div className="p-4">
+                  <div className="p-4 flex flex-col flex-grow">
                     <Link href={`/tin-tuc/${item.slug}`} className="text-xl font-semibold text-[#101828] hover:text-blue-600 line-clamp-2">
                       {item.title}
                     </Link>
-                    <p className="mt-2 text-base text-gray-600 line-clamp-3 md:!line-clamp-2">
+                    <p className="mt-2 text-base text-gray-600 line-clamp-3 md:!line-clamp-2 flex-grow">
                       {item.summary}
                     </p>
 
-                    <div className="mt-4">
+                    <div className="mt-4 flex-shrink-0">
                       <Link
                         href={`/tin-tuc/${item.slug}`}
                         className="inline-flex items-center gap-2 text-[#087443] hover:underline"

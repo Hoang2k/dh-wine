@@ -140,7 +140,6 @@ export const STATUS_SUBSCRIPTION = {
  */
 export const BOOK_VISIT_LOCATIONS = [
   { id: 1, name: "Nghĩa trang Liệt sĩ Vị Xuyên" },
-  { id: 2, name: "Điểm cao 468" }
 ] as const;
 
 /**
@@ -153,6 +152,6 @@ export const BOOK_VISIT_TYPES = [
   { id: 4, name: "Cơ sở giáo dục" },
   { id: 5, name: "Khách nước ngoài" },
   { id: 6, name: "Khách du lịch" },
-  { id: 7, name: "Thân nhân nghệ sĩ" },
+  { id: 7, name: "Thân nhân liệt sĩ" },
   { id: 8, name: "Tập thể" },
 ] as const;

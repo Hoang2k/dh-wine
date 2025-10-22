@@ -17,6 +17,7 @@ interface BookVisitPaymentModalProps {
     bookVisitData: any;
     totalAmount: number;
     totalQuantity: number;
+    paymentMethod?: 'vnpay' | 'cod';
 }
 
 export default function BookVisitPaymentModal({ 
@@ -25,7 +26,8 @@ export default function BookVisitPaymentModal({
     onConfirm, 
     bookVisitData, 
     totalAmount, 
-    totalQuantity 
+    totalQuantity,
+    paymentMethod = 'vnpay'
 }: BookVisitPaymentModalProps) {
     const [isReset, setIsReset] = React.useState(false);
     const [contactName, setContactName] = React.useState('');
@@ -273,7 +275,7 @@ export default function BookVisitPaymentModal({
                                 disabled={isReset && (!contactName || !contactPhone)}
                                 className="flex-1 bg-emerald-700 hover:bg-emerald-800"
                             >
-                                Xác nhận thanh toán
+                                {paymentMethod === 'cod' ? 'Xác nhận đặt hàng' : 'Xác nhận thanh toán'}
                             </Button>
                         </div>
                     </CardContent>

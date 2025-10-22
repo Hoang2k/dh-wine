@@ -16,4 +16,5 @@ export interface TServiceOrder {
     contactPhone: string;
     note?: string;
     orderItems: TServiceOrderItem[];
+    paymentMethod?: number;
 }

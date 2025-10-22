@@ -118,7 +118,19 @@ export default function Pagination({
                             );
                         })}
                         {totalPages > 3 && currentPage < totalPages - 1 && (
-                            <span className="text-muted-foreground px-1 text-xs">...</span>
+                            <>
+                                <span className="text-muted-foreground px-1 text-xs">...</span>
+                                {/* Last page button */}
+                                <Button 
+                                    variant={currentPage === totalPages ? "default" : "outline"}
+                                    size="sm" 
+                                    onClick={() => handlePageChange(totalPages)}
+                                    disabled={isLoading || isFetching}
+                                    className="w-7 h-7 sm:w-8 sm:h-8 p-0 text-xs sm:text-sm"
+                                >
+                                    {totalPages}
+                                </Button>
+                            </>
                         )}
                     </div>
                     
@@ -133,19 +145,6 @@ export default function Pagination({
                         <span className="hidden sm:inline">Sau</span>
                         <ChevronRight className="h-3 w-3 sm:h-4 sm:w-4" />
                     </Button>
-                    
-                    {/* Last page button */}
-                    {totalPages > 3 && currentPage < totalPages - 1 && (
-                        <Button 
-                            variant="outline" 
-                            size="sm" 
-                            onClick={() => handlePageChange(totalPages)}
-                            disabled={isLoading || isFetching}
-                            className="ml-1 w-7 h-7 sm:w-8 sm:h-8 p-0 text-xs sm:text-sm"
-                        >
-                            {totalPages}
-                        </Button>
-                    )}
                 </div>
             )}
         </div>

@@ -28,9 +28,10 @@ interface PaymentPopupProps {
     onConfirm: (data: PaymentForm) => void;
     totalAmount: number;
     totalQuantity: number;
+    paymentMethod?: 'vnpay' | 'cod';
 }
 
-export default function PaymentPopup({ isOpen, onClose, onConfirm, totalAmount, totalQuantity }: PaymentPopupProps) {
+export default function PaymentPopup({ isOpen, onClose, onConfirm, totalAmount, totalQuantity, paymentMethod = 'vnpay' }: PaymentPopupProps) {
     const form = useForm<PaymentForm>({
         resolver: zodResolver(PaymentSchema),
         defaultValues: {
@@ -129,7 +130,7 @@ export default function PaymentPopup({ isOpen, onClose, onConfirm, totalAmount, 
 
                             <div className="space-y-2">
                                     <Label htmlFor="location">Địa điểm</Label>
-                                    <Select
+                                    <Select disabled={true}
                                         value={form.watch("siteId")?.toString() || ""}
                                         onValueChange={(v) => form.setValue("siteId", Number(v))}
                                     >
@@ -174,7 +175,7 @@ export default function PaymentPopup({ isOpen, onClose, onConfirm, totalAmount, 
                                     className="flex-1 bg-emerald-700 hover:bg-emerald-800"
                                 >
                                     <CreditCard className="h-4 w-4 mr-2" />
-                                    Xác nhận thanh toán
+                                    {paymentMethod === 'cod' ? 'Xác nhận đặt hàng' : 'Xác nhận thanh toán'}
                                 </Button>
                             </div>
                         </form>

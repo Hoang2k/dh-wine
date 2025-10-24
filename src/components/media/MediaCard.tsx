@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Calendar, Play, Image as ImageIcon, Eye } from "lucide-react";
 import { IGallery } from "@/types/media";
 import Lightbox, { LightboxItem } from "./Lightbox";
+import Link from "next/link";
 
 function isVideo(url: string) {
   return /\.(mp4|mov|avi|webm|mkv)$/i.test(url);
@@ -39,6 +40,7 @@ export default function MediaCard({ item }: { item: IGallery }) {
 
   const MediaGrid = ({ all = false }: { all?: boolean }) => {
     const list = all ? media : preview;
+    console.log("MediaGrid - list:", list);
     return (
       <div
         className={`grid gap-2 ${
@@ -104,6 +106,16 @@ export default function MediaCard({ item }: { item: IGallery }) {
                 <p className="mt-1">{item.description}</p>
               ) : null}
             </div>
+            <Link href={`/media/${item.id}`}>
+              <Button
+                variant="outline"
+                size="sm"
+                className="ml-4 hover:bg-blue-500 hover:text-primary-foreground"
+              >
+                <Eye className="w-4 h-4 mr-1" />
+                Xem chi tiết
+              </Button>
+            </Link>
           </div>
         </CardHeader>
 

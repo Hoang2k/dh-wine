@@ -21,9 +21,8 @@ export async function getMedia(
 
 export async function getMediaById(id: number): Promise<IGallery> {
   try {
-    console.log("id", id);
     const base = process.env.NEXT_PUBLIC_API_URL;
-    const url = `${base}/gallery/${id}`;
+    const url = `${base}/gallery/detail/${id}`;
     const res = await fetch(url, {
       method: "GET",
       cache: "no-store",

@@ -80,25 +80,16 @@ export default function SuccessPopup({ isOpen, orgName, phone, idBookVisit, onCl
                   Trong trường hợp có thay đổi, vui lòng liên hệ số điện thoại{" "}
                   <strong>{phone}</strong>
                 </p>
-                <p className="font-medium text-gray-800 mt-4">
-                   Bạn có muốn đặt kèm dịch vụ đồ lễ không ?
-                </p>
               </div>
 
               {/* Action buttons */}
-              <div className="flex gap-3">
+              <div className="flex">
                 <Button
                   variant="outline"
                   onClick={onNo}
-                  className="flex-1"
+                  className="w-full bg-emerald-700 hover:bg-emerald-800 text-white hover:text-white cursor-pointer"
                 >
-                  Không
-                </Button>
-                <Button
-                  onClick={handleYes}
-                  className="flex-1 bg-emerald-700 hover:bg-emerald-800"
-                >
-                  Có
+                  Đồng ý
                 </Button>
               </div>
             </CardContent>

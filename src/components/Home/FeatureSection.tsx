@@ -39,7 +39,7 @@ const features: Feature[] = [
     description: "Đặt hoa, lễ vật viếng online, thanh toán tiện lợi",
     icon: Gift,
     color: "bg-blue-100 text-blue-600",
-    path: "/dat-do-le",
+    path: "/",
   },
   {
     title: "Tin tức & Sự kiện",

@@ -29,7 +29,7 @@ export default function Header() {
     { href: '/', label: 'Trang chủ' },
     { href: '/gioi-thieu', label: 'Giới thiệu' },
     { href: '/dat-lich-vieng', label: 'Đặt lịch viếng' },
-    { href: '/dat-do-le', label: 'Đặt đồ lễ' },
+    // { href: '/dat-do-le', label: 'Đặt đồ lễ' },
     { href: '/tra-cuu', label: 'Tra cứu' },
     // { href: '/so-vang-tri-an', label: 'Sổ vàng tri ân' },
     { href: '/tin-tuc', label: 'Tin tức' },

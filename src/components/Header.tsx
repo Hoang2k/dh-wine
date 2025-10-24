@@ -79,16 +79,16 @@ export default function Header() {
               ))}
             </ul>
             
-            {/* Shopping Cart Icon */}
+            {/* Shopping Cart Icon
             <div className="ml-4">
               <CartIcon />
-            </div>
+            </div> */}
           </nav>
 
           {/* Mobile Menu Controls */}
           <div className="lg:hidden flex items-center gap-2">
             {/* Shopping Cart Icon for Mobile */}
-            <CartIcon />
+            {/* <CartIcon /> */}
             
             {/* Menu Toggle Button */}
             <button

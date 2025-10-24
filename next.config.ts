@@ -19,12 +19,12 @@ const nextConfig: NextConfig = {
       { source: '/tin-tuc/danh-muc/:category', destination: '/news/category/:category' },
       { source: '/gioi-thieu', destination: '/about' },
       { source: '/dat-lich-vieng', destination: '/book-visit' },
-      { source: '/dat-do-le', destination: '/' },
+      { source: '/dat-do-le', destination: '/offering' },
       { source: '/tra-cuu', destination: '/grave-search' },
-      { source: '/so-vang-tri-an', destination: '/' },
-      { source: '/nhan-tim-dong-doi', destination: '/' },
-      { source: '/nhan-tim-dong-doi/:slug', destination: '/' },
-      { source: '/nhan-tim-dong-doi/tao-moi', destination: '/' },
+      { source: '/so-vang-tri-an', destination: '/golden-book' },
+      { source: '/nhan-tim-dong-doi', destination: '/find-relatives' },
+      { source: '/nhan-tim-dong-doi/:slug', destination: '/find-relatives/:slug' },
+      { source: '/nhan-tim-dong-doi/tao-moi', destination: '/find-relatives/create' },
 
       { source: '/lien-he', destination: '/contact' },
 

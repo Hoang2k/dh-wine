@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 import OfferingClient from './OfferingClient';
 import { getServiceItems } from "@/services/offerings";
+import { redirect } from 'next/navigation';
 
 export const metadata: Metadata = {
   title: 'Sản phẩm cúng viếng | Nghĩa trang liệt sĩ Vị Xuyên',
@@ -51,6 +52,8 @@ export const metadata: Metadata = {
 export const dynamic = 'force-dynamic';
 
 export default async function OfferingPage() {
+  // comment if you want to see the offering page
+  redirect('/');
   const response = await getServiceItems({ page: 1, per_page: 50 });
   const items = response?.data || [];
   return <OfferingClient items={items} />;

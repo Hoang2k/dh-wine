@@ -1,5 +1,5 @@
 import { Metadata } from 'next';
-import { notFound } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 import { getServiceItemById } from '@/services/offerings';
 import OfferingDetailClient from './OfferingDetailClient';
 import Breadcrumbs from '@/components/Breadcrumbs';
@@ -103,39 +103,42 @@ export async function generateStaticParams() {
 export const revalidate = 300;
 
 export default async function OfferingDetailPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params;
-  let serviceItem;
+  // comment if you want to see the offering detail page
+  redirect('/');
+
+  // const { id } = await params;
+  // let serviceItem;
   
-  try {
-    serviceItem = await getServiceItemById(id);
-  } catch (error) {
-    console.error('Error fetching service item:', error);
-  }
+  // try {
+  //   serviceItem = await getServiceItemById(id);
+  // } catch (error) {
+  //   console.error('Error fetching service item:', error);
+  // }
 
-  if (!serviceItem) {
-    notFound();
-  }
+  // if (!serviceItem) {
+  //   notFound();
+  // }
 
-  const breadcrumbItems = [
-    { label: 'Sản phẩm cúng viếng', href: '/offering' },
-    { label: serviceItem.name }
-  ];
+  // const breadcrumbItems = [
+  //   { label: 'Sản phẩm cúng viếng', href: '/offering' },
+  //   { label: serviceItem.name }
+  // ];
 
-  return (
-    <>
-      <StructuredData 
-        type="product" 
-        data={serviceItem} 
-      />
-      <div className="min-h-[100dvh]">
-        {/* Header */}
-        <div className="container mx-auto px-4 lg:px-30 py-6">
-          <Breadcrumbs items={breadcrumbItems} />
-        </div>
+  // return (
+  //   <>
+  //     <StructuredData 
+  //       type="product" 
+  //       data={serviceItem} 
+  //     />
+  //     <div className="min-h-[100dvh]">
+  //       {/* Header */}
+  //       <div className="container mx-auto px-4 lg:px-30 py-6">
+  //         <Breadcrumbs items={breadcrumbItems} />
+  //       </div>
 
-        {/* Content */}
-        <OfferingDetailClient serviceItem={serviceItem} />
-      </div>
-    </>
-  );
+  //       {/* Content */}
+  //       <OfferingDetailClient serviceItem={serviceItem} />
+  //     </div>
+  //   </>
+  // );
 }

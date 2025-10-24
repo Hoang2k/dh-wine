@@ -41,8 +41,12 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import * as React from "react";
+import { redirect } from 'next/navigation';
 
 export default function CartPage() {
+  // comment if you want to see the cart page
+  redirect('/');
+
   const {
     cartItems,
     removeFromCart,

@@ -146,12 +146,14 @@ export const BOOK_VISIT_LOCATIONS = [
  * Book visit type options
  */
 export const BOOK_VISIT_TYPES = [
-  { id: 1, name: "Cá nhân" },
-  { id: 2, name: "Cơ quan Đảng, Nhà nước" },
-  { id: 3, name: "Cựu chiến binh" },
-  { id: 4, name: "Cơ sở giáo dục" },
-  { id: 5, name: "Khách nước ngoài" },
-  { id: 6, name: "Khách du lịch" },
-  { id: 7, name: "Thân nhân liệt sĩ" },
-  { id: 8, name: "Tập thể" },
+  { id: 1, name: "Cơ quan Đảng, Nhà nước" },
+  { id: 2, name: "Mặt trận Tổ quốc Việt Nam và các tổ chức Chính trị - Xã hội" },
+  { id: 3, name: "Lực lượng Quân đội" },
+  { id: 4, name: "Lực lượng Công an" },
+  { id: 5, name: "Thân nhân liệt sĩ" },
+  { id: 6, name: "Cựu chiến binh" },
+  { id: 7, name: "Cơ sở giáo dục" },
+  { id: 8, name: "Doanh nghiệp, tổ chức kinh tế" },
+  { id: 9, name: "Khách nước ngoài" },
+  { id: 10, name: "Khách thăm viếng khác" },
 ] as const;

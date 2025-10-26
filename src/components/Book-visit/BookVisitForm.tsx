@@ -358,7 +358,7 @@ function handleDateTimePickerClose() {
                     </CardHeader>
                     <CardContent className="text-sm text-muted-foreground space-y-2">
                         <p>• Trang phục lịch sự, giữ không gian yên tĩnh khi vào khu tưởng niệm.</p>
-                        <p>• Nếu cần hỗ trợ, liên hệ <a href="tel:0123456789" className="underline text-emerald-700">0123 456 789</a>.</p>
+                        <p>• Nếu cần hỗ trợ, liên hệ <a href="tel:0123456789" className="underline text-emerald-700">0988678938</a>.</p>
                     </CardContent>
                 </Card>
 
@@ -367,7 +367,7 @@ function handleDateTimePickerClose() {
                         <CardTitle className="text-base">Chính sách</CardTitle>
                     </CardHeader>
                     <CardContent className="text-sm text-muted-foreground space-y-2">
-                        <p>• Đăng ký cần được ban quản lý duyệt trước khi có hiệu lực.</p>
+                        <p>• Đơn đăng ký cần được ban quản lý phê duyệt trước khi có hiệu lực.</p>
                         <p>• Mọi thay đổi / hủy cần liên hệ với ban quản lý nghĩa trang trước 24 giờ.</p>
                         <p>• Dữ liệu cá nhân được bảo mật theo quy định hiện hành.</p>
                     </CardContent>

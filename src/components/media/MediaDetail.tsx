@@ -21,7 +21,7 @@ function formatDateYMD(ymd: string) {
   return `${d}/${m}/${y}`;
 }
 
-export default function MediaDetail({ media }: { media: IGallery }) {
+export default function MediaDetail({ media, pageUrl }: { media: IGallery, pageUrl: string }) {
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
 
@@ -73,7 +73,7 @@ export default function MediaDetail({ media }: { media: IGallery }) {
                       {formatDateYMD(media.time)}
                     </div>
                     <ShareButtons 
-                      url={typeof window !== 'undefined' ? window.location.href : ''}
+                      url={pageUrl}
                       title={media.title}
                       layout="horizontal"
                     />

@@ -34,7 +34,25 @@ export async function generateMetadata({
       description: media.description || `Chi tiết về ${media.title}`,
       url: pageUrl,
       type: "article",
-      images: imageUrl ? [{ url: imageUrl, width: 1200, height: 630 }] : [],
+      locale: 'vi_VN',
+      siteName: 'Nghĩa trang liệt sĩ Vị Xuyên',
+      images: imageUrl ? [{ 
+        url: imageUrl, 
+        width: 1200, 
+        height: 630,
+        alt: media.title 
+      }] : [{
+        url: `${siteUrl}/logo-la-co-03.jpg`,
+        width: 1200,
+        height: 630,
+        alt: media.title
+      }],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: media.title,
+      description: media.description || `Chi tiết về ${media.title}`,
+      images: [imageUrl || `${siteUrl}/logo-la-co-03.jpg`],
     },
     alternates: { canonical: pageUrl },
   };

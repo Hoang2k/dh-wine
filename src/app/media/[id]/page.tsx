@@ -15,7 +15,7 @@ export async function generateMetadata({
   const media = await getMediaById(Number(id));
   if (!media) return { title: "Không tìm thấy" };
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://nghiatranglietsivixuyen.com";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://nghiatranglietsivixuyen.vn";
   const pageUrl = `${siteUrl}/media/${id}`;
 
   let imageUrl: string | undefined = undefined;
@@ -26,9 +26,23 @@ export async function generateMetadata({
     else imageUrl = `${siteUrl}${maybeFull}`;
   }
 
+  console.log("imageUrl", imageUrl);
+  console.log("title", media.title);
+  console.log("description", media.description);
+
   return {
     title: `${media.title} - Thư viện hình ảnh/video`,
     description: media.description || `Chi tiết về ${media.title}`,
+    keywords: [
+      'thư viện hình ảnh',
+      'thư viện video', 
+      'nghĩa trang liệt sĩ',
+      'Vị Xuyên',
+      media.title,
+      'hình ảnh',
+      'video'
+    ],
+    authors: [{ name: 'Nghĩa trang liệt sĩ Vị Xuyên' }],
     openGraph: {
       title: media.title,
       description: media.description || `Chi tiết về ${media.title}`,
@@ -55,6 +69,17 @@ export async function generateMetadata({
       images: [imageUrl || `${siteUrl}/logo-la-co-03.jpg`],
     },
     alternates: { canonical: pageUrl },
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        'max-video-preview': -1,
+        'max-image-preview': 'large',
+        'max-snippet': -1,
+      },
+    },
   };
 }
 
@@ -64,7 +89,7 @@ export default async function MediaDetailPage({ params }: MediaDetailPageProps) 
     const media = await getMediaById(Number(id));
     if (!media) notFound();
 
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://nghiatranglietsivixuyen.com";
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://nghiatranglietsivixuyen.vn";
     const pageUrl = `${siteUrl}/media/${id}`;
 
     return <MediaDetail media={media} pageUrl={pageUrl} />;
@@ -73,3 +98,4 @@ export default async function MediaDetailPage({ params }: MediaDetailPageProps) 
     notFound();
   }
 }
+

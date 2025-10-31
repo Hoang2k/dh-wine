@@ -83,9 +83,6 @@ export default function TableComponent({data, total, page, pageSize, onPageChang
                     Nguyên quán
                   </TableHead>
                   <TableHead className="text-center border-r border-memorial-red/20 font-medium text-memorial-dark">
-                    Nguyên quán (mới)
-                  </TableHead>
-                  <TableHead className="text-center border-r border-memorial-red/20 font-medium text-memorial-dark">
                     Đơn vị
                   </TableHead>
                   <TableHead className="text-center border-r border-memorial-red/20 font-medium text-memorial-dark">
@@ -131,9 +128,6 @@ export default function TableComponent({data, total, page, pageSize, onPageChang
                     </TableCell>
                     <TableCell className="border-r border-memorial-red/20">
                       {[item.oldCommune, item.oldDistrict, item.oldProvince].filter(Boolean).join(', ')}
-                    </TableCell>
-                    <TableCell className="border-r border-memorial-red/20">
-                      {[item.commune, item.district, item.province].filter(Boolean).join(', ')}
                     </TableCell>
                     <TableCell className="border-r border-memorial-red/20">
                       {item.unitName}

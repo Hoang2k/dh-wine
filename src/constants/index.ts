@@ -153,6 +153,7 @@ export const BOOK_VISIT_TYPES = [
   { id: 5, name: "Thân nhân liệt sĩ" },
   { id: 6, name: "Cựu chiến binh" },
   { id: 7, name: "Cơ sở giáo dục" },
+  { id: 11, name: "Cơ quan y tế"},
   { id: 8, name: "Doanh nghiệp, tổ chức kinh tế" },
   { id: 9, name: "Khách nước ngoài" },
   { id: 10, name: "Khách thăm viếng khác" },

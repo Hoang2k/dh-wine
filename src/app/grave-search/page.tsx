@@ -38,10 +38,10 @@ export default function GraveSearchPage() {
       <main className="container mx-auto md:px-8 md:py-8">
         <div className="mb-2 flex flex-col items-center">
           <h1 className="text-[32px] md:text-[64px] text-memorial-dark mb-2 font-utmalpine text-center text-[#8B0000]">
-            "Sống bám đá đánh giặc"
+            "Sống bám đá đánh giặc
           </h1>
           <p className="text-memorial-gray text-[32px] md:text-[64px] font-utmalpine text-center text-[#8B0000]">
-            "Chết hóa đá bất tử"
+            Chết hóa đá bất tử "
           </p>
         </div>
 

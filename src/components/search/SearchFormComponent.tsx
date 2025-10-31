@@ -68,7 +68,7 @@ export default function SearchFormComponent({
                   placeholder="Nhập nguyên quán"
                 />
               </div>
-              <div className="space-y-2">
+              {/* <div className="space-y-2">
                 <Label htmlFor="newOrigin">
                   Nguyên quán (theo nghị quyết mới)
                 </Label>
@@ -79,7 +79,7 @@ export default function SearchFormComponent({
                   onChange={(e) => handleInput("new_origin", e.target.value)}
                   placeholder="Nhập nguyên quán mới"
                 />
-              </div>
+              </div> */}
               <div className="space-y-2">
                 <Label htmlFor="birthYear">Ngày sinh</Label>
                 <Input

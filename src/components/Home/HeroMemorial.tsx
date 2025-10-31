@@ -1,5 +1,5 @@
 import HeroMemorialImage from "../../assets/image/bg2.jpg";
-import { Users2, MapPin, Calendar as CalendarIcon } from "lucide-react";
+import { Users2, MapPin, Calendar as CalendarIcon, CircleHelp, Building2 } from "lucide-react";
 import Image from "next/image";
 
 type StatItem = {
@@ -19,12 +19,14 @@ interface HeroMemorialProps {
 export default function HeroMemorial({
   backgroundSrc = HeroMemorialImage.src,
   title = "Nghĩa trang Liệt sĩ Vị Xuyên",
-  description = "Nằm tại Điểm cao 468, Vị Xuyên, Hà Giang. Nơi đã diễn ra những trận chiến oanh liệt bảo vệ biên giới phía Bắc. Nghĩa trang là nơi an nghỉ của hàng nghìn Anh hùng Liệt sĩ đã hy sinh vì Tổ quốc.",
+  description = "Toạ lạc tại Km 18 QL2; Thuộc thôn 18, xã Vị Xuyên, tỉnh Tuyên Quang. Nơi an nghỉ của hàng nghìn Anh hùng Liệt sĩ đã hy sinh vì Độc lập tự do của Tổ quốc",
   alt = "Nghĩa trang Liệt sĩ Vị Xuyên",
   stats = [
-    { label: "Liệt sĩ", value: "1870", icon: Users2 },
-    { label: "Diện tích", value: "10 ha", icon: MapPin },
+    { label: "Liệt sĩ", value: "1957", icon: Users2 },
+    { label: "Diện tích", value: "11,4 ha", icon: MapPin },
     { label: "Xây dựng", value: "1990", icon: CalendarIcon },
+    { label: "Mộ tập thể", value: "01", icon: Building2 },
+    { label: "Chưa xác định thông tin", value: "439", icon: CircleHelp },
   ],
 }: HeroMemorialProps) {
   return (
@@ -59,7 +61,7 @@ export default function HeroMemorial({
               </p>
             </div>
 
-            <div className="mx-auto mt-12 lg:mt-20 grid grid-cols-3 gap-6 max-w-5xl">
+            <div className="mx-auto mt-12 lg:mt-20 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 md:gap-8 max-w-7xl">
               {stats.map((s, idx) => {
                 const Icon = s.icon;
                 return (

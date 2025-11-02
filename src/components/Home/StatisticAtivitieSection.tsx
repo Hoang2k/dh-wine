@@ -3,6 +3,8 @@
 import BgStatistic from "../../assets/image/home/bg_statistic.jpg";
 import CalendarImage from "../../assets/image/home/calendar.png";
 import UserGroup from "../../assets/image/home/user-group-logo.png";
+import { getMedia } from "@/services/media";
+import { IGallery } from "@/types/media";
 import { useDailyRollingCounter } from "@/utils/useDailyRollingCounterHook";
 import { ArrowRight, Calendar } from "lucide-react";
 import Image from "next/image";
@@ -94,32 +96,6 @@ function CountOnView({
   );
 }
 
-type TActiviti = {
-  title: string;
-  created_at: string;
-  description: string;
-};
-const activity: TActiviti[] = [
-  {
-    title: "Lễ tưởng niệm 27/07/2024",
-    created_at: "27/07/2024",
-    description:
-      "Lễ tưởng niệm 45 năm chiến thắng biên giới phía Bắc, với sự tham gia của 500+ thân nhân liệt sĩ.",
-  },
-  {
-    title: "Lễ tưởng niệm 27/07/2024",
-    created_at: "27/07/2024",
-    description:
-      "Lễ tưởng niệm 45 năm chiến thắng biên giới phía Bắc, với sự tham gia của 500+ thân nhân liệt sĩ.",
-  },
-  {
-    title: "Lễ tưởng niệm 27/07/2024",
-    created_at: "27/07/2024",
-    description:
-      "Lễ tưởng niệm 45 năm chiến thắng biên giới phía Bắc, với sự tham gia của 500+ thân nhân liệt sĩ.",
-  },
-];
-
 const statisic = {
   totalVisits: "100,000+",
   visitationSchedule: "1,872",
@@ -128,6 +104,24 @@ const statisic = {
 
 export default function StatisticActivitieSection() {
   const { count, lastUpdate } = useDailyRollingCounter();
+  const [activities, setActivities] = useState<IGallery[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchActivities = async () => {
+      try {
+        setIsLoading(true);
+        const response = await getMedia(1, 3);
+        setActivities(response.data || []);
+      } catch (error) {
+        console.error("Error fetching media:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchActivities();
+  }, []);
 
   return (
     <section className=" px-6">
@@ -209,33 +203,62 @@ export default function StatisticActivitieSection() {
 
           <div className="space-y-4">
             <div className="flex justify-between items-center w-full  mt-10 lg:mt-0"></div>
-            {activity.map((item, index) => {
-              return (
-                <div
-                  key={index}
-                  className="bg-white p-6 rounded-xl border border-[#D0D5DD]"
-                >
-                  <div className="flex gap-x-4">
-                    <div className="w-12 h-12 shrink-0 bg-[#087443] rounded-lg flex items-center justify-center">
-                      <Calendar color="white" />
-                    </div>
-                    <div className="w-full">
-                      <div className="flex justify-between items-center">
-                        <div className="font-semibold text-left text-lg">
-                          {item.title}
-                        </div>
-                        <div className="text-sm text-[#475467]">
-                          {item.created_at}
-                        </div>
+            {isLoading ? (
+              <div className="flex justify-center items-center py-12">
+                <div className="text-gray-500">Đang tải...</div>
+              </div>
+            ) : activities.length === 0 ? (
+              <div className="flex justify-center items-center py-12">
+                <div className="text-gray-500">Chưa có hoạt động nào</div>
+              </div>
+            ) : (
+              activities.map((item) => {
+                const firstImage =
+                  item.images && item.images.length > 0 ? item.images[0] : null;
+                return (
+                  <Link
+                    key={item.id}
+                    href={`/media/${item.id}`}
+                    className="block bg-white p-4 rounded-xl border border-[#D0D5DD] hover:shadow-md transition-shadow cursor-pointer"
+                  >
+                    <div className="flex gap-x-4 items-start">
+                      <div className="w-24 h-24 rounded-lg overflow-hidden flex-shrink-0">
+                        {firstImage ? (
+                          <Image
+                            src={firstImage}
+                            alt={item.title}
+                            width={96}
+                            height={96}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full bg-[#087443] flex items-center justify-center">
+                            <Calendar color="white" size={32} />
+                          </div>
+                        )}
                       </div>
-                      <p className="mt-2 text-[#475467] text-left text-base line-clamp-2">
-                        {item.description}
-                      </p>
+
+                      <div className="flex-1 flex flex-col justify-start">
+                        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start">
+                          <div className="font-semibold text-left text-lg line-clamp-2 leading-5">
+                            {item.title}
+                          </div>
+                          <div className="text-sm text-[#475467] mt-1 sm:mt-0 text-left">
+                            {item.time
+                              ? new Date(item.time).toLocaleDateString("vi-VN")
+                              : ""}
+                          </div>
+                        </div>
+
+                        <p className="mt-2 text-[#475467] text-left text-base line-clamp-3 leading-5">
+                          {item.description}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                </div>
-              );
-            })}
+                  </Link>
+                );
+              })
+            )}
             <div className="flex justify-center mt-6">
               <Link
                 href="/media"

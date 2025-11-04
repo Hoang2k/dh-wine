@@ -40,7 +40,7 @@ export default function MediaCard({ item }: { item: IGallery }) {
 
   const MediaGrid = ({ all = false }: { all?: boolean }) => {
     const list = all ? media : preview;
-    console.log("MediaGrid - list:", list);
+
     return (
       <div
         className={`grid gap-2 ${

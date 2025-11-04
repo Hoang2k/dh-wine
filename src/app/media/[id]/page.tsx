@@ -26,10 +26,6 @@ export async function generateMetadata({
     else imageUrl = `${siteUrl}${maybeFull}`;
   }
 
-  console.log("imageUrl", imageUrl);
-  console.log("title", media.title);
-  console.log("description", media.description);
-
   return {
     title: `${media.title} - Thư viện hình ảnh/video`,
     description: media.description || `Chi tiết về ${media.title}`,

@@ -118,7 +118,6 @@ export const getRelatedPostsByCategory = async (postId: number, limit = 4): Prom
 
 export const getListPostHomepage = async (limit = 20): Promise<IPostHomepage> => {
   try {
-    console.log('limit');
     const response = await request.get<IPostHomepage>({
       url: '/client/posts/homepage',
       params: { limit: limit },

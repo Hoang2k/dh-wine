@@ -223,7 +223,6 @@ export default function CartPage() {
 
       // Call API to create service order
       const orderResponse = await createServiceOrder(orderData);
-      console.log("Service order created:", orderResponse);
 
       // Handle different payment methods
       if (selectedPaymentMethod === 'vnpay') {
@@ -234,7 +233,6 @@ export default function CartPage() {
         };
 
         const paymentResponse = await createVNPayPayment(paymentRequest);
-        console.log("VNPay payment created:", paymentResponse);
         
         // Close modals
         setShowPaymentPopup(false);

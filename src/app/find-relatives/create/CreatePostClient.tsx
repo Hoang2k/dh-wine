@@ -82,7 +82,6 @@ export default function CreatePostClient() {
     const onSubmit = async (data: CreatePostForm) => {
         setIsSubmitting(true);
         try {
-            console.log("Creating post:", data);
             await new Promise(resolve => setTimeout(resolve, 2000));
             router.push("/posts");
         } catch (error) {

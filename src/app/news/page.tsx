@@ -68,8 +68,6 @@ export default async function NewsPage() {
             getListCategories()
         ]);
 
-        console.log('listPosts', listPosts);
-
         const heroPost = listPosts?.hero || [];
         const featuredPosts = listPosts?.featured || [];
         const latestPosts = listPosts?.latest || [];

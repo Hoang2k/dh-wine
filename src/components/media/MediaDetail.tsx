@@ -25,10 +25,6 @@ export default function MediaDetail({ media, pageUrl }: { media: IGallery, pageU
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
 
-  // Debug logging
-  console.log("MediaDetail - media object:", media);
-  console.log("MediaDetail - media.images:", media.images);
-
   const mediaItems: LightboxItem[] = useMemo(
     () => {
       const items = (media.images ?? []).map((url) => ({

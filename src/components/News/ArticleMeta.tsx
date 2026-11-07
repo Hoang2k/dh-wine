@@ -44,7 +44,7 @@ export default function ArticleMeta({ article, initialViewCount }: ArticleMetaPr
   }, [article.id]);
 
   return (
-    <div className="flex flex-wrap items-center gap-6 text-sm text-muted-foreground mb-8">
+    <div className="mb-10 mt-8 flex flex-wrap items-center gap-6 border-y border-line py-4 text-sm text-stone">
       <div className="flex items-center gap-2" itemProp="author" itemScope itemType="https://schema.org/Person">
         <User className="h-4 w-4" />
         <span itemProp="name">{article?.author?.name ?? "—"}</span>

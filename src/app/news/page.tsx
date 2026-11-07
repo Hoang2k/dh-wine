@@ -13,36 +13,34 @@ export async function generateMetadata(): Promise<Metadata> {
         const categoryNames = categories.map(cat => cat.name).join(', ');
         
         return {
-            title: 'Tin tức mới nhất - Cập nhật thông tin hàng ngày',
-            description: `Tin tức mới nhất về ${categoryNames}. Cập nhật thông tin nhanh chóng và chính xác về các sự kiện, tin tức trong và ngoài tỉnh.`,
+            title: 'Tạp chí rượu vang',
+            description: `Kiến thức, xu hướng và câu chuyện rượu vang${categoryNames ? `: ${categoryNames}` : ''}.`,
             keywords: [
-                'tin tức',
-                'tin tức mới nhất',
-                'thông tin',
-                'sự kiện',
-                'cập nhật',
+                'rượu vang',
+                'kiến thức rượu vang',
+                'xu hướng rượu vang',
                 ...categories.map(cat => cat.name)
             ],
             openGraph: {
-                title: 'Tin tức mới nhất - Cập nhật thông tin hàng ngày',
-                description: `Tin tức mới nhất về ${categoryNames}. Cập nhật thông tin nhanh chóng và chính xác.`,
+                title: 'Tạp chí rượu vang',
+                description: `Kiến thức, xu hướng và câu chuyện rượu vang${categoryNames ? `: ${categoryNames}` : ''}.`,
                 type: 'website',
                 locale: 'vi_VN',
             },
             twitter: {
                 card: 'summary_large_image',
-                title: 'Tin tức mới nhất - Cập nhật thông tin hàng ngày',
-                description: `Tin tức mới nhất về ${categoryNames}. Cập nhật thông tin nhanh chóng và chính xác.`,
+                title: 'Tạp chí rượu vang',
+                description: `Kiến thức, xu hướng và câu chuyện rượu vang${categoryNames ? `: ${categoryNames}` : ''}.`,
             },
             alternates: {
-                canonical: '/news',
+                canonical: '/tin-tuc',
             },
         };
     } catch (error) {
         console.error('Error generating metadata:', error);
         return {
-            title: 'Tin tức mới nhất',
-            description: 'Tin tức mới nhất và cập nhật thông tin hàng ngày',
+            title: 'Tạp chí rượu vang',
+            description: 'Kiến thức, xu hướng và câu chuyện rượu vang.',
         };
     }
 }

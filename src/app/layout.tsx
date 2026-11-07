@@ -2,41 +2,64 @@ import "../assets/css/globals.css";
 import 'react-toastify/dist/ReactToastify.css';
 import ClientProvider from "@/providers/ClientProvider";
 import StructuredData from "@/components/StructuredData";
-import type { Metadata } from 'next'
+import { siteConfig } from "@/config/site";
+import type { Metadata, Viewport } from 'next'
+import { Be_Vietnam_Pro, Cormorant_Garamond } from 'next/font/google'
+
+const display = Cormorant_Garamond({
+  subsets: ['latin', 'vietnamese'],
+  weight: ['400', '500', '600', '700'],
+  style: ['normal', 'italic'],
+  variable: '--font-cormorant',
+  display: 'swap',
+})
+
+const sans = Be_Vietnam_Pro({
+  subsets: ['latin', 'vietnamese'],
+  weight: ['300', '400', '500', '600', '700'],
+  variable: '--font-be-vietnam',
+  display: 'swap',
+})
 
 export const metadata: Metadata = {
   title: {
-    default: 'Nghĩa trang liệt sĩ Vị Xuyên',
-    template: '%s | Nghĩa trang liệt sĩ Vị Xuyên'
+    default: `${siteConfig.name} — ${siteConfig.tagline}`,
+    template: `%s | ${siteConfig.name}`,
   },
-  description: 'Nghĩa trang liệt sĩ Vị Xuyên - Nơi tưởng niệm các anh hùng liệt sĩ. Cung cấp dịch vụ cúng viếng, đặt lịch thăm viếng và các sản phẩm tâm linh.',
+  description: siteConfig.description,
   keywords: [
-    'nghĩa trang liệt sĩ',
-    'Vị Xuyên',
-    'cúng viếng',
-    'đặt lịch thăm viếng',
-    'sản phẩm cúng viếng',
-    'truyền thống Việt Nam',
-    'tâm linh',
-    'thờ cúng'
+    'rượu vang nhập khẩu',
+    'phân phối rượu vang',
+    'rượu vang Nha Trang',
+    'rượu vang Khánh Hòa',
+    'rượu vang cho nhà hàng',
+    'rượu vang khách sạn',
+    'quà tặng rượu vang doanh nghiệp',
+    'giá sỉ rượu vang',
   ],
-  authors: [{ name: 'Nghĩa trang liệt sĩ Vị Xuyên' }],
-  creator: 'Nghĩa trang liệt sĩ Vị Xuyên',
-  publisher: 'Nghĩa trang liệt sĩ Vị Xuyên',
+  authors: [{ name: siteConfig.name }],
+  creator: siteConfig.name,
+  publisher: siteConfig.name,
   formatDetection: {
     email: false,
     address: false,
     telephone: false,
   },
-  metadataBase: new URL('https://ntlsvx.com'),
+  metadataBase: new URL(siteConfig.url),
   alternates: {
     canonical: '/',
   },
-  icons: {
-    icon: '/l1.jpg',
-    shortcut: '/l1.jpg',
-    apple: '/l1.jpg',
+  openGraph: {
+    type: 'website',
+    locale: siteConfig.locale,
+    siteName: siteConfig.name,
+    title: siteConfig.name,
+    description: siteConfig.description,
   },
+}
+
+export const viewport: Viewport = {
+  themeColor: '#191919',
 }
 
 export default function RootLayout({
@@ -45,14 +68,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="vi">
+    <html lang="vi" className={`${display.variable} ${sans.variable}`}>
       <head>
-        <StructuredData 
-          type="organization" 
-          data={{}} 
-        />
+        <StructuredData type="organization" data={{}} />
       </head>
-      <body>
+      <body className="pb-mobile-bar">
         <ClientProvider>
           {children}
         </ClientProvider>

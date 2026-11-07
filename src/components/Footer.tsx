@@ -1,138 +1,138 @@
-import LogoBCT from "@/assets/image/dathongbao.png";
-import LogoVNPay from "@/assets/image/logovnpay.png";
-import Facebook from "@/assets/svg/facebook.svg";
-import Zalo from "@/assets/svg/zalo.svg";
-import { Mail, MapPin, Phone } from "lucide-react";
-import Image from "next/image";
-import Link from "next/link";
+import Link from 'next/link'
+import { Clock, Mail, MapPin, MessageCircle, Phone } from 'lucide-react'
+import Logo from '@/components/site/Logo'
+import { Button } from '@/components/ui/button'
+import { ctaLinks, siteConfig } from '@/config/site'
+import { wineSegments, wineTypes } from '@/data/wines'
+import { getWineCountries } from '@/services/wine'
+
+const columns = [
+  {
+    title: 'Sản phẩm',
+    links: [
+      { label: 'Tất cả sản phẩm', href: '/san-pham' },
+      ...wineTypes.map((t) => ({ label: t.label, href: `/san-pham?loai=${t.value}` })),
+    ],
+  },
+  {
+    title: 'Giải pháp B2B',
+    links: [
+      { label: 'Nhà hàng & Khách sạn', href: '/giai-phap#horeca' },
+      { label: 'Nhà bán lẻ', href: '/giai-phap#ban-le' },
+      { label: 'Nhà phân phối & Đại lý', href: '/giai-phap#phan-phoi' },
+      { label: 'Quà tặng doanh nghiệp', href: '/giai-phap#qua-tang' },
+    ],
+  },
+  {
+    title: 'Hỗ trợ khách hàng',
+    links: [
+      { label: 'Yêu cầu báo giá', href: ctaLinks.quote },
+      { label: 'Trở thành đại lý', href: ctaLinks.dealer },
+      { label: 'Liên hệ kinh doanh', href: ctaLinks.sales },
+      { label: 'Về chúng tôi', href: '/gioi-thieu' },
+      { label: 'Tạp chí rượu vang', href: '/tin-tuc' },
+    ],
+  },
+]
 
 export default function Footer() {
-  type TMenu = {
-    title: string;
-    url: string;
-  };
-
-  const info = [
-    {
-      icon: <MapPin size={20} color="#087443" />,
-      content: "Thôn 18, xã Vị Xuyên, tỉnh Tuyên Quang",
-    },
-    {
-      icon: <Phone size={20} color="#087443" />,
-      content: "Trần Thanh Tuấn - 0988.678.938",
-    },
-    {
-      icon: <Image src={Facebook} alt="Facebook" width={20} height={20} />,
-      content: (
-        <a
-          href="https://www.facebook.com/profile.php?id=61570007917694"
-          target="_blank"
-        >
-          Fanpage
-        </a>
-      ),
-    },
-    {
-      icon: <Image src={Zalo} alt="Zalo" width={20} height={20} />,
-      content: (
-        <a href="https://zalo.me/1049441348897599122" target="_blank">
-          Ban Quản lý Nghĩa trang Liệt sĩ Vị Xuyên
-        </a>
-      ),
-    },
-    {
-      icon: <Mail size={20} color="#087443" />,
-      content: "tttuanttvl@gmail.com",
-    },
-  ];
-
-  const menus: TMenu[] = [
-    { title: "Giới thiệu", url: "/gioi-thieu" },
-    { title: "Tin tức - Sự kiện", url: "/tin-tuc" },
-    { title: "Tra cứu mộ", url: "/tra-cuu" },
-    { title: "Đăng ký viếng", url: "/dat-lich-vieng" },
-    { title: "Số vàng tri ân", url: "#" },
-    { title: "Nhắn tìm đồng đội", url: "/nhan-tim-dong-doi" },
-  ];
-
-  const supportMenus: TMenu[] = [
-    { title: "Hướng dẫn mua hàng", url: "/huong-dan-mua-hang" },
-    { title: "Chính sách giao hàng", url: "/chinh-sach-giao-hang" },
-    { title: "Hướng dẫn thanh toán VNPAY", url: "/phuong-thuc-thanh-toan" },
-    { title: "Bảo hành và đổi trả", url: "/bao-hanh-doi-tra" },
-    { title: "Chính sách bảo mật", url: "/chinh-sach-bao-mat" },
-  ];
+  const { contact } = siteConfig
+  const tags = [
+    ...getWineCountries().map((c) => ({ label: `Rượu vang ${c}`, href: `/san-pham?quoc-gia=${encodeURIComponent(c)}` })),
+    ...wineSegments.map((s) => ({ label: `Vang ${s.label.toLowerCase()}`, href: `/san-pham?nhu-cau=${s.value}` })),
+  ]
 
   return (
-    <footer>
-      <section className="pt-16 border-t-1">
-        <div className="container px-6 mx-auto text-center pb-8">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-y-6 lg:gap-y-0 gap-x-8">
-            <div className="text-left lg:col-span-5">
-              {info.map((item, index) => (
-                <div key={index} className="flex items-center mb-2">
-                  {item.icon}
-                  <p className="pl-2 text-base">{item.content}</p>
-                </div>
-              ))}
-              <p className="text-base mt-4">
-                © 2025 Sản phẩm phát triển bởi Ban Quản lý Nghĩa trang Liệt sĩ
-                Vị Xuyên
-              </p>
-            </div>
-
-            <div className="text-left lg:col-span-2">
-              <p className="pb-4 font-semibold text-base">Liên kết nhanh</p>
-              {menus.map((item, index) => (
-                <Link
-                  key={index}
-                  href={item.url}
-                  className="text-base block text-[#475467] leading-[28px] hover:text-[#087443] transition-colors duration-200"
-                >
-                  {item.title}
-                </Link>
-              ))}
-            </div>
-
-            <div className="text-left lg:col-span-2">
-              <p className="pb-4 font-semibold text-base">Thông tin khác</p>
-              {supportMenus.map((item, index) => (
-                <Link
-                  key={index}
-                  href={item.url}
-                  className="text-base block text-[#475467] leading-[28px] hover:text-[#087443] transition-colors duration-200"
-                >
-                  {item.title}
-                </Link>
-              ))}
-            </div>
-
-            <div className="text-left lg:col-span-3 flex flex-col md:items-center">
-              <p className="font-semibold text-base">Phương thức thanh toán</p>
-              <Image src={LogoVNPay} alt="VNPay" width={100} className="mb-4" />
-              <a
-                href="http://online.gov.vn/Home/WebDetails/136542"
-                target="_blank"
-                className="cursor-pointer"
-              >
-                <Image
-                  src={LogoBCT}
-                  alt="Bộ Công Thương"
-                  width={150}
-                  height={60}
-                />
-              </a>
-            </div>
+    <footer className="bg-ink text-ivory">
+      <div className="bg-gold text-ink">
+        <div className="container-site flex flex-col gap-5 py-6 lg:flex-row lg:items-center lg:justify-between">
+          <div>
+            <p className="text-lg font-bold">Nhà hàng, khách sạn, đại lý hay doanh nghiệp?</p>
+            <p className="mt-0.5 text-sm text-ink/75">Nhận bảng giá sỉ và tư vấn danh mục rượu vang phù hợp với mô hình của bạn.</p>
+          </div>
+          <div className="flex flex-col gap-2.5 sm:flex-row">
+            <Button asChild variant="dark">
+              <Link href={ctaLinks.quote}>Yêu cầu báo giá</Link>
+            </Button>
+            <Button asChild variant="wine">
+              <Link href={ctaLinks.dealer}>Trở thành đại lý</Link>
+            </Button>
+            <Button asChild variant="outline" className="border-ink/40 bg-transparent">
+              <Link href={ctaLinks.sales}>Liên hệ kinh doanh</Link>
+            </Button>
           </div>
         </div>
-        <div className="bg-[#F9FAFB] mt-4 md:mt-0 md:h-[24px] items-center flex justify-center">
-          <p className="text-center md:text-right text-[14px] opacity-50">
-            <a href="https://www.facebook.com/nguyen.kyz" target="_blank">
-              Powered by kyz - nguyenkyct@gmail.com
-            </a>
-          </p>
+      </div>
+
+      <div className="container-site grid gap-10 pb-10 pt-12 lg:grid-cols-12 lg:gap-8">
+        <div className="lg:col-span-4">
+          <Logo tone="light" />
+          <p className="mt-5 max-w-sm text-sm leading-relaxed text-ivory/60">{siteConfig.description}</p>
+          <ul className="mt-6 space-y-2.5 text-sm text-ivory/80">
+            <li className="flex items-start gap-3">
+              <MapPin className="mt-0.5 size-4 shrink-0 text-gold" /> {contact.address}
+            </li>
+            <li>
+              <a href={contact.phoneHref} className="flex items-center gap-3 transition-colors hover:text-gold">
+                <Phone className="size-4 shrink-0 text-gold" /> Hotline: <strong>{contact.phone}</strong>
+              </a>
+            </li>
+            <li>
+              <a href={contact.zalo} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 transition-colors hover:text-gold">
+                <MessageCircle className="size-4 shrink-0 text-gold" /> Zalo: {contact.phone}
+              </a>
+            </li>
+            <li>
+              <a href={`mailto:${contact.email}`} className="flex items-center gap-3 transition-colors hover:text-gold">
+                <Mail className="size-4 shrink-0 text-gold" /> {contact.email}
+              </a>
+            </li>
+            <li className="flex items-center gap-3">
+              <Clock className="size-4 shrink-0 text-gold" /> {contact.hours}
+            </li>
+          </ul>
         </div>
-      </section>
+
+        <div className="grid grid-cols-2 gap-8 sm:grid-cols-3 lg:col-span-8 lg:pl-8">
+          {columns.map((col) => (
+            <div key={col.title}>
+              <p className="border-b border-ivory/10 pb-3 text-sm font-bold uppercase tracking-[0.08em] text-gold">{col.title}</p>
+              <ul className="mt-4 space-y-2.5">
+                {col.links.map((link) => (
+                  <li key={link.href}>
+                    <Link href={link.href} className="text-sm text-ivory/70 transition-colors hover:text-gold">
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="container-site border-t border-ivory/10 py-6">
+        <p className="text-xs font-semibold uppercase tracking-[0.12em] text-ivory/50">Danh mục rượu vang</p>
+        <ul className="mt-3 flex flex-wrap gap-2">
+          {tags.map((t) => (
+            <li key={t.href}>
+              <Link
+                href={t.href}
+                className="block rounded-xs border border-ivory/15 px-2.5 py-1 text-xs text-ivory/70 transition-colors hover:border-gold hover:text-gold"
+              >
+                {t.label}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div className="border-t border-ivory/10 bg-black/30">
+        <div className="container-site flex flex-col gap-2 py-5 text-xs text-ivory/45 md:flex-row md:items-center md:justify-between">
+          <p>© {new Date().getFullYear()} {siteConfig.name}. Bảo lưu mọi quyền.</p>
+          <p>Uống có trách nhiệm · Không bán rượu cho người dưới 18 tuổi · Đã uống rượu bia, không lái xe.</p>
+        </div>
+      </div>
     </footer>
-  );
+  )
 }

@@ -4,11 +4,10 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { getListPosts } from '@/services/news';
 import { IPost, ICategory } from '@/types/post';
 import Link from 'next/link';
-import Image from 'next/image';
-import { Badge } from '@/components/ui/badge';
-import { motion } from 'framer-motion';
-import { formatDate } from '@/utils';
 import Pagination from '@/components/ui/pagination';
+import PageHero from '@/components/site/PageHero';
+import PostCard from '@/components/News/PostCard';
+import { cn } from '@/lib/utils';
 
 interface CategoryClientProps {
     category: string;
@@ -108,171 +107,86 @@ function CategoryWithSearchParams({ category, initialData }: CategoryClientProps
     }, [searchParams, isInitialized, currentPage, pageSize, fetchArticles]);
 
     return (
-        <div className="min-h-screen bg-gray-50">
-            <div className="container mx-auto px-4 lg:px-30 py-6 md:py-10">
-                {/* Category Header */}
-                <div className="mb-6 md:mb-8">
-                    <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
-                        {initialData.categoryName}
-                    </h1>
-                    <p className="text-gray-600">
-                        {meta.total} bài viết trong danh mục này
-                    </p>
-                </div>
+        <>
+            <PageHero
+                eyebrow="Tạp chí"
+                title={initialData.categoryName}
+                description={`${meta.total} bài viết trong chủ đề này.`}
+                breadcrumbs={[{ label: 'Tạp chí', href: '/tin-tuc' }, { label: initialData.categoryName }]}
+            />
+            <section className="bg-ivory pb-20 pt-10 md:pb-28 md:pt-14">
+                <div className="container-site">
+                    {categories.length > 0 && (
+                        <nav aria-label="Chủ đề" className="scrollbar-hide -mx-4 mb-12 flex gap-2 overflow-x-auto px-4 sm:mx-0 sm:flex-wrap sm:px-0">
+                            <Link href="/tin-tuc" className="shrink-0 rounded-full border border-line-strong px-4 py-2 text-sm text-ink transition-colors hover:border-ink">
+                                Tất cả
+                            </Link>
+                            {categories.map((cat) => (
+                                <Link
+                                    key={cat.id}
+                                    href={`/tin-tuc/danh-muc/${cat.slug}`}
+                                    aria-current={cat.slug === category ? 'page' : undefined}
+                                    className={cn(
+                                        'shrink-0 rounded-full border px-4 py-2 text-sm transition-colors',
+                                        cat.slug === category ? 'border-ink bg-ink text-ivory' : 'border-line-strong text-ink hover:border-ink',
+                                    )}
+                                >
+                                    {cat.name}
+                                </Link>
+                            ))}
+                        </nav>
+                    )}
 
-                <div className="flex flex-col lg:flex-row gap-6">
-                    {/* Main Content Area */}
-                    <div className="flex-1">
-                        {/* Articles List */}
-                        <div className="space-y-4 mb-8">
-                            {loading ? (
-                                // Loading skeleton
-                                <div className="space-y-4">
-                                    {[...Array(pageSize)].map((_, index) => (
-                                        <div key={index} className="bg-white rounded-lg p-4 md:p-6 shadow-md">
-                                            <div className="animate-pulse">
-                                                <div className="flex flex-col md:flex-row gap-4">
-                                                    <div className="flex-1">
-                                                        <div className="h-4 bg-gray-200 rounded w-1/4 mb-2"></div>
-                                                        <div className="h-6 bg-gray-200 rounded mb-2"></div>
-                                                        <div className="h-4 bg-gray-200 rounded mb-2"></div>
-                                                        <div className="h-3 bg-gray-200 rounded w-1/3"></div>
-                                                    </div>
-                                                    <div className="md:ml-4 w-full md:w-48 lg:w-56 flex-shrink-0">
-                                                        <div className="w-full h-32 md:h-40 bg-gray-200 rounded"></div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    ))}
+                    {loading ? (
+                        <div className="grid gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-3" aria-hidden>
+                            {[...Array(6)].map((_, i) => (
+                                <div key={i} className="space-y-4">
+                                    <div className="aspect-[3/2] animate-pulse rounded-card bg-cream" />
+                                    <div className="h-6 animate-pulse rounded bg-cream" />
+                                    <div className="h-4 w-2/3 animate-pulse rounded bg-cream" />
                                 </div>
-                            ) : articles?.length > 0 ? (
-                                articles?.map((article, index) => (
-                                    <motion.div
-                                        key={article.id}
-                                        initial={{ opacity: 0, y: 20 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        transition={{ duration: 0.5, delay: index * 0.1 }}
-                                    >
-                                        <Link href={`/tin-tuc/${article.slug}`} className="block group">
-                                            <div className="bg-white rounded-lg p-4 md:p-6 shadow-md group-hover:shadow-lg transition-all duration-300">
-                                                <div className="flex flex-col md:flex-row gap-4">
-                                                    <div className="flex-1">
-                                                        <Badge className="bg-blue-100 text-blue-800 text-xs mb-2">
-                                                            {typeof article.category === 'object' 
-                                                                ? article.category?.name || 'Uncategorized'
-                                                                : 'Uncategorized'
-                                                            }
-                                                        </Badge>
-                                                        <h2 className="font-bold text-lg md:text-xl mb-2 text-gray-900 line-clamp-2 group-hover:text-blue-600 transition-colors">
-                                                            {article.title}
-                                                        </h2>
-                                                        <p className="text-gray-600 text-sm md:text-base mb-3 line-clamp-2">
-                                                            {article.summary}
-                                                        </p>
-                                                        <div className="text-xs text-gray-500">
-                                                            {formatDate(article.publishAt)}
-                                                        </div>  
-                                                    </div>
-                                                    <div className="md:ml-4 w-full md:w-48 lg:w-56 flex-shrink-0">
-                                                        <div className="relative w-full h-32 md:h-40 overflow-hidden rounded">
-                                                            {article.thumbnailImage ? (
-                                                                <Image
-                                                                    src={article.thumbnailImage.path}
-                                                                    alt={article.thumbnailImage.altText}
-                                                                    fill
-                                                                    className="object-cover group-hover:scale-105 transition-transform duration-300"
-                                                                />
-                                                            ) : (
-                                                                <div className="w-full h-full bg-gray-200 flex items-center justify-center">
-                                                                    <span className="text-gray-500 text-sm">Không có hình ảnh</span>
-                                                                </div>
-                                                            )}
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </Link>
-                                    </motion.div>
-                                ))
-                            ) : (
-                                <div className="bg-white rounded-lg p-8 text-center">
-                                    <p className="text-gray-500 text-lg">Không có bài viết nào trong danh mục này</p>
-                                </div>
-                            )}
+                            ))}
                         </div>
-
-                        {/* Pagination */}
-                        {meta.totalPages > 1 && (
-                            <div className="flex justify-center">
-                                <Pagination
-                                    totalRecords={meta.total}
-                                    currentPage={currentPage}
-                                    pageSize={pageSize}
-                                    onPageChange={handlePageChange}
-                                    onPageSizeChange={handlePageSizeChange}
-                                    isLoading={loading}
-                                    pageSizeOptions={[10, 20, 50]}
-                                    showPageSizeSelector={true}
-                                    showRecordsInfo={true}
-                                />
-                            </div>
-                        )}
-                    </div>
-
-                    {/* Right Sidebar */}
-                    <div className="w-full lg:w-80 xl:w-96 space-y-4 md:space-y-6">
-                        {/* Other Categories Section */}
-                        <div className="bg-white rounded-lg p-4 md:p-6 shadow-md">
-                            <h3 className="text-base md:text-lg font-bold text-gray-900 mb-3 md:mb-4">
-                                DANH MỤC KHÁC
-                            </h3>
-                            {categories.length > 0 ? (
-                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-2">
-                                    {categories.map((cat) => (
-                                        <Link 
-                                            key={cat.id} 
-                                            href={`/tin-tuc/danh-muc/${cat.slug}`}
-                                            className={`text-xs md:text-sm text-gray-700 hover:text-blue-600 cursor-pointer transition-colors p-2 rounded hover:bg-gray-50 ${cat.slug === category ? 'bg-blue-50 text-blue-700' : ''}`}
-                                        >
-                                            {cat.name}
-                                        </Link>
-                                    ))}
-                                </div>
-                            ) : (
-                                <div className="text-center py-4">
-                                    <p className="text-gray-500 text-sm">Không có danh mục khác</p>
-                                </div>
-                            )}
+                    ) : articles?.length > 0 ? (
+                        <div className="grid gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
+                            {articles.map((article) => (
+                                <PostCard key={article.id} post={article} />
+                            ))}
                         </div>
-                    </div>
+                    ) : (
+                        <div className="mx-auto max-w-md py-20 text-center">
+                            <p className="heading-display text-display-sm text-ink">Chưa có bài viết trong chủ đề này.</p>
+                            <Link href="/tin-tuc" className="mt-6 inline-block text-ink underline decoration-gold decoration-2 underline-offset-4">
+                                Xem tất cả bài viết
+                            </Link>
+                        </div>
+                    )}
+
+                    {meta.totalPages > 1 && (
+                        <div className="mt-16 flex justify-center">
+                            <Pagination
+                                totalRecords={meta.total}
+                                currentPage={currentPage}
+                                pageSize={pageSize}
+                                onPageChange={handlePageChange}
+                                onPageSizeChange={handlePageSizeChange}
+                                isLoading={loading}
+                                pageSizeOptions={[10, 20, 50]}
+                                showPageSizeSelector={true}
+                                showRecordsInfo={true}
+                            />
+                        </div>
+                    )}
                 </div>
-            </div>
-        </div>
+            </section>
+        </>
     );
 }
 
 // Wrapper component với Suspense
 export default function CategoryClient({ category, initialData }: CategoryClientProps) {
     return (
-        <React.Suspense fallback={
-            <div className="min-h-screen bg-gray-50">
-                <div className="container mx-auto px-4 lg:px-30 py-6 md:py-10">
-                    <div className="mb-6 md:mb-8">
-                        <div className="h-8 bg-gray-200 rounded w-64 mb-2 animate-pulse"></div>
-                        <div className="h-4 bg-gray-200 rounded w-48 animate-pulse"></div>
-                    </div>
-                    <div className="space-y-4">
-                        {[...Array(3)].map((_, i) => (
-                            <div key={i} className="bg-white rounded-lg p-6 shadow-md animate-pulse">
-                                <div className="h-4 bg-gray-200 rounded w-full mb-2"></div>
-                                <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </div>
-        }>
+        <React.Suspense fallback={<div className="min-h-[60vh] bg-ivory" />}>
             <CategoryWithSearchParams category={category} initialData={initialData} />
         </React.Suspense>
     );

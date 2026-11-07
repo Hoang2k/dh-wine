@@ -8,6 +8,7 @@ import {
 } from '@/services/news';
 import StructuredData from '@/components/StructuredData';
 import Breadcrumbs from '@/components/Breadcrumbs';
+import { siteConfig } from '@/config/site';
 import RelatedArticlesList from '@/components/News/RelatedArticlesList';
 import FeaturedArticlesSidebar from '@/components/News/FeaturedArticlesSidebar';
 import ShareButtons from '@/components/News/ShareButtons';
@@ -37,19 +38,18 @@ export async function generateMetadata({ params }: NewsDetailPageProps): Promise
             };
         }
 
-        const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://nghiatranglietsivixuyen.vn';
+        const siteUrl = siteConfig.url;
         const articleUrl = `${siteUrl}/tin-tuc/${slug}`;
 
         return {
-            title: `${post.title} - Nghĩa trang liệt sĩ Vị Xuyên`,
+            title: post.title,
             description: post.summary,
             keywords: [
                 post.category.name,
                 post.title,
-                'tin tức',
-                'thông tin',
-                'nghĩa trang liệt sĩ',
-                'Vị Xuyên'
+                'rượu vang',
+                'Khánh Hòa',
+                siteConfig.name
             ],
             authors: [{ name: post.author.name }],
             openGraph: {
@@ -62,7 +62,7 @@ export async function generateMetadata({ params }: NewsDetailPageProps): Promise
                 tags: [post.category.name],
                 images: [
                     {
-                        url: post.thumbnailImage?.path || `${siteUrl}/logo-la-co-03.jpg`,
+                        url: post.thumbnailImage?.path || `${siteUrl}/icon.svg`,
                         width: 1200,
                         height: 630,
                         alt: post.title,
@@ -75,7 +75,7 @@ export async function generateMetadata({ params }: NewsDetailPageProps): Promise
                 card: 'summary_large_image',
                 title: post.title,
                 description: post.summary,
-                images: [post.thumbnailImage?.path || `${siteUrl}/logo-la-co-03.jpg`],
+                images: [post.thumbnailImage?.path || `${siteUrl}/icon.svg`],
             },
             alternates: {
                 canonical: articleUrl,
@@ -130,12 +130,12 @@ export default async function NewsDetailPage({ params }: NewsDetailPageProps) {
             getFeaturedPosts(6).catch(() => []),
         ]);
 
-        const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://nghiatranglietsivixuyen.vn';
+        const siteUrl = siteConfig.url;
         const articleUrl = `${siteUrl}/tin-tuc/${slug}`;
 
         // Breadcrumb data
         const breadcrumbItems = [
-            { label: 'Tin tức', href: '/tin-tuc' },
+            { label: 'Tạp chí', href: '/tin-tuc' },
             { label: post.category.name, href: `/tin-tuc/danh-muc/${post.category.slug}` },
             { label: post.title },
         ];
@@ -155,49 +155,32 @@ export default async function NewsDetailPage({ params }: NewsDetailPageProps) {
                     data={{ items: breadcrumbItems }}
                 />
 
-                <div className="min-h-[100dvh] bg-white">
-                    {/* Breadcrumbs */}
-                    <div className="px-4 pt-4 max-w-6xl mx-auto">
+                <div className="bg-ivory">
+                    <div className="container-site pt-6">
                         <Breadcrumbs items={breadcrumbItems} />
                     </div>
 
-                    {/* Article Content */}
-                    <div className="px-4 py-8">
-                        <div className="max-w-6xl mx-auto">
-                            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-                                {/* Social Sharing - Left Side (Desktop) */}
-                                <div className="hidden lg:block lg:col-span-1 order-1">
-                                    <div className="sticky top-8">
-                                        <ShareButtons
-                                            url={articleUrl}
-                                            title={post.title}
-                                            layout="vertical"
-                                        />
-                                    </div>
+                    <div className="container-site pb-20 pt-6 md:pb-28">
+                        <div className="grid grid-cols-1 gap-12 lg:grid-cols-12">
+                            {/* Social Sharing - Left Side (Desktop) */}
+                            <div className="hidden lg:col-span-1 lg:block">
+                                <div className="sticky top-[calc(var(--header-h)+24px)]">
+                                    <ShareButtons url={articleUrl} title={post.title} layout="vertical" />
                                 </div>
+                            </div>
 
-                                {/* Main Content + Interactions */}
-                                <div className="lg:col-span-8 order-2">
-                                    <ArticleContent article={post} viewCount={Number(post.view) || 0} />
+                            <div className="lg:col-span-8">
+                                <ArticleContent article={post} viewCount={Number(post.view) || 0} />
+                                <div className="mt-8 flex lg:hidden">
+                                    <ShareButtons url={articleUrl} title={post.title} layout="horizontal" />
                                 </div>
-
-                                {/* Sidebar - Featured Articles */}
-                                <FeaturedArticlesSidebar articles={featuredArticles} />
                             </div>
 
-                            {/* Related Articles */}
-                            <div className="max-w-6xl mx-auto lg:pl-[calc((100%/12)*1)] lg:pr-[calc((100%/12)*3)] mt-8">
-                                <RelatedArticlesList articles={relatedArticles} />
-                            </div>
+                            <FeaturedArticlesSidebar articles={featuredArticles} />
+                        </div>
 
-                            {/* Mobile Share Buttons */}
-                            <div className="lg:hidden max-w-6xl mx-auto mt-8 flex justify-center">
-                                <ShareButtons
-                                    url={articleUrl}
-                                    title={post.title}
-                                    layout="horizontal"
-                                />
-                            </div>
+                        <div className="mt-20">
+                            <RelatedArticlesList articles={relatedArticles} />
                         </div>
                     </div>
                 </div>

@@ -32,8 +32,8 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
         }
 
         return {
-            title: `${categoryData.name} - Tin tức`,
-            description: `Tin tức mới nhất về ${categoryData.name}. Cập nhật thông tin nhanh chóng và chính xác.`,
+            title: `${categoryData.name} - Tạp chí`,
+            description: `Bài viết về ${categoryData.name} từ Tạp chí rượu vang Đức Minh Wine.`,
             keywords: [
                 categoryData.name,
                 'tin tức',
@@ -42,18 +42,18 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
                 'cập nhật'
             ],
             openGraph: {
-                title: `${categoryData.name} - Tin tức`,
-                description: `Tin tức mới nhất về ${categoryData.name}. Cập nhật thông tin nhanh chóng và chính xác.`,
+                title: `${categoryData.name} - Tạp chí`,
+                description: `Bài viết về ${categoryData.name} từ Tạp chí rượu vang Đức Minh Wine.`,
                 type: 'website',
                 locale: 'vi_VN',
             },
             twitter: {
                 card: 'summary_large_image',
-                title: `${categoryData.name} - Tin tức`,
-                description: `Tin tức mới nhất về ${categoryData.name}. Cập nhật thông tin nhanh chóng và chính xác.`,
+                title: `${categoryData.name} - Tạp chí`,
+                description: `Bài viết về ${categoryData.name} từ Tạp chí rượu vang Đức Minh Wine.`,
             },
             alternates: {
-                canonical: `/news/category/${category}`,
+                canonical: `/tin-tuc/danh-muc/${category}`,
             },
         };
     } catch (error) {

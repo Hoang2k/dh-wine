@@ -58,7 +58,7 @@ export default function ShareButtons({
       {/* Facebook */}
       <button
         onClick={() => handleShare("facebook")}
-        className="w-8 h-8 bg-blue-600 hover:bg-blue-700 hover:cursor-pointer text-white rounded-full flex items-center justify-center transition-colors"
+        className="w-10 h-10 bg-ink hover:bg-gold hover:cursor-pointer text-ivory hover:text-ink rounded-full flex items-center justify-center transition-colors"
         title="Chia sẻ trên Facebook"
         aria-label="Chia sẻ Facebook"
       >
@@ -70,7 +70,7 @@ export default function ShareButtons({
       {/* Zalo */}
       <button
         onClick={() => handleShare("zalo")}
-        className="w-8 h-8 bg-blue-500 hover:bg-blue-600 hover:cursor-pointer text-white rounded-full flex items-center justify-center transition-colors"
+        className="w-10 h-10 bg-ink hover:bg-gold hover:cursor-pointer text-ivory hover:text-ink rounded-full flex items-center justify-center transition-colors"
         title="Chia sẻ trên Zalo"
         aria-label="Chia sẻ Zalo"
       >
@@ -80,7 +80,7 @@ export default function ShareButtons({
       {/* Copy Link */}
       <button
         onClick={() => handleShare("copy")}
-        className="w-8 h-8 bg-emerald-600 hover:bg-emerald-700 hover:cursor-pointer text-white rounded-full flex items-center justify-center transition-colors"
+        className="w-10 h-10 bg-ink hover:bg-gold hover:cursor-pointer text-ivory hover:text-ink rounded-full flex items-center justify-center transition-colors"
         title={copied ? "Đã sao chép!" : "Sao chép liên kết"}
         aria-label="Sao chép liên kết"
       >

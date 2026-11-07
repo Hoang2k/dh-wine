@@ -1,3 +1,5 @@
+import { siteConfig } from '@/config/site';
+
 interface StructuredDataProps {
   type: 'product' | 'organization' | 'website' | 'article' | 'breadcrumb';
   data: any;
@@ -10,42 +12,43 @@ export default function StructuredData({ type, data }: StructuredDataProps) {
         return {
           "@context": "https://schema.org",
           "@type": "Product",
-          "name": data.name,
-          "description": data.description,
-          "image": data.imageMedia?.path,
-          "offers": {
-            "@type": "Offer",
-            "price": data.unitPrice || data.minPrice,
-            "priceCurrency": "VND",
-            "availability": "https://schema.org/InStock"
-          },
-          "brand": {
-            "@type": "Brand",
-            "name": "Nghĩa trang liệt sĩ Vị Xuyên"
-          }
+          "name": `${data.producer} ${data.name}`,
+          "description": data.summary,
+          "category": data.category,
+          "countryOfOrigin": data.country,
+          "brand": { "@type": "Brand", "name": data.producer },
+          "seller": { "@type": "Organization", "name": siteConfig.name }
         };
       
       case 'organization':
         return {
           "@context": "https://schema.org",
-          "@type": "Organization",
-          "name": "Nghĩa trang liệt sĩ Vị Xuyên",
-          "url": "https://ntlsvx.com",
-          "logo": "https://ntlsvx.com/logo-la-co-03.jpg",
-          "description": "Nghĩa trang liệt sĩ Vị Xuyên - Nơi tưởng niệm các anh hùng liệt sĩ"
+          "@type": "WholesaleStore",
+          "name": siteConfig.name,
+          "url": siteConfig.url,
+          "description": siteConfig.description,
+          "telephone": siteConfig.contact.phone,
+          "email": siteConfig.contact.email,
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Nha Trang",
+            "addressRegion": "Khánh Hòa",
+            "addressCountry": "VN"
+          },
+          "areaServed": siteConfig.serviceAreas
         };
       
       case 'website':
         return {
           "@context": "https://schema.org",
           "@type": "WebSite",
-          "name": "Nghĩa trang liệt sĩ Vị Xuyên",
-          "url": "https://ntlsvx.com",
-          "description": "Website chính thức của nghĩa trang liệt sĩ Vị Xuyên"
+          "name": siteConfig.name,
+          "url": siteConfig.url,
+          "description": siteConfig.description
         };
       
       case 'article':
-        const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://nghiatranglietsivixuyen.vn';
+        const siteUrl = siteConfig.url;
         return {
           "@context": "https://schema.org",
           "@type": "NewsArticle",
@@ -53,7 +56,7 @@ export default function StructuredData({ type, data }: StructuredDataProps) {
           "description": data.summary,
           "image": {
             "@type": "ImageObject",
-            "url": data.thumbnailImage?.path || `${siteUrl}/logo-la-co-03.jpg`,
+            "url": data.thumbnailImage?.path || `${siteUrl}/icon.svg`,
             "width": 1200,
             "height": 630
           },
@@ -61,14 +64,14 @@ export default function StructuredData({ type, data }: StructuredDataProps) {
           "dateModified": data.updatedAt || data.publishAt,
           "author": {
             "@type": "Person",
-            "name": data.author?.name || "Nghĩa trang liệt sĩ Vị Xuyên"
+            "name": data.author?.name || siteConfig.name
           },
           "publisher": {
             "@type": "Organization",
-            "name": "Nghĩa trang liệt sĩ Vị Xuyên",
+            "name": siteConfig.name,
             "logo": {
               "@type": "ImageObject",
-              "url": `${siteUrl}/logo-la-co-03.jpg`,
+              "url": `${siteUrl}/icon.svg`,
               "width": 600,
               "height": 60
             }
@@ -95,7 +98,7 @@ export default function StructuredData({ type, data }: StructuredDataProps) {
           // Word count for content quality signals
           "wordCount": data.content ? data.content.replace(/<[^>]*>/g, '').split(/\s+/).length : 0,
           // Keywords for topical relevance
-          "keywords": data.category?.name ? [data.category.name, "tin tức", "Vị Xuyên", "nghĩa trang liệt sĩ"] : []
+          "keywords": data.category?.name ? [data.category.name, "rượu vang", "Khánh Hòa", siteConfig.name] : []
         };
 
       case 'breadcrumb':
@@ -106,7 +109,7 @@ export default function StructuredData({ type, data }: StructuredDataProps) {
             "@type": "ListItem",
             "position": index + 1,
             "name": item.label,
-            "item": item.href ? `https://nghiatranglietsivixuyen.vn${item.href}` : undefined
+            "item": item.href ? `${siteConfig.url}${item.href}` : undefined
           })) || []
         };
       

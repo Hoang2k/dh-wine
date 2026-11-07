@@ -11,33 +11,18 @@ const nextConfig: NextConfig = {
   experimental: {
 
   },
-  // Redirects configuration
+  // Vietnamese public URLs mapped onto the app routes
   async rewrites() {
     return [
-      { source: '/tin-tuc', destination: '/news' },
-      { source: '/tin-tuc/:slug', destination: '/news/:slug' },
-      { source: '/tin-tuc/danh-muc/:category', destination: '/news/category/:category' },
+      { source: '/san-pham', destination: '/products' },
+      { source: '/san-pham/:slug', destination: '/products/:slug' },
+      { source: '/giai-phap', destination: '/solutions' },
       { source: '/gioi-thieu', destination: '/about' },
-      { source: '/dat-lich-vieng', destination: '/book-visit' },
-      { source: '/dat-do-le', destination: '/offering' },
-      { source: '/tra-cuu', destination: '/grave-search' },
-      { source: '/so-vang-tri-an', destination: '/golden-book' },
-      { source: '/nhan-tim-dong-doi', destination: '/find-relatives' },
-      { source: '/nhan-tim-dong-doi/:slug', destination: '/find-relatives/:slug' },
-      { source: '/nhan-tim-dong-doi/tao-moi', destination: '/find-relatives/create' },
-
+      { source: '/bao-gia', destination: '/quote' },
       { source: '/lien-he', destination: '/contact' },
-
-      { source: '/huong-dan-mua-hang', destination: '/purchase-instructions' },
-
-      { source: '/phuong-thuc-thanh-toan', destination: '/payment-methods' },
-      { source: '/bao-hanh-doi-tra', destination: '/warranty-return' },
-
-      { source: '/chinh-sach-giao-hang', destination: '/delivery-policy' },
-
-      { source: '/chinh-sach-bao-mat', destination: '/privacy-policy' },
-
-      { source: '/gio-hang', destination: '/cart' },
+      { source: '/tin-tuc', destination: '/news' },
+      { source: '/tin-tuc/danh-muc/:category', destination: '/news/category/:category' },
+      { source: '/tin-tuc/:slug', destination: '/news/:slug' },
     ];
   },
   env: {

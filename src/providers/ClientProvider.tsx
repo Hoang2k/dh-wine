@@ -2,7 +2,7 @@
 import { ReactNode } from "react";
 import ReduxProvider from "./ReduxProvider";
 import QueryProvider from "./QueryProvider";
-import { CartProvider } from "@/contexts/CartContext";
+import { QuoteProvider } from "@/contexts/QuoteContext";
 import GoogleAnalytics from "@/components/GoogleAnalytics";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -12,23 +12,30 @@ export default function ClientProvider({ children }: { children: ReactNode }) {
   return (
     <QueryProvider>
       <ReduxProvider>
-        <CartProvider>
+        <QuoteProvider>
           <GoogleAnalytics />
+          <a
+            href="#main"
+            className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[200] focus:bg-gold focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-ink"
+          >
+            Bỏ qua đến nội dung chính
+          </a>
           <Header />
-          <main>{children}</main>
+          <main id="main">{children}</main>
           <Footer />
           <ToastContainer
-            position="top-center"
+            position="top-right"
             autoClose={3000}
-            hideProgressBar={false}
+            hideProgressBar
             newestOnTop
             closeOnClick
             rtl={false}
             pauseOnFocusLoss
             draggable
             pauseOnHover
+            theme="light"
           />
-        </CartProvider>
+        </QuoteProvider>
       </ReduxProvider>
     </QueryProvider>
   );

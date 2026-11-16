@@ -1,0 +1,233 @@
+<title>Hoàng Đinh · Trình diễn</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,600;0,800;0,900;1,800&family=Be+Vietnam+Pro:wght@300;400;500;600&display=swap">
+<style>
+  /* Direction C — "Trình diễn động": kinetic bold, full-height snap panels, oversized moving
+     type, alternating color blocks, running marquee, draggable gallery. Single dark-world theme. */
+  :root{
+    --ink:#150f0d;
+    --ink-2:#1f1613;
+    --bone:#efe7d6;
+    --wine:#73172a;
+    --wine-2:#8f1f35;
+    --green:#163020;
+    --gold:#d8a24a;
+    --maxw:1220px;
+    color-scheme:dark;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{background:var(--ink);color:var(--bone);
+    font-family:"Be Vietnam Pro",system-ui,sans-serif;line-height:1.6;-webkit-font-smoothing:antialiased;
+    overflow-x:hidden}
+  .kin{font-family:"Montserrat",system-ui,sans-serif;font-weight:900;line-height:.9;letter-spacing:-.02em;
+    text-transform:uppercase;text-wrap:balance}
+  a{color:inherit;text-decoration:none}
+  .wrap{width:100%;max-width:var(--maxw);margin-inline:auto;
+    padding-left:max(22px,env(safe-area-inset-left,0px));
+    padding-right:max(22px,env(safe-area-inset-right,0px))}
+  .eyebrow{font-weight:600;font-size:.72rem;letter-spacing:.3em;text-transform:uppercase}
+  .btn{display:inline-flex;align-items:center;gap:.6rem;font-family:"Montserrat";font-weight:800;font-size:.82rem;
+    letter-spacing:.06em;text-transform:uppercase;padding:.85rem 1.5rem;border-radius:999px;cursor:pointer;
+    border:2px solid currentColor;background:transparent;transition:transform .2s,background .3s,color .3s}
+  .btn:hover{transform:translateY(-3px)}
+  .btn.fill{background:var(--gold);color:var(--ink);border-color:var(--gold)}
+  .btn.fill:hover{background:#e8b45c}
+
+  header{position:fixed;inset:0 0 auto;z-index:40;mix-blend-mode:difference;color:#fff;
+    padding-top:max(16px,env(safe-area-inset-top,0px));padding-bottom:16px}
+  .nav{display:flex;align-items:center;justify-content:space-between;gap:20px}
+  .brand{font-family:"Montserrat";font-weight:900;font-size:1.3rem;letter-spacing:-.01em;text-transform:uppercase}
+  nav.links{display:flex;gap:26px;font-size:.82rem;font-weight:500}
+  nav.links a:hover{color:var(--gold)}
+  .nbtn{border:2px solid #fff;border-radius:999px;padding:.5rem 1.1rem;font-family:"Montserrat";font-weight:800;font-size:.74rem;letter-spacing:.06em;text-transform:uppercase}
+  @media(max-width:860px){nav.links{display:none}}
+
+  .panel{min-height:92vh;display:flex;flex-direction:column;justify-content:center;
+    padding-block:90px;position:relative;scroll-snap-align:start}
+  main{scroll-snap-type:y proximity}
+
+  /* hero */
+  .hero{background:
+     radial-gradient(70% 60% at 85% 10%,rgba(115,23,42,.6),transparent 55%),
+     radial-gradient(60% 50% at 5% 100%,rgba(22,48,32,.55),transparent 60%),var(--ink)}
+  .hero .big{font-size:clamp(3.4rem,15vw,12rem);color:var(--bone)}
+  .hero .big .ln{display:block;overflow:hidden}
+  .hero .big .ln>span{display:block;transform:translateY(105%);animation:up .9s cubic-bezier(.16,1,.3,1) forwards}
+  .hero .big .ln:nth-child(2)>span{animation-delay:.12s;color:var(--gold)}
+  .hero .big .ln:nth-child(3)>span{animation-delay:.24s}
+  @keyframes up{to{transform:translateY(0)}}
+  .hero .row{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;flex-wrap:wrap;margin-top:34px;
+    opacity:0;transform:translateY(20px);animation:fade .9s ease .5s forwards}
+  @keyframes fade{to{opacity:1;transform:none}}
+  .hero .row p{max-width:40ch;color:#d9cdbb}
+  .hero .eyebrow{color:var(--gold)}
+
+  /* marquee */
+  .mq{background:var(--gold);color:var(--ink);overflow:hidden;white-space:nowrap;padding-block:16px;border-block:3px solid var(--ink)}
+  .mq .t{display:inline-block;animation:scrollx 24s linear infinite;font-family:"Montserrat";font-weight:900;
+    font-size:clamp(1.6rem,4vw,2.6rem);text-transform:uppercase;letter-spacing:-.01em}
+  .mq .t span{margin:0 1.4rem}.mq .t b{color:var(--wine)}
+  @keyframes scrollx{to{transform:translateX(-50%)}}
+
+  /* manifesto (bone) */
+  .bone{background:var(--bone);color:var(--ink)}
+  .bone .eyebrow{color:var(--wine)}
+  .mani{font-family:"Montserrat";font-weight:800;text-transform:none;font-size:clamp(1.8rem,5vw,3.6rem);
+    line-height:1.08;letter-spacing:-.01em;max-width:18ch;margin:18px 0 0}
+  .mani b{color:var(--wine)}
+  .cols{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;margin-top:50px}
+  .cols .c{border-top:3px solid var(--ink);padding-top:16px}
+  .cols .c .k{font-family:"Montserrat";font-weight:900;font-size:1.1rem}
+  .cols .c p{color:#5a504a;font-size:.92rem;margin-top:.4rem}
+  @media(max-width:760px){.cols{grid-template-columns:1fr;gap:20px}}
+
+  /* gallery (wine panel) */
+  .winep{background:var(--wine);color:var(--bone)}
+  .winep .eyebrow{color:var(--gold)}
+  .winep h2{font-size:clamp(2.4rem,7vw,5rem);margin:12px 0 30px}
+  .gal{display:flex;gap:20px;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:16px;cursor:grab;scroll-padding-left:22px}
+  .gal.drag{cursor:grabbing}
+  .gal::-webkit-scrollbar{height:6px}.gal::-webkit-scrollbar-thumb{background:rgba(239,231,214,.3);border-radius:9px}
+  .gc{scroll-snap-align:start;flex:0 0 clamp(230px,70vw,300px);background:rgba(0,0,0,.18);border:2px solid rgba(239,231,214,.25);
+    border-radius:10px;padding:24px;min-height:360px;display:flex;flex-direction:column;justify-content:flex-end;
+    transition:transform .4s,background .4s;user-select:none}
+  .gc:hover{transform:translateY(-8px);background:rgba(0,0,0,.3)}
+  .gc .num{font-family:"Montserrat";font-weight:900;font-size:3rem;opacity:.3;position:absolute;margin-top:-300px}
+  .gc .region{font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold)}
+  .gc h3{font-family:"Montserrat";font-weight:800;font-size:1.5rem;text-transform:none;margin:.3rem 0}
+  .gc .meta{font-size:.84rem;color:#e4cdd2;margin-bottom:14px}
+  .gc a{font-family:"Montserrat";font-weight:800;font-size:.72rem;letter-spacing:.05em;text-transform:uppercase;color:var(--gold)}
+
+  /* stats (green) */
+  .greenp{background:var(--green);color:var(--bone)}
+  .greenp .eyebrow{color:var(--gold)}
+  .st{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;margin-top:40px}
+  .st .num{font-family:"Montserrat";font-weight:900;font-size:clamp(2.8rem,7vw,5rem);color:var(--gold);font-variant-numeric:tabular-nums;line-height:1}
+  .st .lbl{font-size:.88rem;color:#c4d2c6;margin-top:.3rem}
+  @media(max-width:720px){.st{grid-template-columns:1fr 1fr;gap:30px 20px}}
+
+  /* cta */
+  .ctap{background:var(--ink);text-align:center}
+  .ctap h2{font-size:clamp(3rem,12vw,9rem);color:var(--bone)}
+  .ctap h2 .g{color:var(--gold)}
+  .ctap p{color:#d9cdbb;max-width:46ch;margin:1.2rem auto 2rem}
+
+  footer{padding-block:36px;color:#9a8f85;font-size:.82rem;border-top:1px solid rgba(239,231,214,.12)}
+  .fg{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:center}
+
+  @media(prefers-reduced-motion:reduce){
+    *{animation:none!important;transition:none!important}
+    .hero .big .ln>span{transform:none}.hero .row{opacity:1;transform:none}
+    main{scroll-snap-type:none}
+  }
+</style>
+
+<header>
+  <div class="wrap nav">
+    <div class="brand">Hoàng Đinh</div>
+    <nav class="links"><a href="#bst">Sản phẩm</a><a href="#gp">Giải pháp</a><a href="#cs">Giới thiệu</a></nav>
+    <a class="nbtn" href="#bg">Nhận báo giá</a>
+  </div>
+</header>
+
+<main>
+  <section class="panel hero">
+    <div class="wrap">
+      <span class="eyebrow">Phân phối rượu vang · HoReCa</span>
+      <h1 class="kin big" style="margin-top:18px">
+        <span class="ln"><span>Rượu vang</span></span>
+        <span class="ln"><span>đúng gu</span></span>
+        <span class="ln"><span>từng bàn</span></span>
+      </h1>
+      <div class="row">
+        <p>Tuyển chọn & phân phối cho nhà hàng, khách sạn, đại lý. Danh mục theo thực đơn — không niêm yết giá đại trà.</p>
+        <div style="display:flex;gap:12px;flex-wrap:wrap">
+          <a class="btn fill" href="#bg">Nhận báo giá</a>
+          <a class="btn" href="#bst" style="color:var(--bone)">Bộ sưu tập</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="mq" aria-hidden="true">
+    <div class="t"><span>Tuyển chọn</span><b>◆</b><span>Phân phối</span><b>◆</b><span>HoReCa</span><b>◆</b><span>Hoàng Đinh</span><b>◆</b><span>Tuyển chọn</span><b>◆</b><span>Phân phối</span><b>◆</b><span>HoReCa</span><b>◆</b><span>Hoàng Đinh</span><b>◆</b></div>
+  </div>
+
+  <section class="panel bone" id="cs">
+    <div class="wrap">
+      <span class="eyebrow">Tuyên ngôn</span>
+      <p class="mani">Chúng tôi không bán rượu — chúng tôi giúp mỗi <b>bàn tiệc</b> chọn đúng chai.</p>
+      <div class="cols">
+        <div class="c"><div class="k">Tuyển chọn</div><p>Làm việc trực tiếp với nhà nhập khẩu, chọn nhãn hợp khẩu vị và thực đơn.</p></div>
+        <div class="c"><div class="k">Phân phối</div><p>Quản lý kho theo lô & hạn dùng, giao đúng hẹn trên 34 tỉnh thành.</p></div>
+        <div class="c"><div class="k">Đồng hành</div><p>Đội ngũ hiểu rượu tư vấn danh mục và đào tạo phục vụ.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel winep" id="bst">
+    <div class="wrap">
+      <span class="eyebrow">Bộ sưu tập</span>
+      <h2 class="kin">Tuyển chọn mùa</h2>
+      <div class="gal" id="gal">
+        <article class="gc"><span class="region">Bordeaux · Pháp</span><h3>Château Mazeris</h3><div class="meta">Vang đỏ · Merlot · 2019</div><a href="#bg">Thêm vào báo giá →</a></article>
+        <article class="gc"><span class="region">Tuscany · Ý</span><h3>Chianti Riserva</h3><div class="meta">Vang đỏ · Sangiovese · 2020</div><a href="#bg">Thêm vào báo giá →</a></article>
+        <article class="gc"><span class="region">Mendoza · Argentina</span><h3>Alta Malbec</h3><div class="meta">Vang đỏ · Malbec · 2021</div><a href="#bg">Thêm vào báo giá →</a></article>
+        <article class="gc"><span class="region">Marlborough · NZ</span><h3>Cloud Bay</h3><div class="meta">Vang trắng · Sauvignon · 2022</div><a href="#bg">Thêm vào báo giá →</a></article>
+        <article class="gc"><span class="region">Champagne · Pháp</span><h3>Brut Réserve</h3><div class="meta">Vang sủi · Chardonnay · NV</div><a href="#bg">Thêm vào báo giá →</a></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel greenp" id="gp">
+    <div class="wrap">
+      <span class="eyebrow">Con số</span>
+      <h2 class="kin" style="font-size:clamp(2rem,6vw,4rem);margin-top:12px">Quy mô phân phối</h2>
+      <div class="st">
+        <div><div class="num" data-to="12" data-suffix="+">0</div><div class="lbl">Năm trong ngành</div></div>
+        <div><div class="num" data-to="180" data-suffix="+">0</div><div class="lbl">Nhãn tuyển chọn</div></div>
+        <div><div class="num" data-to="400" data-suffix="+">0</div><div class="lbl">Đối tác HoReCa</div></div>
+        <div><div class="num" data-to="34">0</div><div class="lbl">Tỉnh thành</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel ctap" id="bg">
+    <div class="wrap">
+      <span class="eyebrow" style="color:var(--gold)">Bắt đầu</span>
+      <h2 class="kin" style="margin-top:14px">Báo giá<br><span class="g">24 giờ</span></h2>
+      <p>Để lại thông tin — đội ngũ Hoàng Đinh tư vấn danh mục và gửi báo giá theo mô hình của bạn.</p>
+      <a class="btn fill" href="#top" style="font-size:.95rem;padding:1rem 2rem">Gửi yêu cầu báo giá</a>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap fg">
+    <div class="brand" style="font-size:1.1rem">Hoàng Đinh</div>
+    <div>Nhà phân phối rượu vang cho HoReCa · © 2026</div>
+    <div>Phương án C — Trình diễn động</div>
+  </div>
+</footer>
+
+<script>
+  var reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
+  // count-up
+  var seen=new WeakSet();
+  var cio=new IntersectionObserver(function(es){es.forEach(function(e){
+    if(!e.isIntersecting||seen.has(e.target))return;seen.add(e.target);
+    var el=e.target,to=+el.dataset.to,suf=el.dataset.suffix||'',t0=null,dur=1300;
+    if(reduce){el.textContent=to+suf;return}
+    function step(ts){if(!t0)t0=ts;var p=Math.min((ts-t0)/dur,1);el.textContent=Math.round(to*(1-Math.pow(1-p,3)))+suf;if(p<1)requestAnimationFrame(step)}
+    requestAnimationFrame(step)})},{threshold:.5});
+  document.querySelectorAll('.num[data-to]').forEach(function(el){cio.observe(el)});
+  // drag-scroll gallery
+  var gal=document.getElementById('gal');
+  if(gal){var down=false,sx=0,sl=0;
+    gal.addEventListener('mousedown',function(e){down=true;gal.classList.add('drag');sx=e.pageX;sl=gal.scrollLeft});
+    addEventListener('mouseup',function(){down=false;gal.classList.remove('drag')});
+    gal.addEventListener('mousemove',function(e){if(!down)return;e.preventDefault();gal.scrollLeft=sl-(e.pageX-sx)*1.4});
+  }
+</script>

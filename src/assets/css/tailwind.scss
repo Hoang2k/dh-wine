@@ -1,0 +1,118 @@
+/* purgecss start ignore */
+@import "tailwindcss/base";
+/* purgecss end ignore */
+
+@import "tailwindcss/components";
+
+@import "tailwindcss/utilities";
+
+@import "./unreset.scss";
+
+@media (width: 1366px) {
+    .container {
+        max-width: 1326px;
+    }
+}
+
+.Toastify__toast-container--top-right {
+    width: 500px !important;
+}
+
+.react-calendar {
+    border-radius: 4px;
+}
+
+.react-calendar__navigation {
+    background: #8539D9;
+    border-radius: 4px 4px 0 0;
+    color: #ffffff;
+}
+
+.react-calendar__navigation button:enabled:hover, .react-calendar__navigation button:enabled:focus {
+    background-color: #906aba !important;
+}
+
+.react-calendar__tile {
+    display: grid !important;
+    padding: 5px 6.6px !important;
+    justify-content: center;
+    align-content: center;
+}
+
+.react-calendar__tile--active {
+    background-color: #ffffff !important;
+}
+
+.react-calendar__tile abbr {
+    width: 31px;
+    height: 31px;
+    align-content: center;
+}
+
+.react-calendar__tile--active abbr {
+    background-color: #8539D9  !important;
+    color: #ffffff !important;
+    border-radius: 50%;
+}
+
+.react-calendar__tile--active:enabled:hover abbr, .react-calendar__tile--active:enabled:focus abbr {
+    background-color: #8539D9  !important;
+    color: #ffffff !important;
+    border-radius: 50%;
+}
+
+.react-calendar__tile:enabled:hover, .react-calendar__tile:enabled:focus {
+    background-color: #ffffff !important;
+}
+
+.react-calendar__tile:enabled:hover abbr , .react-calendar__tile:enabled:focus abbr {
+    background-color: #8539D9  !important;
+    color: #ffffff !important;
+    border-radius: 50%;
+}
+
+.react-calendar__tile--now {
+    background: #ffffff !important;
+    color: #FF88A5 !important;
+}
+
+input::placeholder {
+    color: #33333380;
+}
+
+.react-datepicker-wrapper {
+    width: 100%;
+}
+
+*,
+*::after,
+*::before {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.loading {
+  width: 54px;
+  height: 54px;
+  position: relative;
+  transform: rotate(15deg);
+  transition: all .3s ease;
+}
+
+.loading .orange {
+  position: absolute;
+  stroke-width: 4;
+  stroke: #ff9933;
+  stroke-dasharray: 20, 180;
+  animation: dash 1s linear infinite;
+}
+
+@keyframes dash {
+  0% {
+    stroke-dashoffset: 0;
+  }
+  100% {
+    stroke-dashoffset: -200;
+  }
+}

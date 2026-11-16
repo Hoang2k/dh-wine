@@ -1,0 +1,48 @@
+stages:
+    - build
+    - deploy
+    - checklog
+
+build:
+    stage: build
+    variables:
+        GIT_STRATEGY: clone
+    before_script:
+        - echo "NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL" >> .env
+        - echo "NEXTAUTH_SECRET=$NEXTAUTH_SECRET" >> .env
+    script:
+        - yarn install --frozen-lockfile
+        - yarn build
+    cache:
+        paths:
+         - node_modules/
+    tags:
+        - ntlsvx-runner 
+    only:
+        - tags
+
+deploy:
+    stage: deploy
+    variables:
+        GIT_STRATEGY: none
+    script:
+        - sudo rsync -av --delete --exclude node_modules --exclude .git --exclude .env ./ /var/www/dh-wine-fe/
+        - sudo chown -R ntls:ntls /var/www/dh-wine-fe
+        - sudo -u ntls bash -c "cd /var/www/dh-wine-fe && yarn install --frozen-lockfile && pm2 restart dh-wine-fe || pm2 start npm --name "dh-wine-fe" -- run start"
+    tags:
+        - ntlsvx-runner
+    only:
+        - tags
+
+
+checklog:
+    stage: checklog
+    variables:
+        GIT_STRATEGY: none
+    script:
+        - sudo -u ntls pm2 logs dh-wine-fe --lines 200 --nostream
+    tags:
+        - ntlsvx-runner
+    only:
+        - tags
+

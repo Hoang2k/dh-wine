@@ -1,0 +1,306 @@
+<title>Hoàng Đinh · Dư vị</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=Be+Vietnam+Pro:wght@300;400;500&display=swap">
+<style>
+  /* Direction D — "Dư vị" (quiet luxury, washi): warm paper, refined Garamond, faint vertical
+     hairline grid, full-bleed muted photography bleeding to the edge, generous negative space,
+     slow restrained motion. Inspired by the CIELIA Kyoto reference. Single warm-light theme. */
+  :root{
+    --washi:#efe9dd;       /* warm paper */
+    --washi-2:#e6dfcf;
+    --sumi:#1e1a15;        /* ink */
+    --sumi-soft:#4d473d;
+    --wine:#6a1a28;        /* muted bordeaux, used sparingly */
+    --muted:#8c8475;
+    --hair:rgba(30,26,21,.11);
+    --rule:rgba(30,26,21,.16);
+    --maxw:1240px;
+    color-scheme:light;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{background:var(--washi);color:var(--sumi);
+    font-family:"Be Vietnam Pro",system-ui,sans-serif;font-weight:300;line-height:1.85;
+    -webkit-font-smoothing:antialiased;overflow-x:hidden;letter-spacing:.01em}
+  h1,h2,h3,.serif{font-family:"EB Garamond",Georgia,serif;font-weight:400;line-height:1.14;text-wrap:balance}
+  a{color:inherit;text-decoration:none}
+  img{max-width:100%}
+
+  /* faint vertical hairline grid, constrained to content width */
+  #grid{position:fixed;top:0;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:var(--maxw);
+    z-index:0;pointer-events:none;
+    background-image:linear-gradient(to right,var(--hair) 1px,transparent 1px);
+    background-size:calc(100%/6) 100%;background-position:left;opacity:.9}
+  @media(max-width:700px){#grid{background-size:calc(100%/3) 100%}}
+
+  .wrap{position:relative;z-index:1;width:100%;max-width:var(--maxw);margin-inline:auto;
+    padding-left:max(26px,env(safe-area-inset-left,0px));
+    padding-right:max(26px,env(safe-area-inset-right,0px))}
+  .label{font-family:"EB Garamond",serif;font-size:.78rem;font-weight:500;letter-spacing:.42em;
+    text-transform:uppercase;color:var(--sumi)}
+  .label .vi{font-family:"Be Vietnam Pro",sans-serif;font-weight:400;font-size:.68rem;letter-spacing:.3em;color:var(--muted);margin-left:.9em}
+  .lede{color:var(--sumi-soft);font-weight:300;font-size:1.02rem;max-width:40ch}
+
+  header{position:fixed;inset:0 0 auto;z-index:40;color:#f2ede3;
+    padding-top:max(22px,env(safe-area-inset-top,0px));padding-bottom:20px;
+    transition:background .5s,color .5s,padding .5s,border-color .5s;border-bottom:1px solid transparent}
+  header.scrolled{background:rgba(239,233,221,.92);backdrop-filter:blur(10px);color:var(--sumi);
+    border-bottom-color:var(--hair);padding-top:max(13px,env(safe-area-inset-top,0px));padding-bottom:13px}
+  .nav{display:flex;align-items:center;justify-content:space-between;gap:20px;
+    width:100%;max-width:var(--maxw);margin-inline:auto;
+    padding-left:max(26px,env(safe-area-inset-left,0px));padding-right:max(26px,env(safe-area-inset-right,0px))}
+  .brand{display:flex;align-items:baseline;gap:.7rem}
+  .brand b{font-family:"EB Garamond",serif;font-weight:500;font-size:1.35rem;letter-spacing:.24em;text-transform:uppercase}
+  .brand small{font-size:.6rem;letter-spacing:.34em;text-transform:uppercase;opacity:.75}
+  nav.links{display:flex;gap:34px;font-family:"EB Garamond",serif;font-size:.98rem;letter-spacing:.04em}
+  nav.links a{opacity:.85;transition:opacity .3s}nav.links a:hover{opacity:1}
+  .mini{font-family:"EB Garamond",serif;font-size:.86rem;letter-spacing:.14em;text-transform:uppercase;
+    border:1px solid currentColor;padding:.5rem 1.05rem;transition:background .3s,color .3s}
+  header.scrolled .mini:hover{background:var(--sumi);color:var(--washi)}
+  @media(max-width:860px){nav.links{display:none}}
+
+  /* slow reveals */
+  .rv{opacity:1;transform:none;transition:opacity 1.3s cubic-bezier(.19,1,.22,1),transform 1.3s cubic-bezier(.19,1,.22,1)}
+  html.js .rv{opacity:0;transform:translateY(30px)}
+  html.js .rv.in{opacity:1;transform:none}
+  .d1{transition-delay:.12s}.d2{transition-delay:.26s}.d3{transition-delay:.4s}
+
+  /* full-bleed plate helper (muted "photography" via layered gradients + grain) */
+  .plate{position:relative;overflow:hidden;background-size:cover;background-position:center}
+  .plate::after{content:"";position:absolute;inset:0;opacity:.5;mix-blend-mode:overlay;
+    background-image:radial-gradient(rgba(255,255,255,.08) .5px,transparent .5px);background-size:3px 3px}
+  .ph-vine{background:
+    radial-gradient(90% 70% at 30% 20%,#5d6b47,transparent 60%),
+    radial-gradient(80% 90% at 85% 90%,#20281a,transparent 55%),
+    linear-gradient(160deg,#454f33,#232a1b)}
+  .ph-cellar{background:
+    radial-gradient(80% 70% at 70% 20%,#7a5a33,transparent 60%),
+    linear-gradient(160deg,#3a2a1a,#1c140c)}
+  .ph-pour{background:
+    radial-gradient(70% 60% at 60% 30%,#8c2235,transparent 60%),
+    linear-gradient(160deg,#5a1422,#24090f)}
+  .ph-stone{background:
+    radial-gradient(80% 70% at 40% 30%,#9a9384,transparent 60%),
+    linear-gradient(160deg,#6f685b,#352f27)}
+
+  /* hero */
+  .hero{position:relative;min-height:92vh;display:flex;align-items:center;justify-content:center;text-align:center}
+  .hero .bg{position:absolute;inset:0;z-index:0}
+  .hero .bg::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(15,12,8,.3),rgba(15,12,8,.5))}
+  .hero .inner{position:relative;z-index:2;color:#f4efe5;padding-inline:20px}
+  .hero h1{font-size:clamp(2.6rem,6.2vw,5rem);font-weight:400;letter-spacing:.02em;
+    opacity:0;animation:fade 1.6s ease .3s forwards}
+  .hero .sub{font-family:"EB Garamond",serif;font-size:1rem;letter-spacing:.44em;text-transform:uppercase;
+    margin-top:1.1rem;opacity:0;animation:fade 1.6s ease .7s forwards}
+  @keyframes fade{to{opacity:1}}
+  .cue{position:absolute;left:50%;bottom:34px;transform:translateX(-50%);z-index:3;color:#f4efe5;
+    font-family:"EB Garamond",serif;font-size:.82rem;letter-spacing:.2em;display:flex;flex-direction:column;
+    align-items:center;gap:12px;opacity:0;animation:fade 1.6s ease 1.1s forwards}
+  .cue i{width:1px;height:46px;background:linear-gradient(#f4efe5,transparent);animation:drop 2s ease-in-out infinite}
+  @keyframes drop{0%,100%{transform:scaleY(.3);transform-origin:top;opacity:.4}50%{transform:scaleY(1);opacity:1}}
+  .movie{position:absolute;right:max(22px,env(safe-area-inset-right,0px));bottom:28px;z-index:3;width:210px;
+    background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.3);backdrop-filter:blur(4px)}
+  .movie .thumb{height:92px}
+  .movie .bar{display:flex;align-items:center;justify-content:space-between;color:#f4efe5;padding:.5rem .7rem;
+    font-family:"EB Garamond",serif;font-size:.82rem;letter-spacing:.12em;text-transform:uppercase}
+  @media(max-width:700px){.movie{display:none}}
+
+  section{position:relative;z-index:1}
+  .band{padding-block:clamp(72px,12vw,150px)}
+
+  /* poetic statement */
+  .poem{text-align:center;max-width:46ch;margin:0 auto}
+  .poem p{font-family:"EB Garamond",serif;font-size:clamp(1.3rem,3vw,1.9rem);line-height:1.9;font-weight:400;color:var(--sumi)}
+  .poem p em{font-style:italic;color:var(--wine)}
+
+  /* split (image bleeds to edge) */
+  .split{display:grid;grid-template-columns:1.1fr .9fr;align-items:center;gap:0;min-height:62vh}
+  .split.rev{grid-template-columns:.9fr 1.1fr}
+  .split .media{position:relative;align-self:stretch;min-height:420px}
+  .split .media .plate{position:absolute;inset:0}
+  .split.left .media{margin-left:calc(50% - 50vw)}   /* bleed to left viewport edge */
+  .split.right .media{margin-right:calc(50% - 50vw)} /* bleed to right viewport edge */
+  .split .text{padding:52px max(26px,env(safe-area-inset-right,0px)) 52px 52px}
+  .split.right .text{padding:52px 52px 52px max(26px,env(safe-area-inset-left,0px))}
+  .split .text h2{font-size:clamp(1.9rem,4.4vw,3rem);margin:18px 0 20px}
+  .split .text h2 em{font-style:italic;color:var(--wine)}
+  @media(max-width:820px){
+    .split,.split.rev{grid-template-columns:1fr}
+    .split .media{margin:0 calc(50% - 50vw);min-height:300px}
+    .split .text,.split.right .text{padding:34px max(26px,env(safe-area-inset-left,0px))}
+    .split.right .media{order:-1}
+  }
+
+  /* line up */
+  .lineup{border-top:1px solid var(--rule)}
+  .lu{display:grid;grid-template-columns:70px 1fr 1fr auto;align-items:center;gap:24px;
+    padding:30px 4px;border-bottom:1px solid var(--rule);transition:padding-left .4s,background .4s}
+  .lu:hover{padding-left:16px;background:rgba(30,26,21,.03)}
+  .lu .no{font-family:"EB Garamond",serif;font-size:1.1rem;color:var(--muted)}
+  .lu .nm{font-family:"EB Garamond",serif;font-size:clamp(1.4rem,3.4vw,2rem)}
+  .lu .rg{color:var(--muted);font-size:.9rem}
+  .lu .go{font-family:"EB Garamond",serif;font-size:.9rem;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--wine);white-space:nowrap;border-bottom:1px solid var(--wine);padding-bottom:3px}
+  @media(max-width:740px){
+    .lu{grid-template-columns:44px 1fr;gap:6px 16px;row-gap:4px}
+    .lu .rg{grid-column:2}.lu .go{grid-column:2;justify-self:start;margin-top:6px}
+  }
+
+  /* contact */
+  .contact{display:grid;grid-template-columns:1fr 1fr;gap:50px;border-top:1px solid var(--rule);padding-top:60px}
+  .contact h2{font-size:clamp(2.2rem,5.5vw,3.6rem)}
+  .contact h2 em{font-style:italic;color:var(--wine)}
+  .contact .info div{padding:16px 0;border-bottom:1px solid var(--rule)}
+  .contact .info .k{font-family:"EB Garamond",serif;letter-spacing:.14em;text-transform:uppercase;font-size:.84rem;color:var(--muted)}
+  .contact .info .v{font-family:"EB Garamond",serif;font-size:1.3rem;margin-top:.2rem}
+  .cbtn{display:inline-block;margin-top:24px;font-family:"EB Garamond",serif;font-size:1rem;letter-spacing:.14em;
+    text-transform:uppercase;border:1px solid var(--sumi);padding:.9rem 1.8rem;transition:background .3s,color .3s}
+  .cbtn:hover{background:var(--sumi);color:var(--washi)}
+  @media(max-width:760px){.contact{grid-template-columns:1fr;gap:30px}}
+
+  footer{position:relative;z-index:1;border-top:1px solid var(--rule);padding-block:34px;color:var(--muted);
+    font-family:"EB Garamond",serif;font-size:.88rem;letter-spacing:.06em}
+  .fg{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:center;
+    max-width:var(--maxw);margin-inline:auto;
+    padding-left:max(26px,env(safe-area-inset-left,0px));padding-right:max(26px,env(safe-area-inset-right,0px))}
+
+  @media(prefers-reduced-motion:reduce){
+    *{animation:none!important;transition:none!important}
+    html.js .rv{opacity:1;transform:none}
+    .hero h1,.hero .sub,.cue{opacity:1}
+  }
+</style>
+
+<div id="grid" aria-hidden="true"></div>
+
+<header id="top">
+  <div class="nav">
+    <div class="brand"><b>Hoàng Đinh</b><small>Wine</small></div>
+    <nav class="links"><a href="#bst">Line Up</a><a href="#terroir">Về rượu</a><a href="#cs">Giới thiệu</a></nav>
+    <a class="mini" href="#lh">Nhận báo giá</a>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="bg plate ph-vine" aria-hidden="true"></div>
+    <div class="inner">
+      <h1>Dư vị của<br>từng khoảnh khắc</h1>
+      <div class="sub">Hoàng Đinh · HoReCa</div>
+    </div>
+    <div class="cue" aria-hidden="true">Cuộn xuống<i></i></div>
+    <div class="movie" aria-hidden="true">
+      <div class="thumb plate ph-cellar"></div>
+      <div class="bar"><span>Toàn bộ phim</span><span>→</span></div>
+    </div>
+  </section>
+
+  <section class="band">
+    <div class="wrap">
+      <div class="poem rv">
+        <p>Rượu vang kể câu chuyện của đất, của nắng, của bàn tay người làm rượu. Chúng tôi mang <em>dư vị</em> ấy đến từng nhà hàng, từng khách sạn — chậm rãi, đúng gu, trọn vẹn.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="terroir">
+    <div class="wrap"><div class="label rv">Terroir<span class="vi">Thổ nhưỡng</span></div></div>
+    <div class="split left">
+      <div class="media rv"><div class="plate ph-vine" data-par="0.12"></div></div>
+      <div class="text">
+        <h2 class="rv">Mỗi chai là một <em>vùng đất</em></h2>
+        <p class="lede rv d1">Chúng tôi làm việc trực tiếp với nhà nhập khẩu để tuyển chọn những nhãn rượu phù hợp khẩu vị và thực đơn của đối tác. Không bán lẻ ồ ạt — mỗi danh mục được dựng riêng cho từng mô hình.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap"><div class="label rv" style="text-align:right">Craft<span class="vi">Lưu trữ & giao nhận</span></div></div>
+    <div class="split right">
+      <div class="text">
+        <h2 class="rv">Chăm chút đến <em>từng lô</em></h2>
+        <p class="lede rv d1">Quản lý kho theo lô và hạn sử dụng, bảo quản đúng điều kiện, giao hàng đúng hẹn trên 34 tỉnh thành. Một đội ngũ hiểu rượu đứng sau mỗi đơn hàng.</p>
+      </div>
+      <div class="media rv"><div class="plate ph-cellar" data-par="0.12"></div></div>
+    </div>
+  </section>
+
+  <section class="band" id="bst">
+    <div class="wrap">
+      <div class="label rv" style="margin-bottom:34px">Line Up<span class="vi">Tuyển chọn mùa</span></div>
+      <div class="lineup">
+        <a class="lu rv" href="#lh"><span class="no">01</span><span class="nm">Château Mazeris</span><span class="rg">Bordeaux · Pháp · Merlot 2019</span><span class="go">Nhận báo giá</span></a>
+        <a class="lu rv" href="#lh"><span class="no">02</span><span class="nm">Chianti Riserva</span><span class="rg">Tuscany · Ý · Sangiovese 2020</span><span class="go">Nhận báo giá</span></a>
+        <a class="lu rv" href="#lh"><span class="no">03</span><span class="nm">Alta Malbec</span><span class="rg">Mendoza · Argentina · 2021</span><span class="go">Nhận báo giá</span></a>
+        <a class="lu rv" href="#lh"><span class="no">04</span><span class="nm">Cloud Bay</span><span class="rg">Marlborough · NZ · Sauvignon 2022</span><span class="go">Nhận báo giá</span></a>
+        <a class="lu rv" href="#lh"><span class="no">05</span><span class="nm">Brut Réserve</span><span class="rg">Champagne · Pháp · Chardonnay NV</span><span class="go">Nhận báo giá</span></a>
+      </div>
+    </div>
+  </section>
+
+  <section id="cs">
+    <div class="wrap"><div class="label rv">Salon<span class="vi">Showroom Hoàng Đinh</span></div></div>
+    <div class="split left">
+      <div class="media rv"><div class="plate ph-stone" data-par="0.1"></div></div>
+      <div class="text">
+        <h2 class="rv">Nếm thử & <em>tư vấn</em></h2>
+        <p class="lede rv d1">Ghé showroom để nếm thử và trao đổi danh mục cùng đội ngũ của chúng tôi. Đặt lịch trước để được phục vụ trọn vẹn trong không gian riêng.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="band" id="lh">
+    <div class="wrap">
+      <div class="contact">
+        <div class="rv">
+          <div class="label" style="margin-bottom:18px">Contact<span class="vi">Liên hệ</span></div>
+          <h2>Nhận báo giá<br><em>trong 24 giờ</em></h2>
+          <p class="lede" style="margin-top:20px">Để lại thông tin, đội ngũ Hoàng Đinh sẽ tư vấn danh mục và gửi báo giá phù hợp mô hình kinh doanh của bạn.</p>
+          <a class="cbtn" href="#top">Gửi yêu cầu báo giá</a>
+        </div>
+        <div class="info rv d1">
+          <div><div class="k">Điện thoại</div><div class="v" style="user-select:all">1900 0000</div></div>
+          <div><div class="k">Giờ làm việc</div><div class="v">8:00 – 18:00 · T2–T7</div></div>
+          <div><div class="k">Showroom</div><div class="v">Hà Nội · TP. Hồ Chí Minh</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="fg">
+    <div class="brand"><b style="font-size:1.1rem">Hoàng Đinh</b><small>Wine</small></div>
+    <div>Nhà phân phối rượu vang cho HoReCa · © 2026</div>
+    <div>Phương án D — Dư vị</div>
+  </div>
+</footer>
+
+<script>
+  document.documentElement.classList.add('js');
+  var reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
+  var header=document.getElementById('top');
+  var onScroll=function(){header.classList.toggle('scrolled',scrollY>window.innerHeight*0.78)};
+  onScroll();addEventListener('scroll',onScroll,{passive:true});
+
+  var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},
+    {threshold:.14,rootMargin:'0px 0px -8% 0px'});
+  document.querySelectorAll('.rv').forEach(function(el){io.observe(el)});
+
+  // gentle image parallax
+  if(!reduce){
+    var pars=[].slice.call(document.querySelectorAll('[data-par]'));
+    pars.forEach(function(el){el.style.willChange='transform';el.style.transform='scale(1.14)'});
+    var tick=function(){
+      pars.forEach(function(el){
+        var r=el.getBoundingClientRect();var c=(r.top+r.height/2-innerHeight/2)/innerHeight;
+        el.style.transform='scale(1.14) translateY('+(c*-(+el.dataset.par)*120)+'px)';
+      });
+      raf=null;
+    };
+    var raf=null;
+    addEventListener('scroll',function(){if(!raf)raf=requestAnimationFrame(tick)},{passive:true});
+    tick();
+  }
+</script>

@@ -1,0 +1,411 @@
+<title>Hoàng Đinh Wine</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Be+Vietnam+Pro:wght@300;400;500;600;700&display=swap">
+<style>
+  /* Layout concept: cinematic dark "hầm rượu" — full-bleed scroll stage, editorial serif,
+     horizontal collection reel instead of a product grid shelf. Deliberately single dark theme. */
+  :root{
+    --noir:#120507;        /* near-black, wine bias */
+    --noir-2:#1b0a0e;
+    --wine:#611427;        /* bordeaux */
+    --wine-deep:#380b17;
+    --gold:#caa24e;        /* candlelight gold */
+    --gold-soft:#e8cf92;
+    --ivory:#f5ecde;
+    --muted:#b49aa0;       /* rosé grey */
+    --line:rgba(202,162,78,.16);
+    --maxw:1160px;
+    color-scheme:dark;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--noir);
+    color:var(--ivory);
+    font-family:"Be Vietnam Pro",system-ui,"Segoe UI",sans-serif;
+    font-weight:400;
+    line-height:1.65;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  h1,h2,h3,.display{font-family:"Cormorant Garamond",Georgia,"Times New Roman",serif;font-weight:500;line-height:1.05;text-wrap:balance}
+  a{color:inherit;text-decoration:none}
+  img{max-width:100%}
+
+  .wrap{width:100%;max-width:var(--maxw);margin-inline:auto;
+    padding-left:max(22px,env(safe-area-inset-left,0px));
+    padding-right:max(22px,env(safe-area-inset-right,0px));}
+  .eyebrow{font-family:"Be Vietnam Pro",sans-serif;font-size:.72rem;font-weight:600;
+    letter-spacing:.28em;text-transform:uppercase;color:var(--gold)}
+  .lede{color:var(--muted);font-size:1.05rem;max-width:56ch}
+
+  /* ---- particles canvas ---- */
+  #motes{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;opacity:.55}
+
+  /* ---- top nav ---- */
+  header{position:fixed;top:0;left:0;right:0;z-index:40;
+    padding-top:max(14px,env(safe-area-inset-top,0px));padding-bottom:14px;
+    transition:background .4s ease,border-color .4s ease,padding .4s ease;
+    border-bottom:1px solid transparent}
+  header.scrolled{background:rgba(12,4,6,.82);backdrop-filter:blur(14px);border-bottom-color:var(--line);
+    padding-top:max(10px,env(safe-area-inset-top,0px));padding-bottom:10px}
+  .nav{display:flex;align-items:center;justify-content:space-between;gap:20px}
+  .brand{display:flex;align-items:baseline;gap:.5rem}
+  .brand b{font-family:"Cormorant Garamond",serif;font-weight:600;font-size:1.5rem;letter-spacing:.02em}
+  .brand small{font-size:.62rem;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);transform:translateY(-2px)}
+  nav.links{display:flex;gap:30px;font-size:.9rem;color:var(--muted)}
+  nav.links a{position:relative;transition:color .25s}
+  nav.links a::after{content:"";position:absolute;left:0;bottom:-6px;height:1px;width:0;background:var(--gold);transition:width .3s}
+  nav.links a:hover{color:var(--ivory)}nav.links a:hover::after{width:100%}
+  .btn{display:inline-flex;align-items:center;gap:.5rem;font-family:"Be Vietnam Pro",sans-serif;
+    font-weight:600;font-size:.86rem;letter-spacing:.02em;padding:.72rem 1.3rem;border-radius:999px;
+    border:1px solid var(--gold);color:var(--gold);background:transparent;cursor:pointer;
+    transition:background .3s,color .3s,transform .2s,box-shadow .3s;will-change:transform}
+  .btn:hover{background:var(--gold);color:var(--noir);box-shadow:0 10px 36px -12px var(--gold)}
+  .btn.solid{background:var(--gold);color:var(--noir)}
+  .btn.solid:hover{box-shadow:0 14px 44px -12px var(--gold)}
+  @media(max-width:860px){nav.links{display:none}}
+
+  /* ---- hero ---- */
+  .hero{position:relative;z-index:1;min-height:92vh;display:flex;align-items:center;
+    padding-top:120px;padding-bottom:70px;overflow:hidden}
+  .hero::before{content:"";position:absolute;inset:0;z-index:-2;
+    background:
+      radial-gradient(120% 90% at 78% 18%, rgba(97,20,39,.55), transparent 55%),
+      radial-gradient(90% 80% at 12% 95%, rgba(56,11,23,.6), transparent 60%),
+      linear-gradient(180deg,#160609 0%, #0e0406 100%)}
+  .hero-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:40px;align-items:center;width:100%}
+  .hero h1{font-size:clamp(3rem,8.5vw,6.4rem);letter-spacing:-.01em;margin:.6rem 0 1.4rem}
+  .hero h1 .it{font-style:italic;color:var(--gold-soft)}
+  .hero .reveal-line{display:block;overflow:hidden}
+  .hero .reveal-line>span{display:block;transform:translateY(110%);opacity:0;
+    animation:rise .9s cubic-bezier(.16,1,.3,1) forwards}
+  .hero .reveal-line:nth-child(1)>span{animation-delay:.15s}
+  .hero .reveal-line:nth-child(2)>span{animation-delay:.3s}
+  .hero-sub{opacity:0;transform:translateY(16px);animation:rise2 .9s ease .62s forwards}
+  .hero-cta{display:flex;flex-wrap:wrap;gap:14px;margin-top:2rem;opacity:0;transform:translateY(16px);
+    animation:rise2 .9s ease .8s forwards}
+  @keyframes rise{to{transform:translateY(0);opacity:1}}
+  @keyframes rise2{to{transform:translateY(0);opacity:1}}
+
+  /* hero glass visual */
+  .stage{position:relative;height:460px;display:grid;place-items:center}
+  .halo{position:absolute;width:360px;height:360px;border-radius:50%;
+    background:radial-gradient(circle,rgba(202,162,78,.4),transparent 62%);filter:blur(10px);
+    animation:breathe 6s ease-in-out infinite}
+  @keyframes breathe{0%,100%{transform:scale(1);opacity:.75}50%{transform:scale(1.08);opacity:1}}
+  .glass{position:relative;width:150px;height:300px;animation:float 7s ease-in-out infinite}
+  @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
+  .bowl{position:absolute;top:0;left:50%;transform:translateX(-50%);width:150px;height:170px;
+    border-radius:0 0 75px 75px;background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.02));
+    border:1px solid rgba(255,255,255,.18);border-top:none;overflow:hidden;backdrop-filter:blur(2px)}
+  .wine-fill{position:absolute;bottom:0;left:0;right:0;height:62%;
+    background:linear-gradient(180deg,#8a1f33,#4e0f1f);border-radius:0 0 72px 72px}
+  .wine-fill::before{content:"";position:absolute;top:0;left:0;right:0;height:7px;
+    background:linear-gradient(90deg,rgba(255,255,255,.35),rgba(255,180,160,.15));border-radius:50%}
+  .stem{position:absolute;top:170px;left:50%;transform:translateX(-50%);width:5px;height:95px;
+    background:linear-gradient(180deg,rgba(255,255,255,.16),rgba(255,255,255,.06))}
+  .foot{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);width:110px;height:14px;
+    border-radius:50%;background:linear-gradient(180deg,rgba(255,255,255,.14),rgba(255,255,255,.04));
+    border:1px solid rgba(255,255,255,.12)}
+  .scrollcue{position:absolute;left:50%;bottom:26px;transform:translateX(-50%);z-index:3;
+    font-size:.68rem;letter-spacing:.3em;text-transform:uppercase;color:var(--muted);
+    display:flex;flex-direction:column;align-items:center;gap:10px;opacity:0;animation:rise2 1s ease 1.1s forwards}
+  .scrollcue i{display:block;width:1px;height:38px;background:linear-gradient(var(--gold),transparent);animation:cue 1.8s ease-in-out infinite}
+  @keyframes cue{0%,100%{transform:scaleY(.4);transform-origin:top;opacity:.4}50%{transform:scaleY(1);opacity:1}}
+  @media(max-width:860px){.hero-grid{grid-template-columns:1fr}.stage{height:300px;order:-1}.glass{transform:scale(.8)}}
+
+  /* ---- marquee ---- */
+  .marquee{position:relative;z-index:1;border-block:1px solid var(--line);background:var(--noir-2);
+    overflow:hidden;white-space:nowrap;padding-block:16px}
+  .marquee .track{display:inline-block;animation:scrollx 26s linear infinite;font-family:"Cormorant Garamond",serif;
+    font-size:1.5rem;font-style:italic;color:var(--muted)}
+  .marquee .track span{margin:0 1.6rem;color:var(--ivory)}
+  .marquee .track b{color:var(--gold);font-style:normal;font-family:"Be Vietnam Pro";font-weight:400;font-size:1rem}
+  @keyframes scrollx{to{transform:translateX(-50%)}}
+
+  /* ---- generic sections ---- */
+  section.band{position:relative;z-index:1;padding-block:clamp(70px,11vw,130px)}
+  .section-head{max-width:62ch;margin-bottom:54px}
+  .section-head h2{font-size:clamp(2.2rem,5.5vw,3.8rem);margin:.7rem 0}
+  .section-head h2 em{font-style:italic;color:var(--gold-soft)}
+
+  /* reveal on scroll (visible by default; hidden only when .js present) */
+  .reveal{opacity:1;transform:none;transition:opacity .9s cubic-bezier(.16,1,.3,1),transform .9s cubic-bezier(.16,1,.3,1)}
+  html.js .reveal{opacity:0;transform:translateY(34px)}
+  html.js .reveal.in{opacity:1;transform:none}
+  .reveal.d1{transition-delay:.08s}.reveal.d2{transition-delay:.16s}.reveal.d3{transition-delay:.24s}
+
+  /* ---- story split ---- */
+  .story{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center}
+  .story .art{position:relative;aspect-ratio:4/5;border-radius:4px;overflow:hidden;border:1px solid var(--line);
+    background:
+      radial-gradient(90% 60% at 30% 20%,rgba(97,20,39,.7),transparent 60%),
+      linear-gradient(145deg,#2a0b14,#120406)}
+  .story .art .plabel{position:absolute;left:24px;bottom:22px;right:24px}
+  .story .art .plabel .n{font-family:"Cormorant Garamond",serif;font-size:2.4rem;color:var(--ivory)}
+  .story .art .grain{position:absolute;inset:0;background:radial-gradient(circle at 70% 75%,rgba(202,162,78,.22),transparent 45%)}
+  @media(max-width:820px){.story{grid-template-columns:1fr;gap:34px}}
+
+  /* ---- counters ---- */
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:28px;border-top:1px solid var(--line);
+    border-bottom:1px solid var(--line);padding-block:48px}
+  .stat .num{font-family:"Cormorant Garamond",serif;font-size:clamp(2.6rem,6vw,4rem);color:var(--gold-soft);
+    font-variant-numeric:tabular-nums;line-height:1}
+  .stat .lbl{color:var(--muted);font-size:.9rem;margin-top:.4rem}
+  @media(max-width:720px){.stats{grid-template-columns:repeat(2,1fr);gap:34px 22px}}
+
+  /* ---- collection reel ---- */
+  .reel-head{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;margin-bottom:34px}
+  .reel{display:flex;gap:26px;overflow-x:auto;scroll-snap-type:x mandatory;padding:10px 0 30px;
+    scrollbar-width:thin;scroll-padding-left:22px}
+  .reel::-webkit-scrollbar{height:6px}.reel::-webkit-scrollbar-thumb{background:var(--line);border-radius:9px}
+  .card{scroll-snap-align:start;flex:0 0 clamp(250px,78vw,320px);position:relative;border-radius:6px;
+    padding:28px 26px 26px;min-height:420px;display:flex;flex-direction:column;justify-content:flex-end;
+    border:1px solid var(--line);background:linear-gradient(160deg,#20090f,#140507);
+    transition:transform .5s cubic-bezier(.16,1,.3,1),border-color .4s,box-shadow .5s;
+    transform-style:preserve-3d;will-change:transform}
+  .card:hover{border-color:rgba(202,162,78,.5);box-shadow:0 30px 70px -40px rgba(0,0,0,.9)}
+  .card .btl{position:absolute;top:26px;left:50%;transform:translate(-50%,0) translateZ(40px);
+    width:46px;height:200px;border-radius:16px 16px 7px 7px;transition:transform .5s;
+    background:linear-gradient(90deg,rgba(255,255,255,.14),transparent 30%),linear-gradient(180deg,#3c0c1a,#17060b)}
+  .card .btl::before{content:"";position:absolute;top:-26px;left:50%;transform:translateX(-50%);
+    width:14px;height:34px;background:linear-gradient(180deg,#2a0912,#17060b);border-radius:4px}
+  .card .btl::after{content:"";position:absolute;top:70px;left:6px;right:6px;height:58px;border-radius:3px;
+    background:linear-gradient(180deg,var(--ivory),#e4d6bf);opacity:.92}
+  .card .region{font-size:.72rem;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);transform:translateZ(22px)}
+  .card .cname{font-family:"Cormorant Garamond",serif;font-size:1.85rem;margin:.3rem 0 .1rem;transform:translateZ(22px)}
+  .card .cmeta{color:var(--muted);font-size:.86rem;transform:translateZ(14px)}
+  .card .add{margin-top:16px;align-self:flex-start;transform:translateZ(30px);font-size:.8rem;padding:.55rem 1rem}
+  .reel-hint{color:var(--muted);font-size:.82rem;display:flex;align-items:center;gap:8px}
+
+  /* ---- solutions ---- */
+  .sol-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+  .sol{position:relative;padding:34px 28px;border-radius:6px;border:1px solid var(--line);
+    background:linear-gradient(165deg,#1a080d,#100406);overflow:hidden;transition:transform .5s,border-color .4s}
+  .sol:hover{transform:translateY(-8px);border-color:rgba(202,162,78,.45)}
+  .sol .ic{width:48px;height:48px;border-radius:50%;display:grid;place-items:center;margin-bottom:20px;
+    border:1px solid var(--gold);color:var(--gold);font-family:"Cormorant Garamond",serif;font-size:1.4rem}
+  .sol h3{font-size:1.7rem;margin-bottom:.5rem}
+  .sol p{color:var(--muted);font-size:.95rem}
+  .sol::after{content:"";position:absolute;right:-40px;bottom:-40px;width:140px;height:140px;border-radius:50%;
+    background:radial-gradient(circle,rgba(97,20,39,.5),transparent 70%);transition:transform .6s}
+  .sol:hover::after{transform:scale(1.4)}
+  @media(max-width:820px){.sol-grid{grid-template-columns:1fr}}
+
+  /* ---- CTA ---- */
+  .cta-band{position:relative;z-index:1;text-align:center;padding-block:clamp(80px,13vw,150px);
+    background:radial-gradient(90% 120% at 50% 0%,rgba(97,20,39,.55),transparent 60%)}
+  .cta-band h2{font-size:clamp(2.4rem,7vw,5rem)}
+  .cta-band p{color:var(--muted);max-width:52ch;margin:1.2rem auto 2.4rem}
+  .mag{position:relative;display:inline-block}
+  .mag .btn{font-size:1rem;padding:1rem 2.1rem}
+
+  /* ---- footer ---- */
+  footer{position:relative;z-index:1;border-top:1px solid var(--line);padding-block:40px;color:var(--muted);font-size:.85rem}
+  .foot-grid{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;align-items:center}
+
+  @media(prefers-reduced-motion:reduce){
+    *{animation:none!important;transition:none!important}
+    html.js .reveal{opacity:1;transform:none}
+    .hero .reveal-line>span,.hero-sub,.hero-cta,.scrollcue{opacity:1;transform:none}
+  }
+</style>
+
+<canvas id="motes" aria-hidden="true"></canvas>
+
+<header id="top">
+  <div class="wrap nav">
+    <div class="brand"><b>Hoàng Đinh</b><small>Wine</small></div>
+    <nav class="links">
+      <a href="#bo-suu-tap">Sản phẩm</a>
+      <a href="#giai-phap">Giải pháp</a>
+      <a href="#cau-chuyen">Giới thiệu</a>
+      <a href="#bao-gia">Tin tức</a>
+    </nav>
+    <a class="btn" href="#bao-gia">Nhận báo giá</a>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div>
+        <span class="eyebrow">Nhà phân phối rượu vang · HoReCa</span>
+        <h1>
+          <span class="reveal-line"><span>Hương vị</span></span>
+          <span class="reveal-line"><span>của <span class="it">từng bàn tiệc</span></span></span>
+        </h1>
+        <p class="lede hero-sub">Chúng tôi tuyển chọn và phân phối rượu vang cho nhà hàng, khách sạn và đại lý trên toàn quốc — từ hầm rượu đến ly rượu được rót.</p>
+        <div class="hero-cta">
+          <a class="btn solid" href="#bao-gia">Nhận báo giá</a>
+          <a class="btn" href="#bo-suu-tap">Khám phá bộ sưu tập</a>
+        </div>
+      </div>
+      <div class="stage" aria-hidden="true">
+        <div class="halo"></div>
+        <div class="glass">
+          <div class="bowl"><div class="wine-fill"></div></div>
+          <div class="stem"></div>
+          <div class="foot"></div>
+        </div>
+      </div>
+    </div>
+    <div class="scrollcue" aria-hidden="true">Cuộn xuống<i></i></div>
+  </section>
+
+  <div class="marquee" aria-hidden="true">
+    <div class="track">
+      <span>Rượu vang</span><b>·</b><span>Phân phối</span><b>·</b><span>HoReCa</span><b>·</b><span>Tuyển chọn</span><b>·</b><span>Hoàng Đinh</span><b>·</b>
+      <span>Rượu vang</span><b>·</b><span>Phân phối</span><b>·</b><span>HoReCa</span><b>·</b><span>Tuyển chọn</span><b>·</b><span>Hoàng Đinh</span><b>·</b>
+    </div>
+  </div>
+
+  <section class="band" id="cau-chuyen">
+    <div class="wrap">
+      <div class="story">
+        <div class="art reveal">
+          <div class="grain"></div>
+          <div class="plabel"><div class="n">Từ hầm rượu<br>đến bàn tiệc</div></div>
+        </div>
+        <div>
+          <span class="eyebrow reveal">Câu chuyện</span>
+          <h2 class="reveal d1" style="font-size:clamp(2rem,5vw,3.4rem);margin:.6rem 0 1.1rem">Mỗi chai rượu là một <em>vùng đất</em></h2>
+          <p class="lede reveal d2">Hoàng Đinh làm việc trực tiếp với các nhà nhập khẩu để chọn ra những nhãn rượu phù hợp với khẩu vị và mô hình kinh doanh của đối tác. Không bán lẻ ồ ạt — chúng tôi tư vấn danh mục theo từng nhà hàng, từng thực đơn.</p>
+          <p class="lede reveal d3" style="margin-top:1rem">Quản lý kho theo lô và hạn sử dụng, giao hàng đúng hẹn, và một đội ngũ hiểu rượu đứng sau mỗi đơn hàng.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band" style="padding-block:0">
+    <div class="wrap">
+      <div class="stats">
+        <div class="stat reveal"><div class="num" data-to="12" data-suffix="+">0</div><div class="lbl">Năm trong ngành</div></div>
+        <div class="stat reveal d1"><div class="num" data-to="180" data-suffix="+">0</div><div class="lbl">Nhãn rượu tuyển chọn</div></div>
+        <div class="stat reveal d2"><div class="num" data-to="400" data-suffix="+">0</div><div class="lbl">Đối tác HoReCa</div></div>
+        <div class="stat reveal d3"><div class="num" data-to="34">0</div><div class="lbl">Tỉnh thành phủ sóng</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band" id="bo-suu-tap">
+    <div class="wrap">
+      <div class="reel-head">
+        <div class="section-head" style="margin-bottom:0">
+          <span class="eyebrow reveal">Bộ sưu tập</span>
+          <h2 class="reveal d1">Không phải <em>kệ hàng</em> — mà là tuyển chọn</h2>
+          <p class="lede reveal d2">Kéo ngang để khám phá. Mỗi nhãn đi kèm câu chuyện vùng miền, không niêm yết giá — liên hệ để nhận báo giá theo mô hình của bạn.</p>
+        </div>
+        <div class="reel-hint reveal d2" aria-hidden="true">Kéo để xem →</div>
+      </div>
+    </div>
+    <div class="wrap">
+      <div class="reel" id="reel">
+        <article class="card"><div class="btl"></div><span class="region">Bordeaux · Pháp</span><div class="cname">Château Mazeris</div><div class="cmeta">Vang đỏ · Merlot · 2019</div><a class="btn add" href="#bao-gia">Thêm vào báo giá</a></article>
+        <article class="card"><div class="btl"></div><span class="region">Tuscany · Ý</span><div class="cname">Chianti Riserva</div><div class="cmeta">Vang đỏ · Sangiovese · 2020</div><a class="btn add" href="#bao-gia">Thêm vào báo giá</a></article>
+        <article class="card"><div class="btl"></div><span class="region">Mendoza · Argentina</span><div class="cname">Alta Malbec</div><div class="cmeta">Vang đỏ · Malbec · 2021</div><a class="btn add" href="#bao-gia">Thêm vào báo giá</a></article>
+        <article class="card"><div class="btl"></div><span class="region">Marlborough · New Zealand</span><div class="cname">Cloud Bay</div><div class="cmeta">Vang trắng · Sauvignon Blanc · 2022</div><a class="btn add" href="#bao-gia">Thêm vào báo giá</a></article>
+        <article class="card"><div class="btl"></div><span class="region">Champagne · Pháp</span><div class="cname">Brut Réserve</div><div class="cmeta">Vang sủi · Chardonnay · NV</div><a class="btn add" href="#bao-gia">Thêm vào báo giá</a></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="band" id="giai-phap">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow reveal">Giải pháp</span>
+        <h2 class="reveal d1">Phân phối theo <em>mô hình của bạn</em></h2>
+      </div>
+      <div class="sol-grid">
+        <div class="sol reveal"><div class="ic">I</div><h3>Nhà hàng</h3><p>Tư vấn danh mục rượu đi cùng thực đơn, đào tạo phục vụ, giao hàng linh hoạt theo công suất.</p></div>
+        <div class="sol reveal d1"><div class="ic">II</div><h3>Khách sạn</h3><p>Danh mục minibar và tiệc hội nghị, hợp đồng cung ứng dài hạn, kiểm soát tồn kho theo lô.</p></div>
+        <div class="sol reveal d2"><div class="ic">III</div><h3>Đại lý & CTV</h3><p>Chính sách chiết khấu theo sản lượng, bảng báo giá riêng, hỗ trợ trưng bày và bán hàng.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta-band" id="bao-gia">
+    <div class="wrap">
+      <span class="eyebrow reveal">Bắt đầu</span>
+      <h2 class="reveal d1" style="margin-top:.6rem">Nhận báo giá <em>trong 24 giờ</em></h2>
+      <p class="reveal d2">Để lại thông tin, đội ngũ Hoàng Đinh sẽ tư vấn danh mục và gửi báo giá phù hợp với mô hình kinh doanh của bạn.</p>
+      <div class="mag reveal d2" id="mag"><a class="btn solid" href="#top">Gửi yêu cầu báo giá</a></div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap foot-grid">
+    <div class="brand"><b style="font-size:1.2rem">Hoàng Đinh</b><small style="color:var(--gold)">Wine</small></div>
+    <div>Nhà phân phối rượu vang cho HoReCa · © 2026</div>
+    <div>Bản mockup concept — demo giao diện</div>
+  </div>
+</footer>
+
+<script>
+  document.documentElement.classList.add('js');
+  var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // sticky header
+  var header = document.getElementById('top');
+  var onScroll = function(){ header.classList.toggle('scrolled', window.scrollY > 40); };
+  onScroll(); addEventListener('scroll', onScroll, {passive:true});
+
+  // scroll reveals
+  var io = new IntersectionObserver(function(ents){
+    ents.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }});
+  }, {threshold:.18, rootMargin:'0px 0px -8% 0px'});
+  document.querySelectorAll('.reveal').forEach(function(el){ io.observe(el); });
+
+  // count-up
+  var counted = new WeakSet();
+  var cio = new IntersectionObserver(function(ents){
+    ents.forEach(function(e){
+      if(!e.isIntersecting || counted.has(e.target)) return;
+      counted.add(e.target);
+      var el = e.target, to = +el.dataset.to, suf = el.dataset.suffix || '', t0 = null, dur = 1400;
+      if(reduce){ el.textContent = to + suf; return; }
+      function step(ts){ if(!t0) t0 = ts; var p = Math.min((ts-t0)/dur,1);
+        var e2 = 1-Math.pow(1-p,3); el.textContent = Math.round(to*e2) + suf;
+        if(p<1) requestAnimationFrame(step); }
+      requestAnimationFrame(step);
+    });
+  }, {threshold:.6});
+  document.querySelectorAll('.num[data-to]').forEach(function(el){ cio.observe(el); });
+
+  // 3D tilt on cards (pointer only)
+  if(!reduce && matchMedia('(pointer:fine)').matches){
+    document.querySelectorAll('.card').forEach(function(card){
+      card.addEventListener('mousemove', function(ev){
+        var r = card.getBoundingClientRect();
+        var px = (ev.clientX-r.left)/r.width-.5, py = (ev.clientY-r.top)/r.height-.5;
+        card.style.transform = 'perspective(900px) rotateY('+(px*9)+'deg) rotateX('+(-py*9)+'deg) translateY(-6px)';
+      });
+      card.addEventListener('mouseleave', function(){ card.style.transform=''; });
+    });
+    // magnetic CTA
+    var mag = document.getElementById('mag'), mbtn = mag && mag.querySelector('.btn');
+    if(mag){ mag.addEventListener('mousemove', function(ev){
+        var r = mag.getBoundingClientRect(); var x = ev.clientX-r.left-r.width/2, y = ev.clientY-r.top-r.height/2;
+        mbtn.style.transform = 'translate('+(x*.3)+'px,'+(y*.4)+'px)';
+      });
+      mag.addEventListener('mouseleave', function(){ mbtn.style.transform=''; }); }
+  }
+
+  // floating gold motes
+  (function(){
+    var c = document.getElementById('motes'), x = c.getContext('2d'), w, h, dots=[], raf;
+    function size(){ w = c.width = innerWidth*devicePixelRatio; h = c.height = innerHeight*devicePixelRatio; }
+    function seed(){ dots = []; var n = reduce ? 0 : Math.min(60, Math.floor(innerWidth/22));
+      for(var i=0;i<n;i++) dots.push({x:Math.random()*w,y:Math.random()*h,
+        r:(Math.random()*1.6+.4)*devicePixelRatio, s:Math.random()*.25+.05, a:Math.random()*.5+.2}); }
+    function tick(){ x.clearRect(0,0,w,h);
+      for(var i=0;i<dots.length;i++){ var d=dots[i]; d.y-=d.s*devicePixelRatio; if(d.y<-5){d.y=h+5;d.x=Math.random()*w;}
+        x.beginPath(); x.fillStyle='rgba(202,162,78,'+d.a+')'; x.arc(d.x,d.y,d.r,0,7); x.fill(); }
+      raf = requestAnimationFrame(tick); }
+    size(); seed(); if(!reduce) tick();
+    addEventListener('resize', function(){ size(); seed(); });
+  })();
+</script>

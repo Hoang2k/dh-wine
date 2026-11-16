@@ -1,0 +1,360 @@
+/* Hallmark · shape: Index-First (/), kept (inner pages) · genre: editorial · theme: brand · redesign: full · job: request a quote
+ * paper: oklch(97.1% 0.009 85) · accent: oklch(49.6% 0.088 83) · display: EB Garamond · body: Be Vietnam Pro · hero: Index (/), Banner (inner pages) · nav: edge-aligned, a wordmark and one action · footer: a mast, the wordmark over the links · signature: the wine list set like a restaurant list, name, origin, vintage and case size in columns, with a quote action per row
+ * axes: warm-ivory/serif/gold · posture: restrained · contrast: pass · fold: pass · v2.0.0 */
+/* Hallmark · pre-emit critique: P4 H4 E4 S4 R4 V4 · weakest: S, the old hero was a banner any shop could run; the home page now opens on the client's own wine list, the thing a restaurant buyer comes to read */
+/* Hallmark · dropped HomeCategories band (/) · its four type links now live in the catalogue tabs and the footer */
+/* Hallmark · dropped scroll reveals site-wide · the brand keeps still; one quiet page, no entrance */
+/* Hallmark · dismissed 28a · the lazy images are brand logos in the closed mega menu and the brand list far below the fold; the LCP is the hero head */
+/* Hallmark · dismissed 42 · the footer is a mast, the wordmark set large over three link columns and the contacts, named in the stamp */
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* ==========================================================================
+   Tokens. Brand palette kept (ivory paper, gold-brown, deep wine); the
+   interactive gold is one step darker so text on it and of it passes AA.
+   ========================================================================== */
+@theme {
+  /* Paper family */
+  --color-washi: oklch(97.1% 0.009 85);        /* page */
+  --color-paper: oklch(99.4% 0.006 85);        /* raised surface */
+  --color-ivory: oklch(94.5% 0.013 82);        /* tinted well */
+  --color-cream: oklch(92.4% 0.018 81);        /* band */
+  /* Ink family */
+  --color-ink: oklch(20.8% 0.009 59);
+  --color-ink-soft: oklch(39% 0.014 72);
+  --color-stone: oklch(48.4% 0.019 70);        /* muted text, 5:1 on every paper */
+  --color-stone-light: oklch(69.7% 0.019 73);  /* rules and marks only, never text */
+  --color-line: oklch(90.6% 0.018 81);
+  --color-line-strong: oklch(83.7% 0.025 80);
+  /* Brand */
+  --color-wine: oklch(63% 0.107 84);           /* brand gold-brown: marks, rules, large numerals */
+  --color-gold-deep: oklch(49.6% 0.088 83);    /* accent: links, the primary control */
+  --color-wine-deep: oklch(28.7% 0.081 6);     /* deep wine field */
+  --color-wine-soft: oklch(88% 0.034 82);
+  --color-gold: oklch(86.5% 0.177 90);         /* brand yellow, only on the dark fields */
+  --color-gold-soft: oklch(95.5% 0.06 95);
+  /* On the dark fields */
+  --color-on-dark: oklch(97.1% 0.009 85);
+  --color-on-dark-muted: oklch(81.1% 0.021 68);
+  --color-on-dark-rule: oklch(41.2% 0.07 2);
+  --color-ink-rule: oklch(31.8% 0.019 57);
+  /* State */
+  --color-error: oklch(50% 0.182 30);
+  --color-error-on-dark: oklch(78% 0.12 30);
+  --color-success: oklch(50% 0.12 150);
+  --color-focus: oklch(52% 0.12 84);
+
+  /* Type: two families. Display serif for heads only, body sans for everything else. */
+  --font-display: var(--font-cormorant), "EB Garamond", Georgia, serif;
+  --font-sans: var(--font-be-vietnam), "Be Vietnam Pro", system-ui, sans-serif;
+
+  /* Roles on a 1.25 ratio from a 16px body (Hallmark layout § 2) */
+  --text-display-xl: clamp(2.75rem, 5vw + 1rem, 5.25rem);      /* hero head */
+  --text-display-xl--line-height: 1;
+  --text-display-xl--letter-spacing: -0.025em;
+  --text-display-lg: clamp(2.25rem, 4vw + 0.5rem, 3.75rem);    /* long hero head, statement */
+  --text-display-lg--line-height: 1.04;
+  --text-display-lg--letter-spacing: -0.02em;
+  --text-display-md: clamp(2rem, 2.5vw + 1rem, 3.5rem);        /* section head */
+  --text-display-md--line-height: 1.06;
+  --text-display-md--letter-spacing: -0.02em;
+  --text-display-sm: clamp(1.25rem, 0.75vw + 0.875rem, 1.625rem); /* item title */
+  --text-display-sm--line-height: 1.2;
+  --text-display-sm--letter-spacing: -0.01em;
+  --text-lead: clamp(1.125rem, 0.35vw + 1rem, 1.375rem);
+  --text-lead--line-height: 1.45;
+  --text-label: 0.875rem;                                       /* labels, captions, table heads */
+  --text-label--line-height: 1.4;
+
+  /* Shape and depth: one radius, one shadow */
+  --radius-xs: 10px;     /* inputs, badges, small controls */
+  --radius-card: 16px;   /* cards, image wells, panels */
+  --radius-panel: 28px;  /* inset colour panels */
+  --shadow-soft: 0 1px 2px oklch(20% 0.01 70 / 0.06);
+  --shadow-lift: 0 0 0 1px oklch(30% 0.01 70 / 0.08);
+  --shadow-bar: 0 -1px 0 oklch(30% 0.01 70 / 0.1);
+
+  /* Motion */
+  --ease-luxe: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* shadcn/ui semantic tokens mapped onto the brand palette */
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) - 2px);
+  --radius-md: var(--radius);
+  --radius-lg: calc(var(--radius) + 2px);
+  --radius-xl: calc(var(--radius) + 6px);
+}
+
+:root {
+  --radius: 0.625rem;
+  --background: var(--color-washi);
+  --foreground: var(--color-ink);
+  --card: var(--color-paper);
+  --card-foreground: var(--color-ink);
+  --popover: var(--color-paper);
+  --popover-foreground: var(--color-ink);
+  --primary: var(--color-gold-deep);
+  --primary-foreground: var(--color-paper);
+  --secondary: var(--color-cream);
+  --secondary-foreground: var(--color-ink);
+  --muted: var(--color-cream);
+  --muted-foreground: var(--color-stone);
+  --accent: var(--color-cream);
+  --accent-foreground: var(--color-ink);
+  --destructive: var(--color-error);
+  --border: var(--color-line);
+  --input: var(--color-line-strong);
+  --ring: var(--color-focus);
+
+  /* Space scale (Hallmark craft § 3) */
+  --space-3xs: 2px; --space-2xs: 4px; --space-xs: 8px; --space-sm: 12px; --space-md: 16px;
+  --space-lg: 24px; --space-xl: 40px; --space-2xl: 64px; --space-3xl: 96px; --space-4xl: 144px;
+  --dur-micro: 120ms; --dur-short: 220ms; --dur-long: 420ms;
+  --z-sticky-nav: 300; --z-modal: 400;
+
+  /* Sticky part of the header (the nav bar on desktop, the main row on mobile) */
+  --header-h: 64px;
+}
+
+@media (min-width: 1024px) {
+  :root { --header-h: 76px; }
+}
+
+/* ==========================================================================
+   Base
+   ========================================================================== */
+@layer base {
+  * {
+    @apply border-border;
+  }
+  html,
+  body {
+    overflow-x: clip;
+  }
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: calc(var(--header-h) + 16px);
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    background: var(--color-washi);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-synthesis: none;
+    letter-spacing: -0.02em;
+    overflow-wrap: break-word;
+    min-width: 0;
+    text-wrap: balance;
+  }
+  p {
+    text-wrap: pretty;
+  }
+  ::selection {
+    background: var(--color-wine-soft);
+    color: var(--color-ink);
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 2px;
+  }
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+}
+
+/* ==========================================================================
+   Layout utilities: one container, capped and centred (1312px of content)
+   ========================================================================== */
+@utility container-site {
+  width: 100%;
+  max-width: 1440px;
+  margin-inline: auto;
+  padding-inline: 1rem;
+  @media (width >= 640px) { padding-inline: 1.5rem; }
+  @media (width >= 1024px) { padding-inline: 4rem; }
+}
+
+@utility container-narrow {
+  width: 100%;
+  max-width: 880px;
+  margin-inline: auto;
+  padding-inline: 1rem;
+  @media (width >= 640px) { padding-inline: 1.5rem; }
+}
+
+@utility section-y {
+  padding-block: 4.5rem;
+  @media (width >= 768px) { padding-block: 6rem; }
+  @media (width >= 1280px) { padding-block: 7.5rem; }
+}
+
+/* ==========================================================================
+   Typography utilities
+   ========================================================================== */
+/* Serif display head: one weight, one style, one colour */
+@utility heading-display {
+  font-family: var(--font-display);
+  font-weight: 500;
+  text-wrap: balance;
+  overflow-wrap: break-word;
+  min-width: 0;
+}
+
+/* Labels, captions, table heads: the body face a step smaller, sentence case, untracked */
+@utility label {
+  font-family: var(--font-sans);
+  font-size: var(--text-label);
+  line-height: 1.4;
+  font-weight: 500;
+}
+
+@utility prose-lead {
+  font-size: var(--text-lead);
+  line-height: 1.5;
+  color: var(--color-ink-soft);
+}
+
+@utility link-underline {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+  text-decoration-color: var(--color-line-strong);
+  transition: text-decoration-color var(--dur-short) var(--ease-luxe);
+  &:hover { text-decoration-color: currentColor; }
+}
+
+@layer utilities {
+  .line-clamp-1,
+  .line-clamp-2,
+  .line-clamp-3 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+  }
+  .line-clamp-1 { -webkit-line-clamp: 1; }
+  .line-clamp-2 { -webkit-line-clamp: 2; }
+  .line-clamp-3 { -webkit-line-clamp: 3; }
+
+  .scrollbar-hide::-webkit-scrollbar { display: none; }
+  .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+
+  .num { font-variant-numeric: tabular-nums; }
+
+  /* Keeps content clear of the fixed mobile action bar */
+  .pb-mobile-bar { padding-bottom: calc(var(--space-2xl) + env(safe-area-inset-bottom)); }
+  @media (min-width: 1024px) { .pb-mobile-bar { padding-bottom: 0; } }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Rich text from the CMS (news articles) */
+.article-body {
+  color: var(--color-ink-soft);
+  font-size: 1.125rem;
+  line-height: 1.75;
+}
+.article-body h2,
+.article-body h3 {
+  font-family: var(--font-display);
+  font-weight: 500;
+  color: var(--color-ink);
+  line-height: 1.15;
+  text-wrap: balance;
+  margin: 2em 0 0.6em;
+}
+.article-body h2 { font-size: 2.25rem; }
+.article-body h3 { font-size: 1.625rem; }
+.article-body p { margin: 0 0 1.25em; }
+.article-body a { color: var(--color-gold-deep); text-decoration: underline; text-underline-offset: 3px; }
+.article-body img { border-radius: var(--radius-card); margin: 1.5em auto; height: auto; max-width: 100%; }
+.article-body blockquote {
+  border-block: 1px solid var(--color-line-strong);
+  padding-block: var(--space-md);
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  line-height: 1.35;
+  color: var(--color-ink);
+}
+.article-body ul { list-style: disc; padding-left: 1.25rem; margin-bottom: 1.25em; }
+.article-body ol { list-style: decimal; padding-left: 1.25rem; margin-bottom: 1.25em; }
+
+/* Brand presets: each install picks one in admin (Cài đặt website). Only the brand family moves; paper, ink and state stay. */
+html[data-theme='burgundy'] {
+  --color-wine: oklch(52% 0.13 20);
+  --color-gold-deep: oklch(45% 0.13 22);
+  --color-wine-deep: oklch(26% 0.07 18);
+  --color-wine-soft: oklch(90% 0.03 20);
+  --color-gold: oklch(84% 0.1 75);
+  --color-gold-soft: oklch(95.5% 0.04 80);
+  --color-focus: oklch(48% 0.13 22);
+  --color-on-dark-rule: oklch(40% 0.07 18);
+}
+html[data-theme='olive'] {
+  --color-wine: oklch(56% 0.08 135);
+  --color-gold-deep: oklch(44% 0.075 140);
+  --color-wine-deep: oklch(27% 0.04 150);
+  --color-wine-soft: oklch(90% 0.03 130);
+  --color-gold: oklch(86% 0.12 105);
+  --color-gold-soft: oklch(95.5% 0.05 105);
+  --color-focus: oklch(46% 0.08 140);
+  --color-on-dark-rule: oklch(40% 0.04 150);
+}
+html[data-theme='navy'] {
+  --color-wine: oklch(56% 0.08 245);
+  --color-gold-deep: oklch(44% 0.09 250);
+  --color-wine-deep: oklch(25% 0.05 255);
+  --color-wine-soft: oklch(90% 0.025 245);
+  --color-gold: oklch(85% 0.12 85);
+  --color-gold-soft: oklch(95.5% 0.04 90);
+  --color-focus: oklch(46% 0.09 250);
+  --color-on-dark-rule: oklch(38% 0.05 255);
+}
+
+/* Age gate: shown until the visitor confirms 18+, hidden before paint once they have (see AgeGate.tsx) */
+.age-gate { display: grid; }
+html[data-age-ok] .age-gate { display: none; }
+html:not([data-age-ok]),
+html:not([data-age-ok]) body { overflow: hidden; overscroll-behavior: none; }
+/* Before scripts run (slow network), the CSS alone keeps the page behind the gate untouchable */
+html:not([data-age-ok]) body > *:not(.age-gate) { pointer-events: none; user-select: none; }
+.age-gate { overscroll-behavior: contain; }

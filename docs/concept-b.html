@@ -1,0 +1,248 @@
+<title>Hoàng Đinh · Tạp chí vang</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=Be+Vietnam+Pro:wght@300;400;500;600&display=swap">
+<style>
+  /* Direction B — "Tạp chí vang": editorial light, hairline rules, asymmetric grid,
+     horizontal wine gallery, restrained & elegant motion. Deliberately single light theme. */
+  :root{
+    --paper:#f4efe6;       /* warm, slightly cool paper */
+    --paper-2:#ece5d8;
+    --ink:#201b19;
+    --ink-soft:#4a433e;
+    --wine:#7c1d2e;        /* bordeaux accent */
+    --gold:#8c6f2e;        /* olive-gold secondary */
+    --muted:#8a8178;
+    --rule:rgba(32,27,25,.16);
+    --maxw:1180px;
+    color-scheme:light;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{background:var(--paper);color:var(--ink);
+    font-family:"Be Vietnam Pro",system-ui,sans-serif;font-weight:400;line-height:1.6;
+    -webkit-font-smoothing:antialiased;overflow-x:hidden}
+  h1,h2,h3,.disp{font-family:"Fraunces",Georgia,serif;font-weight:500;line-height:1.02;text-wrap:balance}
+  a{color:inherit;text-decoration:none}
+  .wrap{width:100%;max-width:var(--maxw);margin-inline:auto;
+    padding-left:max(24px,env(safe-area-inset-left,0px));
+    padding-right:max(24px,env(safe-area-inset-right,0px))}
+  .eyebrow{font-size:.7rem;font-weight:600;letter-spacing:.26em;text-transform:uppercase;color:var(--wine)}
+  .idx{font-family:"Fraunces",serif;font-variant-numeric:tabular-nums;color:var(--gold)}
+  .lede{color:var(--ink-soft);font-size:1.06rem;max-width:56ch}
+  .rule{height:1px;background:var(--rule);width:100%}
+
+  header{position:fixed;inset:0 0 auto;z-index:30;background:rgba(244,239,230,0);
+    padding-top:max(16px,env(safe-area-inset-top,0px));padding-bottom:16px;
+    border-bottom:1px solid transparent;transition:background .4s,border-color .4s,padding .4s}
+  header.scrolled{background:rgba(244,239,230,.9);backdrop-filter:blur(10px);border-bottom-color:var(--rule);
+    padding-top:max(11px,env(safe-area-inset-top,0px));padding-bottom:11px}
+  .nav{display:flex;align-items:center;justify-content:space-between;gap:20px}
+  .brand{font-family:"Fraunces",serif;font-weight:600;font-size:1.45rem;letter-spacing:.01em}
+  .brand sup{color:var(--wine);font-size:.6rem;letter-spacing:.25em;text-transform:uppercase;margin-left:.4rem}
+  nav.links{display:flex;gap:28px;font-size:.88rem;color:var(--ink-soft)}
+  nav.links a{position:relative}
+  nav.links a::after{content:"";position:absolute;left:0;bottom:-5px;height:1px;width:0;background:var(--wine);transition:width .3s}
+  nav.links a:hover::after{width:100%}
+  .btn{display:inline-flex;align-items:center;gap:.5rem;font-weight:500;font-size:.85rem;
+    padding:.68rem 1.25rem;border-radius:2px;border:1px solid var(--ink);background:transparent;color:var(--ink);
+    cursor:pointer;transition:background .3s,color .3s,border-color .3s}
+  .btn:hover{background:var(--ink);color:var(--paper)}
+  .btn.wine{border-color:var(--wine);background:var(--wine);color:#fff}
+  .btn.wine:hover{background:#651624;border-color:#651624}
+  @media(max-width:820px){nav.links{display:none}}
+
+  /* reveal */
+  .reveal{opacity:1;transform:none;transition:opacity 1s cubic-bezier(.16,1,.3,1),transform 1s cubic-bezier(.16,1,.3,1)}
+  html.js .reveal{opacity:0;transform:translateY(26px)}
+  html.js .reveal.in{opacity:1;transform:none}
+  .d1{transition-delay:.1s}.d2{transition-delay:.2s}.d3{transition-delay:.3s}
+
+  /* hero */
+  .hero{padding-top:150px;padding-bottom:70px}
+  .hero-top{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;flex-wrap:wrap;margin-bottom:22px}
+  .hero-top .meta{text-align:right;color:var(--muted);font-size:.82rem;line-height:1.5}
+  .hero h1{font-size:clamp(3.2rem,11vw,8.5rem);letter-spacing:-.015em;margin:18px 0 0}
+  .hero h1 .it{font-style:italic;color:var(--wine)}
+  .hero-grid{display:grid;grid-template-columns:1.4fr .9fr;gap:46px;align-items:end;margin-top:40px}
+  .plate{position:relative;aspect-ratio:3/4;border-radius:3px;overflow:hidden;border:1px solid var(--rule);
+    background:radial-gradient(70% 50% at 60% 25%,#9a3346,transparent 60%),linear-gradient(160deg,#7c1d2e,#3c0e18)}
+  .plate .tag{position:absolute;left:18px;bottom:16px;right:18px;color:#f4efe6;font-family:"Fraunces",serif;
+    font-size:1.5rem;line-height:1.1}
+  .plate .tag small{display:block;font-family:"Be Vietnam Pro";font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;opacity:.8;margin-bottom:.4rem}
+  .hero-cta{display:flex;gap:14px;flex-wrap:wrap;margin-top:26px}
+  @media(max-width:820px){.hero-grid{grid-template-columns:1fr;gap:30px}.hero{padding-top:130px}}
+
+  /* index row */
+  .index{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+  .index .cell{padding:30px 26px 30px 0;border-right:1px solid var(--rule)}
+  .index .cell:last-child{border-right:none}
+  .index .cell .n{font-family:"Fraunces",serif;font-size:1.1rem;color:var(--gold)}
+  .index .cell h3{font-size:1.5rem;margin:.5rem 0 .4rem}
+  .index .cell p{color:var(--ink-soft);font-size:.92rem;max-width:34ch}
+  @media(max-width:760px){.index{grid-template-columns:1fr}.index .cell{border-right:none;border-bottom:1px solid var(--rule)}.index .cell:last-child{border-bottom:none}}
+
+  section.band{padding-block:clamp(64px,10vw,116px)}
+  .head{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;margin-bottom:40px}
+  .head h2{font-size:clamp(2rem,5vw,3.4rem)}
+  .head h2 em{font-style:italic;color:var(--wine)}
+
+  /* gallery */
+  .gal{display:flex;gap:0;overflow-x:auto;scroll-snap-type:x mandatory;border-top:1px solid var(--rule);scroll-padding-left:24px}
+  .gal::-webkit-scrollbar{height:5px}.gal::-webkit-scrollbar-thumb{background:var(--rule)}
+  .gitem{scroll-snap-align:start;flex:0 0 clamp(248px,72vw,310px);border-right:1px solid var(--rule);
+    padding:26px 24px 30px;transition:background .4s}
+  .gitem:hover{background:var(--paper-2)}
+  .gitem .bottle{height:210px;display:grid;place-items:end center;margin-bottom:18px}
+  .gitem .bshape{width:52px;height:190px;border-radius:14px 14px 5px 5px;position:relative;
+    background:linear-gradient(90deg,rgba(255,255,255,.3),transparent 35%),linear-gradient(180deg,#7c1d2e,#3c0e18);transition:transform .5s}
+  .gitem:hover .bshape{transform:translateY(-10px) rotate(-3deg)}
+  .gitem .bshape::before{content:"";position:absolute;top:-24px;left:50%;transform:translateX(-50%);width:15px;height:30px;background:#2c0a12;border-radius:3px}
+  .gitem .bshape::after{content:"";position:absolute;top:66px;left:6px;right:6px;height:62px;background:var(--paper);border-radius:2px}
+  .gitem .region{font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold)}
+  .gitem h3{font-size:1.55rem;margin:.3rem 0}
+  .gitem .meta{color:var(--muted);font-size:.85rem;margin-bottom:16px}
+  .gitem a{font-size:.8rem;color:var(--wine);font-weight:500;border-bottom:1px solid var(--wine);padding-bottom:2px}
+
+  /* quote */
+  .quote{text-align:center}
+  .quote blockquote{font-family:"Fraunces",serif;font-weight:400;font-size:clamp(1.8rem,4.6vw,3.2rem);
+    line-height:1.18;max-width:20ch;margin:0 auto;text-wrap:balance}
+  .quote blockquote em{font-style:italic;color:var(--wine)}
+  .quote cite{display:block;margin-top:26px;font-style:normal;color:var(--muted);font-size:.86rem;letter-spacing:.14em;text-transform:uppercase}
+
+  /* stats */
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+  .stats .s{padding:40px 20px 40px 0;border-right:1px solid var(--rule)}
+  .stats .s:last-child{border-right:none}
+  .stats .num{font-family:"Fraunces",serif;font-size:clamp(2.4rem,5.5vw,3.6rem);color:var(--wine);font-variant-numeric:tabular-nums;line-height:1}
+  .stats .lbl{color:var(--ink-soft);font-size:.86rem;margin-top:.4rem}
+  @media(max-width:720px){.stats{grid-template-columns:1fr 1fr}.stats .s:nth-child(2){border-right:none}.stats .s:nth-child(1),.stats .s:nth-child(2){border-bottom:1px solid var(--rule)}}
+
+  /* cta */
+  .cta{background:var(--ink);color:var(--paper);border-radius:4px;padding:clamp(44px,8vw,84px);text-align:center}
+  .cta h2{font-size:clamp(2.2rem,6vw,4.4rem)}
+  .cta h2 em{font-style:italic;color:#e9b7bf}
+  .cta p{color:#c9c0b4;max-width:48ch;margin:1.1rem auto 2rem}
+  .cta .btn{border-color:var(--paper);color:var(--paper)}
+  .cta .btn:hover{background:var(--paper);color:var(--ink)}
+  .cta .btn.wine{background:var(--wine);border-color:var(--wine);color:#fff}
+
+  footer{padding-block:38px;color:var(--muted);font-size:.84rem;border-top:1px solid var(--rule)}
+  .fg{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:center}
+
+  @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}html.js .reveal{opacity:1;transform:none}}
+</style>
+
+<header id="top">
+  <div class="wrap nav">
+    <div class="brand">Hoàng Đinh<sup>Wine</sup></div>
+    <nav class="links"><a href="#bst">Sản phẩm</a><a href="#dv">Giải pháp</a><a href="#cs">Giới thiệu</a><a href="#bg">Tin tức</a></nav>
+    <a class="btn wine" href="#bg">Nhận báo giá</a>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="wrap">
+      <div class="hero-top">
+        <span class="eyebrow reveal">Nhà phân phối rượu vang · Est. 2014</span>
+        <div class="meta reveal d1">Tuyển chọn cho nhà hàng,<br>khách sạn & đại lý toàn quốc</div>
+      </div>
+      <div class="rule reveal"></div>
+      <div class="hero-grid">
+        <div>
+          <h1><span class="reveal">Vang cho</span><br><span class="reveal d1"><span class="it">người sành</span></span></h1>
+          <p class="lede reveal d2" style="margin-top:26px">Danh mục rượu được tuyển chọn theo từng thực đơn, từng mô hình kinh doanh — không bán lẻ ồ ạt, không niêm yết giá đại trà.</p>
+          <div class="hero-cta reveal d2">
+            <a class="btn wine" href="#bg">Nhận báo giá</a>
+            <a class="btn" href="#bst">Xem bộ sưu tập</a>
+          </div>
+        </div>
+        <div class="plate reveal d1" aria-hidden="true">
+          <div class="tag"><small>Tuyển chọn mùa</small>Bordeaux · Tuscany · Mendoza</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band" id="dv" style="padding-top:0">
+    <div class="wrap">
+      <div class="index">
+        <div class="cell reveal"><div class="n">01</div><h3>Tuyển chọn</h3><p>Làm việc trực tiếp với nhà nhập khẩu, chọn nhãn phù hợp khẩu vị và thực đơn.</p></div>
+        <div class="cell reveal d1"><div class="n">02</div><h3>Phân phối</h3><p>Quản lý kho theo lô & hạn dùng, giao hàng đúng hẹn trên 34 tỉnh thành.</p></div>
+        <div class="cell reveal d2"><div class="n">03</div><h3>Đồng hành</h3><p>Đội ngũ hiểu rượu tư vấn danh mục, đào tạo phục vụ cho từng đối tác.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band" id="bst" style="padding-top:0">
+    <div class="wrap">
+      <div class="head">
+        <div><span class="eyebrow reveal">Bộ sưu tập</span><h2 class="reveal d1">Tuyển chọn <em>mùa này</em></h2></div>
+        <div class="reveal d2" style="color:var(--muted);font-size:.82rem">Kéo ngang →</div>
+      </div>
+    </div>
+    <div class="wrap">
+      <div class="gal">
+        <article class="gitem"><div class="bottle"><div class="bshape"></div></div><div class="region">Bordeaux · Pháp</div><h3>Château Mazeris</h3><div class="meta">Vang đỏ · Merlot · 2019</div><a href="#bg">Thêm vào báo giá</a></article>
+        <article class="gitem"><div class="bottle"><div class="bshape"></div></div><div class="region">Tuscany · Ý</div><h3>Chianti Riserva</h3><div class="meta">Vang đỏ · Sangiovese · 2020</div><a href="#bg">Thêm vào báo giá</a></article>
+        <article class="gitem"><div class="bottle"><div class="bshape"></div></div><div class="region">Mendoza · Argentina</div><h3>Alta Malbec</h3><div class="meta">Vang đỏ · Malbec · 2021</div><a href="#bg">Thêm vào báo giá</a></article>
+        <article class="gitem"><div class="bottle"><div class="bshape"></div></div><div class="region">Marlborough · NZ</div><h3>Cloud Bay</h3><div class="meta">Vang trắng · Sauvignon · 2022</div><a href="#bg">Thêm vào báo giá</a></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="band quote" id="cs">
+    <div class="wrap">
+      <blockquote class="reveal">“Chúng tôi không bán rượu — chúng tôi giúp mỗi <em>bàn tiệc</em> chọn đúng chai.”</blockquote>
+      <cite class="reveal d1">Đinh Văn Hoàng · Nhà sáng lập</cite>
+    </div>
+  </section>
+
+  <section class="band" style="padding-block:0">
+    <div class="wrap">
+      <div class="stats">
+        <div class="s reveal"><div class="num" data-to="12" data-suffix="+">0</div><div class="lbl">Năm trong ngành</div></div>
+        <div class="s reveal d1"><div class="num" data-to="180" data-suffix="+">0</div><div class="lbl">Nhãn tuyển chọn</div></div>
+        <div class="s reveal d2"><div class="num" data-to="400" data-suffix="+">0</div><div class="lbl">Đối tác HoReCa</div></div>
+        <div class="s reveal d3"><div class="num" data-to="34">0</div><div class="lbl">Tỉnh thành</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band" id="bg">
+    <div class="wrap">
+      <div class="cta reveal">
+        <h2>Nhận báo giá <em>trong 24 giờ</em></h2>
+        <p>Để lại thông tin, đội ngũ Hoàng Đinh sẽ tư vấn danh mục và gửi báo giá phù hợp mô hình của bạn.</p>
+        <a class="btn wine" href="#top">Gửi yêu cầu báo giá</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap fg">
+    <div class="brand" style="font-size:1.2rem">Hoàng Đinh<sup>Wine</sup></div>
+    <div>Nhà phân phối rượu vang cho HoReCa · © 2026</div>
+    <div>Phương án B — Tạp chí vang</div>
+  </div>
+</footer>
+
+<script>
+  document.documentElement.classList.add('js');
+  var reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
+  var header=document.getElementById('top');
+  var onScroll=function(){header.classList.toggle('scrolled',scrollY>30)};onScroll();addEventListener('scroll',onScroll,{passive:true});
+  var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{threshold:.16,rootMargin:'0px 0px -6% 0px'});
+  document.querySelectorAll('.reveal').forEach(function(el){io.observe(el)});
+  var seen=new WeakSet();
+  var cio=new IntersectionObserver(function(es){es.forEach(function(e){
+    if(!e.isIntersecting||seen.has(e.target))return;seen.add(e.target);
+    var el=e.target,to=+el.dataset.to,suf=el.dataset.suffix||'',t0=null,dur=1300;
+    if(reduce){el.textContent=to+suf;return}
+    function step(ts){if(!t0)t0=ts;var p=Math.min((ts-t0)/dur,1);el.textContent=Math.round(to*(1-Math.pow(1-p,3)))+suf;if(p<1)requestAnimationFrame(step)}
+    requestAnimationFrame(step)})},{threshold:.6});
+  document.querySelectorAll('.num[data-to]').forEach(function(el){cio.observe(el)});
+</script>
